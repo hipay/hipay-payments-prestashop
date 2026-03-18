@@ -1,0 +1,16 @@
+className: 'Alma4x'
+defaults:
+  enabled: true
+  code: 'alma-4x'
+  name: 'Alma 4x'
+  minAmount: 100.00
+  maxAmount: 10000.00
+  currenciesCountriesManaged: true
+  currencies: ['EUR']
+  countries: ['FR']
+  minAmountForced: true
+  maxAmountForced: true
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: true

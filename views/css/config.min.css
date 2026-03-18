@@ -1,0 +1,56 @@
+/*!
+ * 2025 HiPay
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0).
+ * It is also available through the world-wide-web at this URL: https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    HiPay partner
+ * @copyright 2025
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *//*!
+ * 2025 HiPay
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0).
+ * It is also available through the world-wide-web at this URL: https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    HiPay partner
+ * @copyright 2025
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */.flex{display:flex}/*!
+ * 2025 HiPay
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0).
+ * It is also available through the world-wide-web at this URL: https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    HiPay partner
+ * @copyright 2025
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *//*!
+ * 2026 HiPay
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0).
+ * It is also available through the world-wide-web at this URL: https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    HiPay partner
+ * @copyright 2026
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */.hipay-payments-health-check-modal .hipay-payments-basic-info .panel-body>div{display:flex}.hipay-payments-health-check-modal .hipay-payments-basic-info .panel-body>div div{flex:1 1 0}.hipay-payments-health-check-modal .hipay-payments-checks .panel-body i{font-size:1.5rem;vertical-align:sub}.hipay-payments-health-check-modal .hipay-payments-checks .panel-body i.icon-times-circle{color:red}.hipay-payments-health-check-modal .hipay-payments-checks .panel-body i.icon-check-circle{color:green}.hipay-payments-health-check-modal .hipay-payments-checks .panel-body i.icon-warning{color:orange}#hipay-configuration{/*!
+   * 2025 HiPay
+   *
+   * NOTICE OF LICENSE
+   *
+   * This source file is subject to the Academic Free License 3.0 (AFL-3.0).
+   * It is also available through the world-wide-web at this URL: https://opensource.org/licenses/AFL-3.0
+   *
+   * @author    HiPay partner
+   * @copyright 2025
+   * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+   */}#hipay-configuration .hipay-header{justify-content:space-between}#hipay-configuration .hipay-header .hipay-logo{align-items:center}#hipay-configuration .hipay-header .hipay-logo img{height:75px}#hipay-configuration .hipay-header .hipay-support .contact i{align-items:center;font-size:50px}#hipay-configuration .hipay-header .hipay-support .contact div{flex-direction:column;padding-left:15px;justify-content:center}#hipay-configuration .hipay-header .hipay-support .contact div:first-of-type{border-right:1px solid;margin-right:0;padding-right:15px}#hipay-configuration .hipay-header .hipay-support .contact div p{text-align:center}#hipay-configuration .hipay-header .hipay-support .cta-buttons{flex-direction:column;justify-content:space-around}#hipay-configuration #hipay-migration-steps-list span.step-label{vertical-align:super}#hipay-configuration .hipay-environment-bar.panel{text-align:center;font-weight:700;color:#fff;background:#006400;padding:10px}#hipay-configuration .hipay-environment-bar.panel.env-test{background:#ff8c00}#hipay-configuration .hipay-environment-bar.panel .js-panel-orderable .row{display:flex;align-items:center}#hipay-configuration .hipay-environment-bar.panel .js-panel-orderable .hipay-panel-dragging{opacity:.6}#hipay-configuration .hipay-environment-bar.panel .js-panel-orderable .hipay-panel-drag-over{outline:2px dashed #00aff0}#hipay-configuration .hipay-advanced-pm-list div.position,#hipay-configuration .hipay-cards-list div.position{border-right:1px solid;margin-right:10px;padding-right:10px;display:inline-flex;align-items:center;font-size:14px;text-align:center;cursor:grab;gap:5px}#hipay-configuration .hipay-advanced-pm-list div.position .js-hipay-position,#hipay-configuration .hipay-cards-list div.position .js-hipay-position{margin-left:10px;margin-right:10px}#hipay-configuration .hipay-advanced-pm-list div.position .icon-chevron-up,#hipay-configuration .hipay-cards-list div.position .icon-chevron-up{margin-right:5px}#hipay-configuration .hipay-advanced-pm-list span.name,#hipay-configuration .hipay-cards-list span.name{font-weight:700;font-size:14px;color:grey;flex:1}#hipay-configuration .hipay-advanced-pm-list span.name.enabled,#hipay-configuration .hipay-cards-list span.name.enabled{color:green}#hipay-configuration .hipay-advanced-pm-list .hipay-unavailable-cards-block .panel,#hipay-configuration .hipay-cards-list .hipay-unavailable-cards-block .panel{background:#eee}#hipay-configuration span.multiselect-native-select{position:relative}#hipay-configuration span.multiselect-native-select select{border:0!important;clip:rect(0 0 0 0)!important;height:1px!important;margin:-1px -1px -1px -3px!important;overflow:hidden!important;padding:0!important;position:absolute!important;width:1px!important;left:50%;top:30px}#hipay-configuration .multiselect-container{position:absolute;list-style-type:none;margin:0;padding:0}#hipay-configuration .multiselect-container .input-group{margin:5px}#hipay-configuration .multiselect-container>li{padding:0}#hipay-configuration .multiselect-container>li>a.multiselect-all label{font-weight:700}#hipay-configuration .multiselect-container>li>a{padding:0}#hipay-configuration .multiselect-container>li>a>label{margin:0;height:100%;cursor:pointer;font-weight:400;padding:3px 20px 3px 40px}#hipay-configuration .multiselect-container>li>a>label>input[type=checkbox]{margin-bottom:5px}#hipay-configuration .multiselect-container>li>a>label.radio{margin:0}#hipay-configuration .multiselect-container>li>a>label.checkbox{margin:0}#hipay-configuration .multiselect-container>li.multiselect-group label{margin:0;padding:3px 20px 3px 20px;height:100%;font-weight:700}#hipay-configuration .multiselect-container>li.multiselect-group-clickable label{cursor:pointer}#hipay-configuration .btn-group>.btn-group:nth-child(2)>.multiselect.btn{border-top-left-radius:4px;border-bottom-left-radius:4px}#hipay-configuration .form-inline .multiselect-container label.checkbox{padding:3px 20px 3px 40px}#hipay-configuration .form-inline .multiselect-container label.radio{padding:3px 20px 3px 40px}#hipay-configuration .form-inline .multiselect-container li a label.checkbox input[type=checkbox]{margin-left:-20px;margin-right:0}#hipay-configuration .form-inline .multiselect-container li a label.radio input[type=radio]{margin-left:-20px;margin-right:0}#hipay-configuration .hipay-intro .hipay-intro-header{margin-bottom:20px}#hipay-configuration .hipay-intro .hipay-intro-header img{height:40px}#hipay-configuration .hipay-intro .hipay-intro-body{color:#000;font-size:14px;line-height:1.6}#hipay-configuration .hipay-intro .hipay-intro-body strong{color:#2c0a64}#hipay-configuration .hipay-intro .hipay-intro-body ul{margin-top:10px;padding-left:20px}#hipay-configuration .hipay-intro .hipay-intro-body li{margin-bottom:8px}

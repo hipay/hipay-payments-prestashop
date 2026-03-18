@@ -1,0 +1,195 @@
+menus:
+  - className: 'AdminHiPayPaymentsLogs'
+    parentClassName: ''
+    names:
+      fr: 'Logs HiPay Payments'
+      en: 'HiPay Payments Logs'
+  - className: 'AdminHiPayPaymentsAjax'
+    parentClassName: ''
+    names:
+      fr: 'Ajax HiPay Payments'
+      en: 'HiPay Payments Ajax'
+  - className: 'AdminHiPayPaymentsAjaxTransactions'
+    parentClassName: ''
+    names:
+      fr: 'Transactions Ajax HiPay Payments'
+      en: 'HiPay Payments Ajax Transactions'
+  - className: 'AdminHiPayPaymentsConfiguration'
+    parentClassName: ''
+    names:
+      fr: 'Configuration HiPay Payments'
+      en: 'HiPay Payments Configuration'
+hooks:
+  - 'actionAdminControllerSetMedia'
+  - 'actionGetAdminOrderButtons'
+  - 'actionFrontControllerSetVariables'
+  - 'actionAfterCreateCartSummaryFormHandler'
+  - 'paymentOptions'
+  - 'displayAdminOrderMainBottom'
+  - 'displayAdminOrderLeft'
+  - 'displayPaymentTop'
+  - 'displayPaymentByBinaries'
+  - 'displayCustomerAccount'
+orderStatuses:
+  - configKey: 'HIPAYPAYMENTS_OS_PENDING_AUTH'
+    color: '#2C3E50'
+    logo: 'icon_HIPAY.gif'
+    template: ''
+    send_email: 0
+    invoice: 0
+    logable: 0
+    deleted: 0
+    names:
+      fr: "En attente d’autorisation (HiPay)"
+      en: "Awaiting payment authorization (HiPay)"
+  - configKey: 'HIPAYPAYMENTS_OS_PENDING_CAPTURE'
+    color: '#3498D8'
+    logo: 'icon_HIPAY.gif'
+    template: ''
+    send_email: 0
+    invoice: 0
+    logable: 0
+    deleted: 0
+    names:
+      fr: 'Paiement autorisé - en attente de capture (HiPay)'
+      en: 'Authorized payment - awaiting payment capture (HiPay)'
+  - configKey: 'HIPAYPAYMENTS_OS_PARTIALLY_CAPTURED'
+    color: '#3498D8'
+    logo: 'icon_HIPAY.gif'
+    template: ''
+    send_email: 0
+    invoice: 0
+    logable: 0
+    deleted: 0
+    names:
+      fr: 'Capturé patiellement (HiPay)'
+      en: 'Partially captured (HiPay)'
+  - configKey: 'HIPAYPAYMENTS_OS_PARTIALLY_REFUNDED'
+    color: '#01B887'
+    logo: 'icon_HIPAY.gif'
+    template: ''
+    send_email: 0
+    invoice: 1
+    logable: 1
+    deleted: 0
+    names:
+      fr: 'Remboursé patiellement (HiPay)'
+      en: 'Partially refunded (HiPay)'
+  - configKey: 'HIPAYPAYMENTS_OS_CHARGEBACK'
+    color: '#01B887'
+    logo: 'icon_HIPAY.gif'
+    template: ''
+    send_email: 0
+    invoice: 1
+    logable: 1
+    deleted: 0
+    names:
+      fr: 'Chargeback (HiPay)'
+      en: 'Chargeback (HiPay)'
+configuration:
+  account:
+    useDemoMode: true
+    environment: 'test'
+    testPrivateIdentifiers:
+      username: ''
+      password: ''
+      secret: ''
+    testPublicIdentifiers:
+      username: ''
+      password: ''
+    prodPrivateIdentifiers:
+      username: ''
+      password: ''
+      secret: ''
+    prodPublicIdentifiers:
+      username: ''
+      password: ''
+    applePayTestPrivateIdentifiers:
+      username: ''
+      password: ''
+      secret: ''
+    applePayTestPublicIdentifiers:
+      username: ''
+      password: ''
+    applePayProdPrivateIdentifiers:
+      username: ''
+      password: ''
+      secret: ''
+    applePayProdPublicIdentifiers:
+      username: ''
+      password: ''
+    motoTestPrivateIdentifiers:
+      username: ''
+      password: ''
+      secret: ''
+    motoProdPrivateIdentifiers:
+      username: ''
+      password: ''
+      secret: ''
+    hashingAlgorithms:
+      main: 'SHA256'
+      apple_pay: 'SHA256'
+      moto: 'SHA256'
+  main:
+    verboseLogsEnabled: false
+    captureMode: 'auto'
+  cardPaymentSettings:
+    displayMode: 'hosted_fields'
+    hostedPageType: 'redirect'
+    cancelButtonDisplayed: true
+    oneClickEnabled: false
+    threeDSMode: 'disabled'
+    UISettings:
+      fontFamily: 'Roboto'
+      fontSize: 15
+      fontWeight: 400
+      color: '#000000'
+      placeholderColor: '#000000'
+      caretColor: '#000000'
+      iconColor: '#000000'
+      oneClickHighlightColor: '#000000'
+    paymentMethods: [ ]
+  otherPaymentMethods:
+    paymentMethods: [ ]
+  moduleInfo:
+    latestVersionAvailable: ''
+    dateLastestCheck: '0000-00-00 00:00:00'
+    releaseUrl: ''
+    assetUrl: ''
+  apmFilesList:
+    - code: 'paypal'
+      file: 'paypal.yml'
+    - code: 'applepay'
+      file: 'applepay.yml'
+    - code: 'mbway'
+      file: 'mbway.yml'
+    - code: 'multibanco'
+      file: 'multibanco.yml'
+    - code: 'ideal'
+      file: 'ideal.yml'
+    - code: 'bancontact'
+      file: 'bancontact.yml'
+    - code: 'mybank'
+      file: 'mybank.yml'
+    - code: 'alma-3x'
+      file: 'alma3x.yml'
+    - code: 'alma-4x'
+      file: 'alma4x.yml'
+    - code: 'sisal'
+      file: 'mooney.yml'
+    - code: 'przelewy24'
+      file: 'p24.yml'
+    - code: 'illicado'
+      file: 'illicado.yml'
+    - code: 'klarna'
+      file: 'klarna.yml'
+    - code: 'postfinance-card'
+      file: 'postfinance.yml'
+    - code: '3xcb'
+      file: 'oney3x.yml'
+    - code: '4xcb'
+      file: 'oney4x.yml'
+    - code: '3xcb-no-fees'
+      file: 'oney3x-no-fees.yml'
+    - code: '4xcb-no-fees'
+      file: 'oney4x-no-fees.yml'

@@ -1,0 +1,130 @@
+services:
+  hp.settings.serializer:
+    class: 'HiPay\PrestaShop\Settings\Serializer\SettingsSerializer'
+    public: true
+
+  hp.settings.loader:
+    class: 'HiPay\PrestaShop\Settings\SettingsLoader'
+    public: true
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+
+  hp.settings:
+    class: 'HiPay\PrestaShop\Settings\SettingsLoader'
+    public: true
+    shared: false
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+    factory: ['@hp.settings.loader', 'load']
+
+  hp.settings.presenter:
+    class: 'HiPay\PrestaShop\Presenter\SettingsPresenter'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.settings.account.validation:
+    class: 'HiPay\PrestaShop\Settings\Validation\AccountSettingsValidation'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.settings.account.resolver:
+    class: 'HiPay\PrestaShop\Settings\OptionsResolver\AccountSettingsOptionsResolver'
+    public: true
+
+  hp.settings.account.updater:
+    class: 'HiPay\PrestaShop\Settings\Updater\AccountSettingsUpdater'
+    public: true
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+      - '@hp.settings.account.resolver'
+      - '@hp.settings'
+      - '@hp.settings.account.validation'
+      - '@hp.module'
+
+  hp.settings.main.validation:
+    class: 'HiPay\PrestaShop\Settings\Validation\MainSettingsValidation'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.settings.main.resolver:
+    class: 'HiPay\PrestaShop\Settings\OptionsResolver\MainSettingsOptionsResolver'
+    public: true
+
+  hp.settings.main.updater:
+    class: 'HiPay\PrestaShop\Settings\Updater\MainSettingsUpdater'
+    public: true
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+      - '@hp.settings.main.resolver'
+      - '@hp.settings'
+      - '@hp.settings.main.validation'
+      - '@hp.module'
+
+  hp.settings.card_payment.validation:
+    class: 'HiPay\PrestaShop\Settings\Validation\CardPaymentSettingsValidation'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.settings.card_payment.resolver:
+    class: 'HiPay\PrestaShop\Settings\OptionsResolver\CardPaymentSettingsOptionsResolver'
+    public: true
+
+  hp.settings.card_payment.updater:
+    class: 'HiPay\PrestaShop\Settings\Updater\CardPaymentSettingsUpdater'
+    public: true
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+      - '@hp.settings.card_payment.resolver'
+      - '@hp.settings'
+      - '@hp.settings.card_payment.validation'
+      - '@hp.module'
+
+  hp.settings.other_pm.validation:
+    class: 'HiPay\PrestaShop\Settings\Validation\OtherPMSettingsValidation'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.settings.other_pm.resolver:
+    class: 'HiPay\PrestaShop\Settings\OptionsResolver\OtherPaymentSettingsOptionsResolver'
+    public: true
+
+  hp.settings.other_pm.updater:
+    class: 'HiPay\PrestaShop\Settings\Updater\OtherPMSettingsUpdater'
+    public: true
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+      - '@hp.settings.other_pm.resolver'
+      - '@hp.settings'
+      - '@hp.settings.other_pm.validation'
+      - '@hp.module'
+
+  hp.settings.module_info.validation:
+    class: 'HiPay\PrestaShop\Settings\Validation\ModuleInfoValidation'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.settings.module_info.resolver:
+    class: 'HiPay\PrestaShop\Settings\OptionsResolver\ModuleInfoOptionsResolver'
+    public: true
+
+  hp.settings.module_info.updater:
+    class: 'HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater'
+    public: true
+    arguments:
+      - '@=service("hp.settings.serializer").getSerializer()'
+      - '@hp.settings.module_info.resolver'
+      - '@hp.settings'
+      - '@hp.settings.module_info.validation'
+      - '@hp.module'
+
+  hp.settings.payment_methods_sync:
+    class: 'HiPay\PrestaShop\Settings\PaymentMethodsSync'
+    public: true
+    arguments:
+      - '@hp.module'

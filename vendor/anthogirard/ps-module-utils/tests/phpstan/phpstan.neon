@@ -1,0 +1,10 @@
+includes:
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+    
+parameters:
+  paths:
+    - ../../lib/
+  reportUnmatchedIgnoredErrors: false
+  level: 5
+  ignoreErrors:
+    - '#Parameter \#1 \$id of class Currency constructor expects null, int given.#'

@@ -1,0 +1,16 @@
+className: 'Mooney'
+defaults:
+  enabled: true
+  code: 'sisal'
+  name: 'Mooney'
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['EUR']
+  countries: ['IT']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: false

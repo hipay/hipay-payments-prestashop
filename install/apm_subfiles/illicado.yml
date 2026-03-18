@@ -1,0 +1,16 @@
+className: 'Illicado'
+defaults:
+  enabled: true
+  code: 'illicado'
+  name: 'Illicado'
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['EUR']
+  countries: ['FR']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: true

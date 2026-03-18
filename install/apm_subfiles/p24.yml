@@ -1,0 +1,16 @@
+className: 'P24'
+defaults:
+  enabled: true
+  code: 'przelewy24'
+  name: 'Przelewy24'
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['PLN', 'EUR']
+  countries: ['PL']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: false

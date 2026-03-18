@@ -1,0 +1,6 @@
+services:
+  hp.sdk.gateway:
+    class: 'HiPay\PrestaShop\Api\PrestaShopSDK'
+    public: true
+    arguments:
+      - '@hp.module'

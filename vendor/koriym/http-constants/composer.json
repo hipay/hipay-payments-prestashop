@@ -1,0 +1,17 @@
+{
+    "name": "koriym/http-constants",
+    "description":"Constants for the HTTP protocol",
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "keywords":[
+        "http",
+        "consntats"
+    ],
+    "license": "MIT",
+    "autoload":{
+        "psr-4":{
+            "Koriym\\HttpConstants\\": "src/"
+        }
+    }
+}

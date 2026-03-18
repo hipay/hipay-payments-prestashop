@@ -1,0 +1,16 @@
+className: 'Oney'
+defaults:
+  enabled: true
+  code: '4xcb'
+  name: 'Oney 4x'
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['EUR']
+  countries: ['FR', 'ES', 'IT', 'PT', 'DE']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: false
