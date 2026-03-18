@@ -35,11 +35,11 @@ class HiPayPayments extends PaymentModule
     {
         $this->name = 'hipaypayments';
         $this->author = 'HiPay';
-        $this->version = '4.2.0';
+        $this->version = '3.2.0';
         $this->tab = 'payments_gateways';
         $this->ps_versions_compliancy = [
-            'min' => '8.0',
-            'max' => '8.3',
+            'min' => '1.7.6',
+            'max' => '1.8.0',
         ];
         parent::__construct();
         $this->bootstrap = true;
@@ -87,9 +87,6 @@ class HiPayPayments extends PaymentModule
     public function disable($force_all = false): bool
     {
         if (parent::disable($force_all)) {
-            $this->removeSymfonyCache('dev');
-            $this->removeSymfonyCache('prod');
-
             return true;
         }
 
@@ -104,9 +101,6 @@ class HiPayPayments extends PaymentModule
     public function enable($force_all = false): bool
     {
         if (parent::enable($force_all)) {
-            $this->removeSymfonyCache('dev');
-            $this->removeSymfonyCache('prod');
-
             return true;
         }
 
@@ -127,9 +121,6 @@ class HiPayPayments extends PaymentModule
         }
 
         if ($this->uninstallModule($installer) && $this->clearConfiguration()) {
-            $this->removeSymfonyCache('dev');
-            $this->removeSymfonyCache('prod');
-
             return true;
         }
 
@@ -153,6 +144,8 @@ class HiPayPayments extends PaymentModule
         if ('AdminOrders' !== $this->context->controller->controller_name || !Tools::getValue('id_order')) {
             return;
         }
+        $params['id_order'] = (int) Tools::getValue('id_order');
+        $this->hookActionGetAdminOrderButtons($params);
         $this->context->controller->addCSS(_PS_MODULE_DIR_.$this->name.'/views/css/adminOrder.min.css');
         $this->context->controller->addJS(_PS_MODULE_DIR_.$this->name.'/views/js/admin-utils.js');
         $this->context->controller->addJS(_PS_MODULE_DIR_.$this->name.'/views/js/admin-order.js');
@@ -171,8 +164,8 @@ class HiPayPayments extends PaymentModule
     public function hookActionFrontControllerSetVariables(array $params)
     {
         $controller = $this->context->controller;
-        if ($controller instanceof OrderController || $controller instanceof OrderControllerCore) {
-            if ('checkout-payment-step' === $controller->getCheckoutProcess()->getCurrentStep()->getIdentifier()) {
+        if ($controller instanceof OrderController) {
+            if ('checkout-payment-step' === $controller->getCurrentStep()->getIdentifier()) {
                 /** @var HiPay\PrestaShop\Settings\Settings $settings */
                 $settings = $this->getService('hp.settings');
 
@@ -545,28 +538,24 @@ class HiPayPayments extends PaymentModule
      * @param mixed[] $params
      * @return void
      */
-    public function hookActionAfterCreateCartSummaryFormHandler(array $params): void
+    public function hookActionValidateOrder(array $params)
     {
-        if (!isset($params['form_data']) || !isset($params['form_data']['payment_module']) || $this->name !== $params['form_data']['payment_module']) {
+        /** @var Order $order */
+        $order = $params['order'];
+        if (!defined('_PS_ADMIN_DIR_') || $order->module !== $this->name) {
             return;
         }
 
         /** @var \HiPay\PrestaShop\Logger\LoggerFactory $loggerFactory */
         $loggerFactory = $this->getService('hp.logger.factory');
         $logger = $loggerFactory->withChannel('MOTO');
-
-        /** @var \PrestaShop\PrestaShop\Core\Domain\Order\ValueObject\OrderId $orderIdValueObject */
-        $orderIdValueObject = $params['id'];
-        $orderId = $orderIdValueObject->getValue();
-        $cartId = $params['form_data']['cart_id'];
-
         $hipayMotoOrder = new HiPayPaymentsMotoOrder();
-        $hipayMotoOrder->id_order = (int) $orderId;
-        $hipayMotoOrder->id_cart = (int) $cartId;
+        $hipayMotoOrder->id_order = (int) $order->id;
+        $hipayMotoOrder->id_cart = (int) $order->id_cart;
         try {
-            $logger->debug('Saving MOTO Order', ['orderId' => (int) $orderId, 'cartId' => (int) $cartId]);
+            $logger->debug('Saving MOTO Order', ['orderId' => (int) $order->id, 'cartId' => (int) $order->id_cart]);
             $hipayMotoOrder->save();
-            $logger->debug('MOTO order saved', ['orderId' => (int) $orderId, 'cartId' => (int) $cartId]);
+            $logger->debug('MOTO order saved', ['orderId' => (int) $order->id, 'cartId' => (int) $order->id_cart]);
         } catch (PrestaShopException $e) {
             $logger->error($e->getMessage());
         }

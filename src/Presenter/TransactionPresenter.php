@@ -15,11 +15,11 @@
 namespace HiPay\PrestaShop\Presenter;
 
 use AG\PSModuleUtils\Presenter\PresenterInterface;
-use AG\PSModuleUtils\Utils\AmountOfMoney;
 use HiPay\Fullservice\Gateway\Model\Transaction;
 use HiPay\PrestaShop\Settings\Entity\MainSettings;
 use HiPay\PrestaShop\Settings\Settings;
 use HiPay\PrestaShop\Settings\SettingsLoader;
+use HiPay\PrestaShop\Utils\AmountOfMoney;
 use HiPay\PrestaShop\Utils\Tools;
 
 if (!defined('_PS_VERSION_')) {

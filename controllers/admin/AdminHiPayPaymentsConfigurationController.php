@@ -186,30 +186,47 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
             }
         }
 
-        $client = new Github\Client();
-        /** @var Github\Api\Repo $repo */
-        $repo = $client->api('repo');
-        $releases = $repo->releases()->all('hipay', 'hipay-enterprise-sdk-prestashop');
-        if ($releases) {
-            foreach ($releases as $release) {
-                $tag = $release['tag_name'];
-                $branch = $release['target_commitish'];
-                if ('develop' !== $branch) {
-                    continue;
-                }
-                $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
-                $settings->moduleInfo->latestVersionAvailable = $tag;
-                $settings->moduleInfo->releaseUrl = $release['html_url'];
-                $settings->moduleInfo->assetUrl = isset($release['assets']) && is_array($release['assets']) ? $release['assets'][0]['browser_download_url'] : '';
-                /** @var \HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater $updater */
-                $updater = $this->module->getService('hp.settings.module_info.updater');
-                try {
-                    $updater->updateObject($settings->moduleInfo);
-                } catch (ExceptionList $e) {
-                    return;
-                }
+        $ch = curl_init('https://api.github.com/repos/hipay/hipay-enterprise-sdk-prestashop/releases');
+        if (false === $ch) {
+            return;
+        }
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Accept: application/vnd.github.v3+json',
+                'User-Agent: HiPay-PrestaShop-Module',
+            ],
+            CURLOPT_TIMEOUT => 10,
+        ]);
 
-                break;
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode === 200 && $response !== false) {
+            $releases = json_decode((string) $response, true);
+
+            if (is_array($releases)) {
+                foreach ($releases as $release) {
+                    $branch = $release['target_commitish'];
+                    if ('1.7' !== $branch) {
+                        continue;
+                    }
+
+                    $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
+                    $settings->moduleInfo->latestVersionAvailable = $release['tag_name'];
+                    $settings->moduleInfo->releaseUrl = $release['html_url'];
+                    $settings->moduleInfo->assetUrl = isset($release['assets']) && is_array($release['assets']) ? $release['assets'][0]['browser_download_url'] : '';
+
+                    /** @var \HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater $updater */
+                    $updater = $this->module->getService('hp.settings.module_info.updater');
+                    try {
+                        $updater->updateObject($settings->moduleInfo);
+                    } catch (ExceptionList $e) {
+                        return;
+                    }
+                    break;
+                }
             }
         }
     }

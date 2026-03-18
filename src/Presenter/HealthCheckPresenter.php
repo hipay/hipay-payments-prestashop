@@ -65,7 +65,7 @@ class HealthCheckPresenter implements PresenterInterface
             ->select('COUNT(*) as count')
             ->from('hipaypayments_queued_notification')
             ->where('is_processed = 0');
-        $notificationsCount = \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($dbQueryNotificationsQueue);
+        $notificationsCount = \Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue($dbQueryNotificationsQueue);
         $hookableHooks = $this->module->getPossibleHooksList();
         $hookableHooksCount = count($hookableHooks);
         $unregisteredHooks = array_filter($hookableHooks, function ($hook) {

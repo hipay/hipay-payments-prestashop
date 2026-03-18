@@ -14,7 +14,7 @@
 
 namespace HiPay\PrestaShop\Builder;
 
-use AG\PSModuleUtils\Utils\AmountOfMoney;
+use HiPay\PrestaShop\Utils\AmountOfMoney;
 use HiPay\Fullservice\Gateway\Request\Info\CustomerBillingInfoRequest;
 use HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest;
 use HiPay\Fullservice\Gateway\Request\Order\OrderRequest;
@@ -22,6 +22,7 @@ use HiPay\Fullservice\Gateway\Request\PaymentMethod\CardTokenPaymentMethod;
 use HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod;
 use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
 use HiPay\PrestaShop\Settings\Settings;
+use HiPay\PrestaShop\Utils\Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -108,9 +109,9 @@ abstract class AbstractPaymentRequestBuilder implements PaymentRequestBuilderInt
         $request->customerShippingInfo->shipto_streetaddress = $shippingAddress->address1;
         $request->customerShippingInfo->shipto_streetaddress2 = $shippingAddress->address2;
         $request->customerShippingInfo->shipto_zipcode = $shippingAddress->postcode;
-        $request->currency = \Currency::getIsoCodeById($this->cart->id_currency);
-        $request->amount = AmountOfMoney::fromStandardUnit($this->cart->getOrderTotal(), \Currency::getIsoCodeById($this->cart->id_currency))->getAmount();
-        $request->shipping = AmountOfMoney::fromStandardUnit($this->cart->getTotalShippingCost(), \Currency::getIsoCodeById($this->cart->id_currency))->getAmount();
+        $request->currency = Tools::getIsoCodeById($this->cart->id_currency);
+        $request->amount = AmountOfMoney::fromStandardUnit($this->cart->getOrderTotal(), Tools::getIsoCodeById($this->cart->id_currency))->getAmount();
+        $request->shipping = AmountOfMoney::fromStandardUnit($this->cart->getTotalShippingCost(), Tools::getIsoCodeById($this->cart->id_currency))->getAmount();
         if (isset($this->data['moto'])) {
             $request->accept_url = \Tools::getHttpHost(true).$context->link->getAdminLink('AdminOrders', true, [], ['orderId' => $this->data['orderId'], 'vieworder' => 1, 'id_order' => $this->data['orderId'], 'hiPayReturnType' => 'accept']);
             $request->decline_url = \Tools::getHttpHost(true).$context->link->getAdminLink('AdminOrders', true, [], ['orderId' => $this->data['orderId'], 'vieworder' => 1, 'id_order' => $this->data['orderId'], 'hiPayReturnType' => 'decline']);

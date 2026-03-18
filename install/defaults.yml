@@ -23,7 +23,7 @@ hooks:
   - 'actionAdminControllerSetMedia'
   - 'actionGetAdminOrderButtons'
   - 'actionFrontControllerSetVariables'
-  - 'actionAfterCreateCartSummaryFormHandler'
+  - 'actionValidateOrder'
   - 'paymentOptions'
   - 'displayAdminOrderMainBottom'
   - 'displayAdminOrderLeft'

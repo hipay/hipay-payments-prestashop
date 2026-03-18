@@ -198,10 +198,7 @@ $_MODULE['<{hipaypayments}prestashop>_healthcheckcontent_55575a58c73033b059a5a76
 $_MODULE['<{hipaypayments}prestashop>_healthcheckcontent_919e6f16823a0f33d32f417a663189f5'] = 'Umgebung / Modus:';
 $_MODULE['<{hipaypayments}prestashop>_healthcheckcontent_7f72863aeacecf1788cc7cf7e1ef2bd2'] = 'Hash-Algorithmen:';
 $_MODULE['<{hipaypayments}prestashop>_healthcheckcontent_f55150101d7e06e78cb9994ebea0a379'] = 'Prüfungen';
-$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_moto_a1d882c28b50f1f97a427b0e4d3036e9'] = 'Die MOTO-Zugangsdaten sind nicht konfiguriert. Daher werden die Zugangsdaten des Hauptkontos zur Erstellung der Zahlung verwendet.';
-$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_moto_87f1cb6009efe7cc1f04cc36e94f703f'] = 'Sie werden zur HiPay-Zahlungsseite weitergeleitet, um die Zahlung für diese Bestellung abzuschließen.';
-$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_moto_e0b017718a0f6562dcae68fd13f19725'] = 'Zur Zahlungsseite gehen';
-$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_86f028bdcea05f77586dc26b3bba667f'] = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
+$_MODULE['<{hipaypayments}prestashop>hookdisplayadminorderleft_86f028bdcea05f77586dc26b3bba667f'] = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
 $_MODULE['<{hipaypayments}prestashop>modaloperationsrefundcontent_17309b7100ba0f0156d20421481e5c5b'] = 'Rückerstattungsbetrag';
 $_MODULE['<{hipaypayments}prestashop>modaloperationsrefundcontent_d3d2e617335f08df83599665eef8a418'] = 'Schließen';
 $_MODULE['<{hipaypayments}prestashop>modaloperationsrefundcontent_602c8277d6ddadd2bfd8bde58e3ad2b4'] = 'Versand Gesamt';
@@ -221,9 +218,9 @@ $_MODULE['<{hipaypayments}prestashop>displayadminordercontent_fd0929ead3c15a1166
 $_MODULE['<{hipaypayments}prestashop>displayadminordercontent_c8aa22d046f7d5bc620712249e91b0c7'] = 'Verbliebener zu erfassender Betrag';
 $_MODULE['<{hipaypayments}prestashop>displayadminordercontent_902e7ca57071fb37dbc18273cbad107c'] = 'Vollständige Erfassung';
 $_MODULE['<{hipaypayments}prestashop>displayadminordercontent_270eee402ab9586e1fae4590352e1259'] = 'Teilweise Erfassung';
-$_MODULE['<{hipaypayments}prestashop>displayadminordercontent_76f0ed934de85cc7131910b32ede7714'] = 'Rückerstattung';
 $_MODULE['<{hipaypayments}prestashop>displayadminordercontent_9f8c310d4b0402a61723b22c34fbd31c'] = 'Rückerstatteter Betrag';
 $_MODULE['<{hipaypayments}prestashop>displayadminordercontent_cadb4e83eb0b321c97be22558fd2cb2b'] = 'Verbliebener zu erstattender Betrag';
+$_MODULE['<{hipaypayments}prestashop>displayadminordercontent_76f0ed934de85cc7131910b32ede7714'] = 'Rückerstattung';
 $_MODULE['<{hipaypayments}prestashop>modaloperationsorderdetails_c0a07a8db478c9a2439ff70e56ad354f'] = 'Produktübersicht';
 $_MODULE['<{hipaypayments}prestashop>modaloperationsorderdetails_df644ae155e79abf54175bd15d75f363'] = 'Produktname';
 $_MODULE['<{hipaypayments}prestashop>modaloperationsorderdetails_694e8d1f2ee056f98ee488bdc4982d73'] = 'Menge';
@@ -242,6 +239,10 @@ $_MODULE['<{hipaypayments}prestashop>modaloperationscapturecontent_39e1a0770378f
 $_MODULE['<{hipaypayments}prestashop>modaloperationscapturecontent_06e85d5dfb9e4389af3c268d70e7d356'] = 'Einzuziehender Betrag';
 $_MODULE['<{hipaypayments}prestashop>modaloperationscapturecontent_ea4788705e6873b424c65e91c2846b19'] = 'Abbrechen';
 $_MODULE['<{hipaypayments}prestashop>modaloperationscapturecontent_44a50f07b4bdc57740901280f9eddaf5'] = 'Einziehen';
+$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_moto_a1d882c28b50f1f97a427b0e4d3036e9'] = 'Die MOTO-Zugangsdaten sind nicht konfiguriert. Daher werden die Zugangsdaten des Hauptkontos zur Erstellung der Zahlung verwendet.';
+$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_moto_87f1cb6009efe7cc1f04cc36e94f703f'] = 'Sie werden zur HiPay-Zahlungsseite weitergeleitet, um die Zahlung für diese Bestellung abzuschließen.';
+$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_moto_e0b017718a0f6562dcae68fd13f19725'] = 'Zur Zahlungsseite gehen';
+$_MODULE['<{hipaypayments}prestashop>hookdisplayadminordermainbottom_86f028bdcea05f77586dc26b3bba667f'] = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.';
 $_MODULE['<{hipaypayments}prestashop>applepaydevicemessage_9621ab9c5198a702c2b32a5070f2cb64'] = 'Ihr Gerät oder Browser unterstützt keine ApplePay-Zahlungen.';
 $_MODULE['<{hipaypayments}prestashop>storedcards_d72a2bd4ef6b7e80ec8daaba7ae2575b'] = 'Gespeicherte Kredit-/Debitkarten';
 $_MODULE['<{hipaypayments}prestashop>storedcards_bacce50cd051072527cb8a59080ddabf'] = 'Kartenmarke';
@@ -260,7 +261,6 @@ $_MODULE['<{hipaypayments}prestashop>paypaladdressmessage_57d056ed0984166336b787
 $_MODULE['<{hipaypayments}prestashop>environmentinfo_02de2bde18989336f8e169632a360fcd'] = 'Zugriff auf Kartentests';
 $_MODULE['<{hipaypayments}prestashop>hookdisplaypaymenttop_cb2de067b8d1b3e131c217e0f0f57c94'] = 'Die Zahlung konnte nicht verarbeitet werden. Bitte versuchen Sie es erneut oder wenden Sie sich an unseren Kundenservice.';
 $_MODULE['<{hipaypayments}prestashop>tcmessage_1994f43f4134104e1ca9abb74ffe9b06'] = 'Bitte akzeptieren Sie die Allgemeinen Geschäftsbedingungen, um die Zahlung abzuschließen.';
-$_MODULE['<{hipaypayments}prestashop>orderpreconfirmation_3a3c269909775efb8458adc3ccee5136'] = 'Seitentitel';
 $_MODULE['<{hipaypayments}prestashop>oneyphonemessage_b4d3569b5c4036d77b0f182e29fea458'] = 'Bitte geben Sie mindestens eine Telefonnummer in Ihrer Lieferadresse an.';
 $_MODULE['<{hipaypayments}prestashop>hookcustomeraccount_d72a2bd4ef6b7e80ec8daaba7ae2575b'] = 'Gespeicherte Kredit-/Debitkarten';
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_9a733784eaefa30eb3822fb8e372f132'] = 'Bitte warten Sie, Sie werden in Kürze weitergeleitet.';

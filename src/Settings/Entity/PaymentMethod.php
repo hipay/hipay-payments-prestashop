@@ -14,7 +14,8 @@
 
 namespace HiPay\PrestaShop\Settings\Entity;
 
-use AG\PSModuleUtils\Utils\AmountOfMoney;
+use AG\PSModuleUtils\Tools;
+use HiPay\PrestaShop\Utils\AmountOfMoney;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -62,7 +63,7 @@ class PaymentMethod
         if (false === $this->enabled) {
             return false;
         }
-        $cartCurrencyIsoCode = \Currency::getIsoCodeById($cart->id_currency);
+        $cartCurrencyIsoCode = Tools::getIsoCurrencyCodeById($cart->id_currency);
         $orderTotal = AmountOfMoney::fromStandardUnit($cart->getOrderTotal(), $cartCurrencyIsoCode);
         $minAmount = AmountOfMoney::fromStandardUnit($this->minAmount, $cartCurrencyIsoCode);
         $maxAmount = AmountOfMoney::fromStandardUnit($this->maxAmount, $cartCurrencyIsoCode);

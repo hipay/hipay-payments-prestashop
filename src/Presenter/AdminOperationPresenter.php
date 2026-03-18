@@ -15,7 +15,7 @@
 namespace HiPay\PrestaShop\Presenter;
 
 use AG\PSModuleUtils\Presenter\PresenterInterface;
-use AG\PSModuleUtils\Utils\AmountOfMoney;
+use HiPay\PrestaShop\Utils\AmountOfMoney;
 
 if (!defined('_PS_VERSION_')) {
     exit;

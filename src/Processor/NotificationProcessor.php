@@ -113,7 +113,7 @@ class NotificationProcessor
             ->where('is_failed = 0')
             ->where(sprintf('attempts < %d', (int) self::MAX_ATTEMPTS));
 
-        return (array) \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
+        return (array) \Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
     }
 
     /**

@@ -387,11 +387,11 @@
         }
         hipayPaymentsInstances[code].on('change', (event) => {
           if (!event.valid) {
-            document.querySelector('.js-payment-confirmation button').classList.add('disabled');
-            document.querySelector('.js-payment-confirmation button').disabled = true;
-          } else if (document.querySelector(prestashop.selectors.checkout.termsCheckboxSelector).checked) {
-            document.querySelector('.js-payment-confirmation button').classList.remove('disabled');
-            document.querySelector('.js-payment-confirmation button').disabled = false;
+            document.querySelector('#payment-confirmation button').classList.add('disabled');
+            document.querySelector('#payment-confirmation button').disabled = true;
+          } else if (document.querySelector('input[name="conditions_to_approve[terms-and-conditions]"]').checked) {
+            document.querySelector('#payment-confirmation button').classList.remove('disabled');
+            document.querySelector('#payment-confirmation button').disabled = false;
             document.getElementById(`js-hipay-payments-${code}-error-message`).innerHTML = '';
             document.getElementById(`js-hipay-payments-${code}-error-message`).style.display = 'none';
           }

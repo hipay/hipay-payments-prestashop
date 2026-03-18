@@ -409,6 +409,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'symfony/lock' => array(
+            'pretty_version' => 'v4.4.46',
+            'version' => '4.4.46.0',
+            'reference' => '8b060dd4e10f05219698ceb3a4ad735b19c1be4f',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/lock',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'symfony/options-resolver' => array(
             'pretty_version' => 'v4.4.44',
             'version' => '4.4.44.0',

@@ -12,7 +12,7 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-use AG\PSModuleUtils\Utils\AmountOfMoney;
+use HiPay\PrestaShop\Utils\AmountOfMoney;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,13 +33,12 @@ class AdminHiPayPaymentsAjaxTransactionsController extends ModuleAdminController
     public function checkTransactionPermission(): bool
     {
         $employee = Context::getContext()->employee;
-        /** @var \PrestaShopBundle\Entity\Repository\TabRepository $tabRepo */
-        $tabRepo = $this->module->get('prestashop.core.admin.tab.repository');
-        $tab = $tabRepo->findOneByClassName('AdminHiPayPaymentsAjaxTransactions');
-        if (!$tab) {
+        $tab = new Tab((int) Tab::getIdFromClassName('AdminHiPayPaymentsAjaxTransactions'));
+        if (!Validate::isLoadedObject($tab)) {
             return false;
         }
-        $access = Profile::getProfileAccess($employee->id_profile, $tab->getId());
+        /** @var bool|mixed[] $access */
+        $access = Profile::getProfileAccess((int) $employee->id_profile, $tab->id);
 
         return false !== $access && is_array($access) && $access['view'] == 1;
     }

@@ -107,6 +107,8 @@ class SettingsPresenter implements PresenterInterface
             ],
         ];
         foreach ($settingArray['otherPMSettings']['paymentMethods'] as $key => $pm) {
+            $settingArray['otherPMSettings']['paymentMethods'][$key]['missingCurrencies'] = [];
+            $settingArray['otherPMSettings']['paymentMethods'][$key]['missingCountries'] = [];
             if ($pm['currenciesForced']) {
                 foreach ($pm['currencies'] as $currencyCode) {
                     $id = \Currency::getIdByIsoCode($currencyCode);

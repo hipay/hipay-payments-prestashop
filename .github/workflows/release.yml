@@ -37,7 +37,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: HiPay Payments ${{ github.ref_name }}
-          target_commitish: master
+          target_commitish: ps1.7
           body: ${{ steps.changelog.outputs.notes }}
           files: dist/hipaypayments.zip
 

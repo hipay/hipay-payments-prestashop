@@ -100,8 +100,26 @@ class Tools
             ->select('id_order')
             ->from('orders')
             ->where('id_cart = '.(int) $cartId);
-        $idOrder = \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($dbQuery);
+        $idOrder = \Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue($dbQuery);
 
         return new \Order((int) $idOrder);
+    }
+
+    /**
+     * @param int  $id
+     * @param bool $forceRefreshCache
+     * @return false|mixed|string|null
+     */
+    public static function getIsoCodeById(int $id, bool $forceRefreshCache = false)
+    {
+        $cacheId = 'Currency::getIsoCodeById' . pSQL((string) $id);
+        if ($forceRefreshCache || !\Cache::isStored($cacheId)) {
+            $resultIsoCode = (string) \Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->getValue('SELECT `iso_code` FROM ' . _DB_PREFIX_ . 'currency WHERE `id_currency` = ' . (int) $id);
+            \Cache::store($cacheId, $resultIsoCode);
+
+            return $resultIsoCode;
+        }
+
+        return \Cache::retrieve($cacheId);
     }
 }

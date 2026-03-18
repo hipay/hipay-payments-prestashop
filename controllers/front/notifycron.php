@@ -69,7 +69,7 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
             ->where(sprintf('attempts < %d', (int) NotificationProcessor::MAX_ATTEMPTS))
             ->groupBy('transaction_reference');
 
-        $rows = (array) \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
+        $rows = (array) \Db::getInstance((bool) _PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
         foreach ($rows as $row) {
             $transactionMapper = new \HiPay\Fullservice\Gateway\Mapper\TransactionMapper(json_decode($row['payload'], true));
             /** @var \HiPay\Fullservice\Gateway\Model\Transaction $transaction */
