@@ -21,6 +21,7 @@ use HiPay\PrestaShop\Settings\Entity\MainSettings;
 use HiPay\PrestaShop\Settings\Settings;
 use HiPay\PrestaShop\Settings\SettingsLoader;
 use HiPay\PrestaShop\Utils\Tools;
+use Monolog\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -61,6 +62,9 @@ class TransactionPresenter implements PresenterInterface
     /** @var TransactionPresented */
     private $dataPresented;
 
+    /** @var Logger */
+    private $logger;
+
     /**
      * TransactionPresenter Constructor.
      *
@@ -76,28 +80,44 @@ class TransactionPresenter implements PresenterInterface
     /**
      * @param Transaction $object
      * @param \Cart|null  $cart
+     * @param Logger|null $logger
      * @return TransactionPresented
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function present($object, \Cart $cart = null): TransactionPresented
+    public function present($object, \Cart $cart = null, Logger $logger = null): TransactionPresented
     {
         $this->settings = $this->settingsLoader->withContext($cart->id_shop, $cart->id_shop_group, true);
+        $this->logger = $logger;
         $this->dataPresented = new TransactionPresented();
 
         $order = Tools::getOrderByCartId($cart->id);
+        $this->logger->debug(sprintf('Transaction %s - Tools::getOrderByCartId', $object->getTransactionReference()), ['data' => ['cartId' => $cart->id, 'orderId' => $order->id, 'module' => $order->module]]);
+        $this->logger->debug(sprintf('Transaction %s - Cart::orderExists', $object->getTransactionReference()), ['result' => $cart->orderExists()]);
+        $dbQuery = (new \DbQuery())
+            ->select('id_order')
+            ->from('hipaypayments_order')
+            ->where('id_cart = '.(int) $cart->id);
+        $idOrder = \Db::getInstance()->getValue($dbQuery, false);
+        $this->logger->debug(sprintf('Transaction %s - Raw request HiPayOrder', $object->getTransactionReference()), ['data' => ['orderId' => $idOrder]]);
+
         if (\Validate::isLoadedObject($order)) {
+            $this->logger->debug(sprintf('Transaction %s - Present existing order', $object->getTransactionReference()));
+
             return $this->presentExistingOrder($order, $object);
         } else {
+            $this->logger->debug(sprintf('Transaction %s - Present new order', $object->getTransactionReference()));
+
             return $this->presentNewOrder($cart, $object);
         }
     }
 
     /**
      * @param Transaction $transaction
+     * @param bool        $newOrder
      * @return false|int
      */
-    public function getPSStatusIdFromHiPayStatusId(Transaction $transaction)
+    public function getPSStatusIdFromHiPayStatusId(Transaction $transaction, bool $newOrder = false)
     {
         $statusId = $transaction->getStatus();
         switch ($statusId) {
@@ -130,7 +150,7 @@ class TransactionPresenter implements PresenterInterface
             case self::STATUS_PARTIALLY_CAPTURED:
                 return $this->settings->partiallyCapturedStatusId;
             case self::STATUS_EXPIRED:
-                return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
+                return $newOrder ? false : (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
             default:
                 return false;
         }
@@ -143,7 +163,7 @@ class TransactionPresenter implements PresenterInterface
      */
     public function presentNewOrder(\Cart $cart, Transaction $transaction): TransactionPresented
     {
-        $idOrderState = $this->getPSStatusIdFromHiPayStatusId($transaction);
+        $idOrderState = $this->getPSStatusIdFromHiPayStatusId($transaction, true);
         if (false === $idOrderState) {
             return $this->dataPresented;
         }
@@ -157,7 +177,7 @@ class TransactionPresenter implements PresenterInterface
         } else {
             $paymentMethodName = $paymentMethod->name;
         }
-
+        $customData = $transaction->getCustomData();
         $amountOfMoney = AmountOfMoney::fromStandardUnit($transaction->getOrder()->getAmount(), $transaction->getOrder()->getCurrency());
         $this->dataPresented->validateOrder = true;
         $this->dataPresented->validation['idCart'] = $cart->id;
@@ -170,6 +190,18 @@ class TransactionPresenter implements PresenterInterface
         $this->dataPresented->transaction['transactionReference'] = $transaction->getTransactionReference();
         $this->dataPresented->transaction['hiPayOrderId'] = $transaction->getOrder()->getId();
         $this->dataPresented->transaction['idCart'] = $cart->id;
+        $transactionPaymentMethod = $transaction->getPaymentMethod();
+        if ($customData && isset($customData['multiUse']) && 1 === (int) $customData['multiUse'] && $transactionPaymentMethod) {
+            $this->dataPresented->token['saveToken'] = true;
+            $this->dataPresented->token['idCustomer'] = $cart->id_customer;
+            $this->dataPresented->token['brand'] = $transactionPaymentMethod->getBrand();
+            $this->dataPresented->token['product'] = $transaction->getPaymentProduct();
+            $this->dataPresented->token['token'] = $transactionPaymentMethod->getToken();
+            $this->dataPresented->token['pan'] = str_replace('*', 'x', (string) $transactionPaymentMethod->getPan());
+            $this->dataPresented->token['cardHolder'] = $transactionPaymentMethod->getCardHolder();
+            $this->dataPresented->token['expiryMonth'] = $transactionPaymentMethod->getCardExpiryMonth();
+            $this->dataPresented->token['expiryYear'] = $transactionPaymentMethod->getCardExpiryYear();
+        }
 
         return $this->dataPresented;
     }
@@ -188,8 +220,6 @@ class TransactionPresenter implements PresenterInterface
         if (false === $idOrderState) {
             return $this->dataPresented;
         }
-        $this->dataPresented->updateStatus = true;
-        $this->dataPresented->newStatus = (int) $idOrderState;
         $this->dataPresented->orderId = (int) $order->id;
         $this->dataPresented->transaction['transactionReference'] = $transaction->getTransactionReference();
         $this->dataPresented->transaction['hiPayOrderId'] = $transaction->getOrder()->getId();
@@ -201,8 +231,63 @@ class TransactionPresenter implements PresenterInterface
         } catch (\Exception $e) {
             return $this->dataPresented;
         }
-
+        $newStatusPriority = $this->getOrderStatePriority($idOrderState);
+        $bestHistoryPriority = $this->getBestHistoryPriority($order);
+        if (($newStatusPriority < $bestHistoryPriority && $bestHistoryPriority) || $order->getHistory($order->id_lang, (int) $idOrderState)) {
+            return $this->dataPresented;
+        }
+        $this->dataPresented->updateStatus = true;
+        $this->dataPresented->newStatus = (int) $idOrderState;
 
         return $this->dataPresented;
+    }
+
+    /**
+     * @param int $idOrderState
+     * @return int
+     */
+    private function getOrderStatePriority(int $idOrderState): int
+    {
+        switch ($idOrderState) {
+            case $this->settings->pendingAuthStatusId:
+                return 1;
+            case (int) \Configuration::getGlobalValue('PS_OS_CANCELED'):
+                return 2;
+            case $this->settings->chargebackStatusId:
+                return 3;
+            case $this->settings->pendingCaptureStatusId:
+                return 4;
+            case $this->settings->partiallyCapturedStatusId:
+                return 6;
+            case (int) \Configuration::getGlobalValue('PS_OS_PAYMENT'):
+                return 7;
+            case (int) \Configuration::getGlobalValue('PS_OS_ERROR'):
+                return 8;
+            case $this->settings->partiallyRefundedStatusId:
+                return 9;
+            case (int) \Configuration::getGlobalValue('PS_OS_REFUND'):
+                return 10;
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * @param \Order $order
+     * @return int
+     */
+    private function getBestHistoryPriority(\Order $order): int
+    {
+        $history = $order->getHistory($order->id_lang);
+        $best = 0;
+
+        foreach ($history as $entry) {
+            $priority = $this->getOrderStatePriority((int) $entry['id_order_state']);
+            if ($priority > $best) {
+                $best = $priority;
+            }
+        }
+
+        return $best;
     }
 }

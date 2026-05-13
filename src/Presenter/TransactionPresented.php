@@ -49,6 +49,19 @@ class TransactionPresented
         'transactionReference' => '',
     ];
 
+    /** @var mixed[] */
+    public $token = [
+        'saveToken' => false,
+        'idCustomer' => 0,
+        'token' => '',
+        'pan' => '',
+        'product' => '',
+        'brand' => '',
+        'cardHolder' => '',
+        'expiryMonth' => '',
+        'expiryYear' => '',
+    ];
+
     /** @var int */
     public $newStatus;
 

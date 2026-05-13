@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src', $vendorDir . '/phpdocumentor/reflection-common/src'),
+    'libphonenumber\\' => array($vendorDir . '/giggsey/libphonenumber-for-php/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
     'Symfony\\Polyfill\\Php73\\' => array($vendorDir . '/symfony/polyfill-php73'),
@@ -50,6 +51,7 @@ return array(
     'HiPay\\PrestaShop\\' => array($baseDir . '/src'),
     'HiPay\\Fullservice\\' => array($vendorDir . '/hipay/hipay-fullservice-sdk-php/lib/HiPay/Fullservice'),
     'Github\\' => array($vendorDir . '/knplabs/github-api/lib/Github'),
+    'Giggsey\\Locale\\' => array($vendorDir . '/giggsey/locale/src'),
     'Clue\\StreamFilter\\' => array($vendorDir . '/clue/stream-filter/src'),
     'Alcohol\\' => array($vendorDir . '/alcohol/iso4217'),
     'AG\\PSModuleUtils\\' => array($vendorDir . '/anthogirard/ps-module-utils/lib'),

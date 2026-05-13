@@ -1,0 +1,62 @@
+{
+  "name": "hipaypayments/prestashop",
+  "version": "3.0.0",
+  "description": "HiPay module for PrestaShop",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "PrestaShop & HiPay partner",
+      "homepage": "https://www.prestashop.com"
+    }
+  ],
+  "config": {
+    "prepend-autoloader": false,
+    "platform": {
+      "php": "7.2.5"
+    },
+    "audit": {
+      "block-insecure": false
+    },
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "HiPay\\PrestaShop\\": "src/"
+    },
+    "classmap": [
+      "hipaypayments.php",
+      "controllers",
+      "classes"
+    ]
+  },
+  "require": {
+    "php": ">=7.2",
+    "anthogirard/ps-module-utils": "~2.1",
+    "alcohol/iso4217": "^3.1",
+    "ircmaxell/random-lib": "^1.2",
+    "monolog/monolog": "^2.9",
+    "phpdocumentor/reflection-docblock": "^5.3",
+    "prestashop/module-lib-service-container": "^v2.0",
+    "symfony/filesystem": "^4.4",
+    "symfony/options-resolver": "^4.4",
+    "symfony/property-access": "^4.4",
+    "symfony/property-info": "^4.4",
+    "symfony/serializer": "^4.4",
+    "symfony/validator": "^4.4",
+    "symfony/yaml": "^4.4",
+    "koriym/http-constants": "^1.1",
+    "ramsey/uuid": "^3.9",
+    "hipay/hipay-fullservice-sdk-php": "^2.19",
+    "knplabs/github-api": "^3.16",
+    "symfony/http-client": "^5.4",
+    "nyholm/psr7": "^1.8",
+    "giggsey/libphonenumber-for-php": "^8.13"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.7",
+    "phpstan/phpstan": "^1.12",
+    "prestashop/php-dev-tools": "^5.0"
+  }
+}

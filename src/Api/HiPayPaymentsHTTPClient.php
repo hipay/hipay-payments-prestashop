@@ -179,6 +179,9 @@ class HiPayPaymentsHTTPClient extends ClientProvider
             if (is_object($httpResponse) && isset($httpResponse->message, $httpResponse->code)) {
                 $description = (isset($httpResponse->description)) ? $httpResponse->description : "";
                 $obfuscatedResult = json_decode((string) $result, true);
+                if (null === $obfuscatedResult) {
+                    $obfuscatedResult = [];
+                }
                 array_walk_recursive($obfuscatedResult, [$this, 'obfuscateParams']);
                 $this->logger->debug(sprintf('Response (HTTP %d) %s %s', $httpResponse->code, $method, $endpoint), [
                     'message' => $httpResponse->message,
@@ -188,6 +191,9 @@ class HiPayPaymentsHTTPClient extends ClientProvider
                 throw new ApiErrorException($httpResponse->message, $httpResponse->code, $description);
             } else {
                 $obfuscatedResult = json_decode((string) $result, true);
+                if (null === $obfuscatedResult) {
+                    $obfuscatedResult = [];
+                }
                 array_walk_recursive($obfuscatedResult, [$this, 'obfuscateParams']);
                 $this->logger->debug(sprintf('Response (HTTP %d) %s %s', $status, $method, $endpoint), [
                     'result' => $obfuscatedResult,
@@ -197,7 +203,7 @@ class HiPayPaymentsHTTPClient extends ClientProvider
         }
 
         $obfuscatedResult = json_decode((string) $result, true);
-        if (true !== $obfuscatedResult) {
+        if (true !== $obfuscatedResult && null !== $obfuscatedResult) {
             array_walk_recursive($obfuscatedResult, [$this, 'obfuscateParams']);
         }
         $this->logger->debug(sprintf('Response (HTTP %d) %s %s', $status, $method, $endpoint), [
@@ -248,6 +254,9 @@ class HiPayPaymentsHTTPClient extends ClientProvider
             'shipto_streetaddress2',
             'shipto_zipcode',
             'cardtoken',
+            'token',
+            'prepaid_card_security_code',
+            'prepaid_card_number',
         ];
         if (in_array($key, $toObfuscate, true)) {
             $item = '***';
@@ -256,6 +265,10 @@ class HiPayPaymentsHTTPClient extends ClientProvider
             'delivery_method',
             'source',
             'basket',
+            'browser_info',
+            'merchant_risk_statement',
+            'account_info',
+            'custom_data',
         ];
         if (in_array($key, $toDecode, true)) {
             $item = json_decode($item, true);

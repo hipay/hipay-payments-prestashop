@@ -118,6 +118,24 @@ class Settings extends \AG\PSModuleUtils\Settings\AbstractSettings
             $this->demoCredentials->private->secret = self::HIPAY_DEMO_CREDENTIALS['private']['passphrase'];
             $this->demoCredentials->hashingAlgorithm = self::HIPAY_DEMO_CREDENTIALS['hashingAlgorithm'];
         }
+        if (null === $this->accountSettings->applePayTestPrivateIdentifiers) {
+            $this->accountSettings->applePayTestPrivateIdentifiers = new PrivateIdentifiers();
+        }
+        if (null === $this->accountSettings->applePayTestPublicIdentifiers) {
+            $this->accountSettings->applePayTestPublicIdentifiers = new PublicIdentifiers();
+        }
+        if (null === $this->accountSettings->applePayProdPrivateIdentifiers) {
+            $this->accountSettings->applePayProdPrivateIdentifiers = new PrivateIdentifiers();
+        }
+        if (null === $this->accountSettings->applePayProdPublicIdentifiers) {
+            $this->accountSettings->applePayProdPublicIdentifiers = new PublicIdentifiers();
+        }
+        if (null === $this->accountSettings->motoProdPrivateIdentifiers) {
+            $this->accountSettings->motoProdPrivateIdentifiers = new PrivateIdentifiers();
+        }
+        if (null === $this->accountSettings->motoTestPrivateIdentifiers) {
+            $this->accountSettings->motoTestPrivateIdentifiers = new PrivateIdentifiers();
+        }
 
         if ($this->cardPaymentSettings->paymentMethods) {
             foreach ($this->cardPaymentSettings->paymentMethods as &$paymentMethod) {
@@ -165,13 +183,13 @@ class Settings extends \AG\PSModuleUtils\Settings\AbstractSettings
                 break;
             case Credentials::CREDENTIALS_TYPE_APPLE_PAY:
                 if (AccountSettings::MODE_TEST === $this->accountSettings->environment) {
-                    if (!$this->accountSettings->applePayTestPublicIdentifiers->username) {
+                    if (null === $this->accountSettings->applePayTestPublicIdentifiers || !$this->accountSettings->applePayTestPublicIdentifiers->username) {
                         return self::getPublicCredentials();
                     }
                     $credentials->env = \HiPay\Fullservice\HTTP\Configuration\Configuration::API_ENV_STAGE;
                     $credentials->identifiers = $this->accountSettings->applePayTestPublicIdentifiers;
                 } else {
-                    if (!$this->accountSettings->applePayProdPublicIdentifiers->username) {
+                    if (null === $this->accountSettings->applePayProdPublicIdentifiers || !$this->accountSettings->applePayProdPublicIdentifiers->username) {
                         return self::getPublicCredentials();
                     }
                     $credentials->env = \HiPay\Fullservice\HTTP\Configuration\Configuration::API_ENV_PRODUCTION;
@@ -214,13 +232,13 @@ class Settings extends \AG\PSModuleUtils\Settings\AbstractSettings
                 break;
             case Credentials::CREDENTIALS_TYPE_APPLE_PAY:
                 if (AccountSettings::MODE_TEST === $this->accountSettings->environment) {
-                    if (!$this->accountSettings->applePayTestPrivateIdentifiers->username) {
+                    if (null === $this->accountSettings->applePayTestPrivateIdentifiers || !$this->accountSettings->applePayTestPrivateIdentifiers->username) {
                         return self::getPrivateCredentials();
                     }
                     $credentials->env = \HiPay\Fullservice\HTTP\Configuration\Configuration::API_ENV_STAGE;
                     $credentials->identifiers = $this->accountSettings->applePayTestPrivateIdentifiers;
                 } else {
-                    if (!$this->accountSettings->applePayProdPrivateIdentifiers->username) {
+                    if (null === $this->accountSettings->applePayProdPrivateIdentifiers || !$this->accountSettings->applePayProdPrivateIdentifiers->username) {
                         return self::getPrivateCredentials();
                     }
                     $credentials->env = \HiPay\Fullservice\HTTP\Configuration\Configuration::API_ENV_PRODUCTION;
@@ -230,13 +248,13 @@ class Settings extends \AG\PSModuleUtils\Settings\AbstractSettings
                 break;
             case Credentials::CREDENTIALS_TYPE_MOTO:
                 if (AccountSettings::MODE_TEST === $this->accountSettings->environment) {
-                    if (!$this->accountSettings->motoTestPrivateIdentifiers->username) {
+                    if (null === $this->accountSettings->motoTestPrivateIdentifiers || !$this->accountSettings->motoTestPrivateIdentifiers->username) {
                         return self::getPrivateCredentials();
                     }
                     $credentials->env = \HiPay\Fullservice\HTTP\Configuration\Configuration::API_ENV_STAGE;
                     $credentials->identifiers = $this->accountSettings->motoTestPrivateIdentifiers;
                 } else {
-                    if (!$this->accountSettings->motoProdPrivateIdentifiers->username) {
+                    if (null === $this->accountSettings->motoProdPrivateIdentifiers || !$this->accountSettings->motoProdPrivateIdentifiers->username) {
                         return self::getPrivateCredentials();
                     }
                     $credentials->env = \HiPay\Fullservice\HTTP\Configuration\Configuration::API_ENV_PRODUCTION;

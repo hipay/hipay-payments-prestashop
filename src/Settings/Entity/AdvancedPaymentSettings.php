@@ -56,6 +56,9 @@ class AdvancedPaymentSettings
      */
     public function isInstalled(string $code): bool
     {
+        if (null === $this->paymentMethods) {
+            return false;
+        }
         foreach ($this->paymentMethods as $paymentMethod) {
             if ($paymentMethod->code === $code) {
                 return true;

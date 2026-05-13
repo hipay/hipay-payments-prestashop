@@ -304,7 +304,7 @@
             countryCode: PSHiPayData.cartDetails.countryCode,
             currencyCode: PSHiPayData.cartDetails.currencyCode,
             total: applePayTotal,
-            supportedNetworks: ['visa', 'masterCard']
+            supportedNetworks: ['visa', 'masterCard', 'cartesBancaires', 'maestro']
           };
 
           const applePayStyle = {

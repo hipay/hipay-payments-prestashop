@@ -100,7 +100,7 @@ class Tools
             ->select('id_order')
             ->from('orders')
             ->where('id_cart = '.(int) $cartId);
-        $idOrder = \Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($dbQuery);
+        $idOrder = \Db::getInstance()->getValue($dbQuery, false);
 
         return new \Order((int) $idOrder);
     }

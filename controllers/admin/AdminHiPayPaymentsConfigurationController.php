@@ -189,28 +189,29 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
         $client = new Github\Client();
         /** @var Github\Api\Repo $repo */
         $repo = $client->api('repo');
-        $releases = $repo->releases()->all('hipay', 'hipay-enterprise-sdk-prestashop');
+        $releases = $repo->releases()->all('hipay', 'hipay-payments-prestashop');
+        $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
         if ($releases) {
             foreach ($releases as $release) {
                 $tag = $release['tag_name'];
                 $branch = $release['target_commitish'];
-                if ('develop' !== $branch) {
+                if ('ps8' !== $branch) {
                     continue;
                 }
-                $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
+
                 $settings->moduleInfo->latestVersionAvailable = $tag;
                 $settings->moduleInfo->releaseUrl = $release['html_url'];
                 $settings->moduleInfo->assetUrl = isset($release['assets']) && is_array($release['assets']) ? $release['assets'][0]['browser_download_url'] : '';
-                /** @var \HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater $updater */
-                $updater = $this->module->getService('hp.settings.module_info.updater');
-                try {
-                    $updater->updateObject($settings->moduleInfo);
-                } catch (ExceptionList $e) {
-                    return;
-                }
 
                 break;
             }
+        }
+        /** @var \HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater $updater */
+        $updater = $this->module->getService('hp.settings.module_info.updater');
+        try {
+            $updater->updateObject($settings->moduleInfo);
+        } catch (ExceptionList $e) {
+            return;
         }
     }
 

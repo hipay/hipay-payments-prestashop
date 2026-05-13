@@ -64,9 +64,12 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
         $logger = $loggerFactory->withChannel('HostedFieldsPayment');
 
         $data = json_decode(Tools::getValue('hipayData'), true);
-        $logger->debug('Received Hosted Fields payment', $data);
+        $logger->debug('Received Hosted Fields payment', null === $data ? [] : $data);
 
         try {
+            if (null === $data) {
+                throw new Exception('Received null data');
+            }
             $paymentMethodCode = $data['payment_product'] ?? '';
             $isCardPayment = isset(CardPaymentSettings::CARDS_PAYMENT_CODES[$paymentMethodCode]);
             /** @var \HiPay\PrestaShop\Builder\PaymentRequestBuilderFactory $requestBuilderFactory */
@@ -100,25 +103,6 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
                     'redirectUrl' => $transaction->getForwardUrl()
                 ];
             } else {
-                if ($transaction->getState() === 'completed') {
-                    if (isset($data['multi_use']) && $data['multi_use']) {
-                        $id = HiPayPaymentsCustomerCard::getCustomerCardIdByPan((string) $data['pan'] ?? '', $this->context->customer->id);
-                        $storedCard = new HiPayPaymentsCustomerCard((int) $id);
-                        $storedCard->id_customer = (int) $this->context->customer->id;
-                        $storedCard->card_token = pSQL($data['token'] ?? '');
-                        $storedCard->card_brand = pSQL($data['brand'] ?? '');
-                        $storedCard->payment_product = pSQL($data['payment_product'] ?? '');
-                        $storedCard->card_pan = pSQL($data['pan'] ?? '');
-                        $storedCard->card_expiry_month = pSQL($data['card_expiry_month'] ?? '');
-                        $storedCard->card_expiry_year = pSQL($data['card_expiry_year'] ?? '');
-                        $storedCard->card_holder = pSQL($data['card_holder'] ?? '');
-                        try {
-                            $storedCard->save();
-                        } catch (PrestaShopException $e) {
-                            $logger->error($e->getMessage());
-                        }
-                    }
-                }
                 $redirectParams = [
                     'orderid' => $transaction->getOrder()->getId(),
                     'reference' => $transaction->getTransactionReference(),
@@ -131,7 +115,7 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
                 ];
             }
         } catch (Exception $e) {
-            $logger->error($e->getMessage());
+            $logger->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
             $returnedData = [
                 'success' => false,
                 'message' => $this->module->l('An error occurred while processing your payment. Please try again or contact our customer support', 'payment'),

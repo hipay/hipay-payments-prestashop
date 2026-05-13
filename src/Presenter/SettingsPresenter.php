@@ -114,6 +114,12 @@ class SettingsPresenter implements PresenterInterface
                         $iso4217 = new ISO4217();
                         $currencyDetails = $iso4217->getByCode($currencyCode);
                         $settingArray['otherPMSettings']['paymentMethods'][$key]['missingCurrencies'][] = sprintf('%s - %s', $currencyDetails['name'], $currencyDetails['alpha3']);
+                    } else {
+                        $ids = array_column($paymentCurrencies, 'id_currency');
+                        if (!in_array($id, $ids)) {
+                            $currency = new \Currency((int) $id, $context->language->id);
+                            $settingArray['otherPMSettings']['paymentMethods'][$key]['missingCurrencies'][] = sprintf('%s - %s', is_array($currency->name) ? (string) $currency->name[$context->language->id] : (string) $currency->name, $currency->iso_code);
+                        }
                     }
                 }
             }
@@ -122,7 +128,7 @@ class SettingsPresenter implements PresenterInterface
                     $country = new \Country((int) \Country::getByIso($countryCode), $context->language->id);
                     if (!\Validate::isLoadedObject($country)) {
                         $settingArray['otherPMSettings']['paymentMethods'][$key]['missingCountries'][] = $countryCode;
-                    } elseif (!$country->active) {
+                    } elseif (!$country->active || !isset($paymentCountries[$country->id])) {
                         $settingArray['otherPMSettings']['paymentMethods'][$key]['missingCountries'][] = $country->name;
                     }
                 }

@@ -22,6 +22,7 @@ use HiPay\Fullservice\Gateway\Model\Cart\Item;
 use HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest;
 use HiPay\Fullservice\Gateway\Request\Order\OrderRequest;
 use HiPay\Fullservice\Gateway\Request\PaymentMethod\XTimesCreditCardPaymentMethod;
+use libphonenumber\NumberParseException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -55,14 +56,47 @@ class OneyRequestBuilder extends AbstractPaymentRequestBuilder
         }
         $shippingAddress = new \Address($this->cart->id_address_delivery);
 
+        $addressIsoCountry = (string) \Country::getIsoById($shippingAddress->id_country);
+        $phoneNumberUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+        $isPhoneValid = null;
+        $isMobilePhoneValid = null;
+
+        if ($shippingAddress->phone) {
+            try {
+                $phoneNumberObject = $phoneNumberUtil->parse($shippingAddress->phone, $addressIsoCountry);
+                $isPhoneValid = $phoneNumberUtil->isValidNumber($phoneNumberObject);
+            } catch (NumberParseException $e) {
+                $isPhoneValid = false;
+            }
+        }
+
+        if ($shippingAddress->phone_mobile) {
+            try {
+                $mobilePhoneNumberObject = $phoneNumberUtil->parse($shippingAddress->phone_mobile, $addressIsoCountry);
+                $isMobilePhoneValid = $phoneNumberUtil->isValidNumber($mobilePhoneNumberObject);
+            } catch (NumberParseException $e) {
+                $isMobilePhoneValid = false;
+            }
+        }
+
+        if (isset($phoneNumberObject) && $isPhoneValid === true) {
+            $validPhone = $phoneNumberUtil->format($phoneNumberObject, \libphonenumber\PhoneNumberFormat::E164);
+        } elseif (isset($mobilePhoneNumberObject) && $isMobilePhoneValid === true) {
+            $validPhone = $phoneNumberUtil->format($mobilePhoneNumberObject, \libphonenumber\PhoneNumberFormat::E164);
+        } else {
+            $validPhone = $shippingAddress->phone ?: $shippingAddress->phone_mobile;
+        }
+
         $date = new \DateTime();
         $date->modify('+2 days');
         $request->cid = sprintf('CUST-%d', $context->customer->id);
         $request->customerBillingInfo->gender = $gender;
+        $request->customerBillingInfo->phone = $validPhone;
         $request->customerShippingInfo->shipto_gender = $gender;
+        $request->customerShippingInfo->shipto_phone = $validPhone;
         $request->paymentMethod = new XTimesCreditCardPaymentMethod();
         $request->paymentMethod->shipto_gender = $gender;
-        $request->paymentMethod->shipto_phone = $shippingAddress->phone ?: $shippingAddress->phone_mobile;
+        $request->paymentMethod->shipto_phone = $validPhone;
         $request->paymentMethod->delivery_method = '{"mode":"CARRIER","shipping":"STANDARD"}';
         $request->paymentMethod->delivery_date = $date->format('Y-m-d');
         $request->basket = new Cart();

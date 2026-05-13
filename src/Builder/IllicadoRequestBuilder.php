@@ -16,6 +16,7 @@ namespace HiPay\PrestaShop\Builder;
 
 use HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest;
 use HiPay\Fullservice\Gateway\Request\Order\OrderRequest;
+use HiPay\Fullservice\Gateway\Request\PaymentMethod\PrepaidCardPaymentMethod;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -26,5 +27,18 @@ if (!defined('_PS_VERSION_')) {
  */
 class IllicadoRequestBuilder extends AbstractPaymentRequestBuilder
 {
+    /**
+     * @return HostedPaymentPageRequest|OrderRequest
+     * @throws \Exception
+     */
+    public function buildRequest()
+    {
+        $request = parent::buildRequest();
 
+        $request->paymentMethod = new PrepaidCardPaymentMethod();
+        $request->paymentMethod->prepaid_card_number = $this->data['prepaid_card_number'] ?? '';
+        $request->paymentMethod->prepaid_card_security_code = $this->data['prepaid_card_security_code'] ?? '';
+
+        return $request;
+    }
 }

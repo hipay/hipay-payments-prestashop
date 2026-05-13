@@ -161,6 +161,7 @@ class Installer extends AbstractInstaller
      * @return void
      * @throws ExceptionInterface
      * @throws ExceptionList
+     * @throws \Exception
      */
     public function installAPMByCode(string $code, string $name, Settings $settings, AvailablePaymentProduct $availablePaymentProduct = null): void
     {
@@ -175,7 +176,7 @@ class Installer extends AbstractInstaller
 
         $apm = $this->installAPM(reset($apmConfiguration), $parser);
         $apm->name = $name;
-        $apm->position = count($settings->otherPMSettings->paymentMethods) + 1;
+        $apm->position = null === $settings->otherPMSettings->paymentMethods ? 1 : count($settings->otherPMSettings->paymentMethods) + 1;
         if (null !== $availablePaymentProduct && in_array($code, ['alma-3x', 'alma-4x'])) {
             $options = $availablePaymentProduct->getOptions();
             if ($options) {

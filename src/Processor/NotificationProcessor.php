@@ -16,7 +16,8 @@ namespace HiPay\PrestaShop\Processor;
 
 use HiPay\Fullservice\Gateway\Model\Transaction;
 use HiPay\PrestaShop\Presenter\TransactionPresenter;
-use Symfony\Component\Lock\LockFactory;
+use HiPay\PrestaShop\Utils\MySqlLock;
+use Monolog\Logger;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -30,11 +31,11 @@ class NotificationProcessor
     const QUEUED_NOTIFICATIONS_TABLE_NAME = 'hipaypayments_queued_notification';
     const MAX_ATTEMPTS = 5;
 
-    /** @var LockFactory */
-    private $lockFactory;
-
     /** @var \Cart */
     public $cart;
+
+    /** @var Logger */
+    public $logger;
 
     /** @var TransactionPresenter */
     private $transactionPresenter;
@@ -45,16 +46,13 @@ class NotificationProcessor
     /**
      * NotificationProcessor Constructor.
      *
-     * @param LockFactory          $lockFactory
      * @param TransactionPresenter $transactionPresenter
      * @param TransactionProcessor $transactionProcessor
      */
     public function __construct(
-        LockFactory $lockFactory,
         TransactionPresenter $transactionPresenter,
         TransactionProcessor $transactionProcessor
     ) {
-        $this->lockFactory = $lockFactory;
         $this->transactionPresenter = $transactionPresenter;
         $this->transactionProcessor = $transactionProcessor;
     }
@@ -62,26 +60,34 @@ class NotificationProcessor
     /**
      * @param Transaction $transaction
      * @param \Cart       $cart
+     * @param Logger      $logger
      * @return void
      * @throws \PrestaShopDatabaseException
      */
-    public function process(Transaction $transaction, \Cart $cart)
+    public function process(Transaction $transaction, \Cart $cart, Logger $logger)
     {
         $this->cart = $cart;
+        $this->logger = $logger;
         $lockKey = sprintf('hipaypayments_lock_%s', $transaction->getTransactionReference());
-        $lock = $this->lockFactory->createLock($lockKey, 30);
+        $lock = new MySqlLock();
 
-        if ($lock->acquire()) {
+        if ($lock->acquire($lockKey)) {
+            $this->logger->debug(sprintf('Transaction %s - Lock acquired', $transaction->getTransactionReference()));
             try {
                 $this->processNotification($transaction, $cart);
+                $this->logger->debug(sprintf('Transaction %s - Process queue', $transaction->getTransactionReference()));
                 $this->processQueuedNotifications($transaction->getTransactionReference());
+                $this->logger->debug(sprintf('Transaction %s - End of process queue', $transaction->getTransactionReference()));
             } catch (\Exception $e) {
+                $this->logger->debug(sprintf('Transaction %s - Exception, store in queue', $transaction->getTransactionReference()));
                 $this->storeNotificationInQueue($transaction, true);
                 throw $e;
             } finally {
+                $this->logger->debug(sprintf('Transaction %s - Lock released', $transaction->getTransactionReference()));
                 $lock->release();
             }
         } else {
+            $this->logger->debug(sprintf('Transaction %s - Cannot acquire lock', $transaction->getTransactionReference()));
             $this->storeNotificationInQueue($transaction);
         }
     }
@@ -94,8 +100,11 @@ class NotificationProcessor
      */
     private function processNotification(Transaction $transaction, \Cart $cart)
     {
-        $dataPresented = $this->transactionPresenter->present($transaction, $cart);
-        $this->transactionProcessor->process($dataPresented);
+        \Cache::clean('Cart::orderExists_'.(string) $cart->id);
+        $dataPresented = $this->transactionPresenter->present($transaction, $cart, $this->logger);
+        $action = $dataPresented->validateOrder ? 'order validation' : ($dataPresented->updateStatus ? 'status update' : 'no action');
+        $this->logger->debug(sprintf('Transaction %s - Order presented (%s)', $transaction->getTransactionReference(), $action), ['data' => json_decode((string) json_encode($dataPresented), true)]);
+        $this->transactionProcessor->process($dataPresented, $this->logger);
     }
 
     /**
@@ -113,7 +122,7 @@ class NotificationProcessor
             ->where('is_failed = 0')
             ->where(sprintf('attempts < %d', (int) self::MAX_ATTEMPTS));
 
-        return (array) \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
+        return (array) \Db::getInstance()->executeS($dbQuery, true, false) ?: [];
     }
 
     /**
@@ -214,6 +223,7 @@ class NotificationProcessor
                     $this->processNotification($transaction, $this->cart);
                     $this->markAsProcessed($queuedNotification);
                 } catch (\Exception $e) {
+                    $this->logger->error(sprintf('Transaction %s - %s', $transaction->getTransactionReference(), $e->getMessage()));
                     $attempt = $this->incrementAttempts($queuedNotification);
                     if ($attempt >= self::MAX_ATTEMPTS) {
                         $this->markAsFailed($queuedNotification);

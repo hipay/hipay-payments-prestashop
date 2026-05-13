@@ -18,6 +18,7 @@ use HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod;
 use HiPay\PrestaShop\Settings\Entity\AccountSettings;
 use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
 use HiPay\PrestaShop\Settings\Settings;
+use libphonenumber\NumberParseException;
 use PrestaShop\PrestaShop\Adapter\Presenter\PresenterInterface;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -154,6 +155,42 @@ class PaymentOptionsPresenter implements PresenterInterface
                                     ->setModuleName(sprintf('hipay-payments-apm-%s', $availableProduct->code));
 
                                 break;
+                            }
+                            $addressIsoCountry = (string) \Country::getIsoById($shippingAddress->id_country);
+                            $phoneNumberUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+                            $isPhoneValid = null;
+                            $isMobilePhoneValid = null;
+
+                            if ($shippingAddress->phone) {
+                                try {
+                                    $phoneNumberObject = $phoneNumberUtil->parse($shippingAddress->phone, $addressIsoCountry);
+                                    $isPhoneValid = $phoneNumberUtil->isValidNumber($phoneNumberObject);
+                                } catch (NumberParseException $e) {
+                                    $isPhoneValid = false;
+                                }
+                            }
+
+                            if ($shippingAddress->phone_mobile) {
+                                try {
+                                    $mobilePhoneNumberObject = $phoneNumberUtil->parse($shippingAddress->phone_mobile, $addressIsoCountry);
+                                    $isMobilePhoneValid = $phoneNumberUtil->isValidNumber($mobilePhoneNumberObject);
+                                } catch (NumberParseException $e) {
+                                    $isMobilePhoneValid = false;
+                                }
+                            }
+
+                            $hasValidPhone = $isPhoneValid === true || $isMobilePhoneValid === true;
+                            if (!$hasValidPhone) {
+                                $fixedPhoneExample = $phoneNumberUtil->getExampleNumberForType($addressIsoCountry, \libphonenumber\PhoneNumberType::FIXED_LINE);
+                                $mobilePhoneExample = $phoneNumberUtil->getExampleNumberForType($addressIsoCountry, \libphonenumber\PhoneNumberType::MOBILE);
+                                $this->context->smarty->assign([
+                                    'oneyWarningMessage' => sprintf(
+                                        $this->module->l('Please make sure you have a valid phone number (e.g. %s or %s) in your delivery address before placing your order.', 'PaymentOptionsPresenter'),
+                                        $phoneNumberUtil->format($fixedPhoneExample, \libphonenumber\PhoneNumberFormat::E164),
+                                        $phoneNumberUtil->format($mobilePhoneExample, \libphonenumber\PhoneNumberFormat::E164)
+                                    ),
+                                ]);
+                                $extraMessage = $this->context->smarty->fetch('module:hipaypayments/views/templates/front/oneyWarningMessage.tpl');
                             }
                         }
 

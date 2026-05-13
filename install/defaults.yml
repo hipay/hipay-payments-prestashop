@@ -37,7 +37,7 @@ orderStatuses:
     template: ''
     send_email: 0
     invoice: 0
-    logable: 0
+    logable: 1
     deleted: 0
     names:
       fr: "En attente d’autorisation (HiPay)"
@@ -48,7 +48,7 @@ orderStatuses:
     template: ''
     send_email: 0
     invoice: 0
-    logable: 0
+    logable: 1
     deleted: 0
     names:
       fr: 'Paiement autorisé - en attente de capture (HiPay)'
@@ -59,7 +59,7 @@ orderStatuses:
     template: ''
     send_email: 0
     invoice: 0
-    logable: 0
+    logable: 1
     deleted: 0
     names:
       fr: 'Capturé patiellement (HiPay)'
