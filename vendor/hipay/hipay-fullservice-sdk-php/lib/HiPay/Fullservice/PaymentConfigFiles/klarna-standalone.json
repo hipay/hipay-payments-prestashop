@@ -1,0 +1,18 @@
+{
+  "productCode": "klarna-standalone",
+  "brandName": "Klarna Standalone",
+  "category": "realtime-banking",
+  "comment": "Available only in Germany, Austria, United Kingdom, Sweden and Switzerland. Also available only in CHF, EUR, GBP and SEK currencies.",
+  "can3ds": 1,
+  "canRecurring": 0,
+  "canManualCapture": 0,
+  "canManualCapturePartially": 0,
+  "canRefund": 1,
+  "canRefundPartially": 1,
+  "basketRequired": 1,
+  "currencies": ["EUR","CHF","GBP","SEK"],
+  "countries": ["DE","AT","GB","SE","CH"],
+  "checkoutFieldsMandatory": ["firstname","lastname","email","streetaddress","city","zipcode","country"],
+  "additionalFields": {},
+  "priority": 13
+}

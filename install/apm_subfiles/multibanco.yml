@@ -1,0 +1,17 @@
+className: 'Multibanco'
+defaults:
+  enabled: true
+  expirationLimit: 3
+  code: 'multibanco'
+  name: 'Multibanco'
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['EUR']
+  countries: ['PT']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: true
