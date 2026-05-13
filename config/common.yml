@@ -1,0 +1,103 @@
+imports:
+  - { resource: settings.yml }
+  - { resource: install.yml }
+  - { resource: sdk.yml }
+
+services:
+  hp.module:
+    class: 'HiPayPayments'
+    factory: ['Module', 'getInstanceByName']
+    public: true
+    arguments:
+      - 'hipaypayments'
+
+  hp.context:
+    class: 'Context'
+    factory: ['Context', 'getContext']
+    public: true
+
+  hp.logger.factory:
+    class: 'HiPay\PrestaShop\Logger\LoggerFactory'
+    public: true
+    shared: false
+    arguments:
+      - '@hp.settings'
+
+  hp.logger:
+    class: 'HiPay\PrestaShop\Logger\LoggerFactory'
+    public: true
+    factory: ['@hp.logger.factory', 'getLogger']
+
+  hp.payment_options.presenter:
+    class: 'HiPay\PrestaShop\Presenter\PaymentOptionsPresenter'
+    public: true
+    arguments:
+      - '@hp.module'
+      - '@hp.settings'
+      - '@hp.context'
+
+  hp.payment_request.builder:
+    class: 'HiPay\PrestaShop\Builder\PaymentRequestBuilderFactory'
+    public: true
+    arguments:
+      - '@hp.module'
+      - '@hp.settings.loader'
+
+  hp.notification.lock_store:
+    class: 'Symfony\Component\Lock\Store\FlockStore'
+    public: true
+
+  hp.notification.lock_factory:
+    class: 'Symfony\Component\Lock\LockFactory'
+    public: true
+    arguments:
+      - '@hp.notification.lock_store'
+
+  hp.transaction.presenter:
+    class: 'HiPay\PrestaShop\Presenter\TransactionPresenter'
+    public: true
+    arguments:
+      - '@hp.module'
+      - '@hp.settings.loader'
+
+  hp.transaction.processor:
+    class: 'HiPay\PrestaShop\Processor\TransactionProcessor'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.notification.processor:
+    class: 'HiPay\PrestaShop\Processor\NotificationProcessor'
+    public: true
+    arguments:
+      - '@hp.notification.lock_factory'
+      - '@hp.transaction.presenter'
+      - '@hp.transaction.processor'
+
+  hp.admin_transaction.presenter:
+    class: 'HiPay\PrestaShop\Presenter\AdminTransactionPresenter'
+    public: true
+    arguments:
+      - '@hp.settings.loader'
+
+  hp.transaction_details.service:
+    class: 'HiPay\PrestaShop\Transaction\TransactionDetailsService'
+    public: true
+    arguments:
+      - '@hp.module'
+      - '@hp.sdk.gateway'
+      - '@hp.admin_transaction.presenter'
+
+  hp.admin_operation.presenter:
+    class: 'HiPay\PrestaShop\Presenter\AdminOperationPresenter'
+    public: true
+    arguments:
+      - '@hp.module'
+
+  hp.health_check.presenter:
+    class: 'HiPay\PrestaShop\Presenter\HealthCheckPresenter'
+    public: true
+    arguments:
+      - '@hp.module'
+      - '@hp.settings'
+      - '@hp.context'

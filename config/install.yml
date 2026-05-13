@@ -1,0 +1,21 @@
+services:
+  hp.tab.manager:
+    class: 'AG\PSModuleUtils\Installer\TabManager'
+    public: true
+
+  hp.status.manager:
+    class: 'AG\PSModuleUtils\Installer\OrderStateManager'
+    public: true
+
+  hp.installer:
+    class: 'HiPay\PrestaShop\Install\Installer'
+    public: true
+    arguments:
+      - '@hp.module'
+      - '@hp.logger.factory'
+      - '@hp.tab.manager'
+      - '@hp.status.manager'
+      - '@hp.settings.account.updater'
+      - '@hp.settings.main.updater'
+      - '@hp.settings.card_payment.updater'
+      - '@hp.settings.other_pm.updater'

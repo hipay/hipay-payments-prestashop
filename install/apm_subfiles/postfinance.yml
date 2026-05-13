@@ -1,0 +1,16 @@
+className: 'Postfinance'
+defaults:
+  enabled: true
+  code: 'postfinance-card'
+  name: 'Postfinance'
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['CHF']
+  countries: ['CH']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: false
