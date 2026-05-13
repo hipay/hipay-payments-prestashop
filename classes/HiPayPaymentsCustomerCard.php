@@ -106,6 +106,23 @@ class HiPayPaymentsCustomerCard extends ObjectModel
     }
 
     /**
+     * @param int    $customerId
+     * @param string $token
+     * @return self
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
+    public static function getCustomerCardByCustomerIdToken(int $customerId, string $token): HiPayPaymentsCustomerCard
+    {
+        $dbQuery = (new DbQuery())
+            ->select(self::$definition['primary'])
+            ->from(self::$definition['table'])
+            ->where(sprintf('id_customer = %d AND card_token = "%s"', (int) $customerId, pSQL($token)));
+
+        return new self((int) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($dbQuery));
+    }
+
+    /**
      * @param string $pan
      * @param int    $customerId
      * @return int

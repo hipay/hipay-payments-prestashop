@@ -72,7 +72,8 @@ class HiPayPaymentsNotifyModuleFrontController extends ModuleFrontController
                 break;
             }
         }
-        $logger->debug('Notification received', ['data' => $transaction->toArray(), 'validSignature' => $isValidSignature]);
+        $transactionArray = $transaction->toArray();
+        $logger->debug('Notification received for transaction reference '.$transactionArray['transaction_reference'] ?? '', ['data' => $transactionArray, 'validSignature' => $isValidSignature]);
         if (false === $isValidSignature) {
             $logger->error('Signature is invalid');
 
@@ -81,7 +82,7 @@ class HiPayPaymentsNotifyModuleFrontController extends ModuleFrontController
         /** @var \HiPay\PrestaShop\Processor\NotificationProcessor $notificationProcessor */
         $notificationProcessor = $this->module->getService('hp.notification.processor');
         try {
-            $notificationProcessor->process($transaction, $cart);
+            $notificationProcessor->process($transaction, $cart, $logger);
         } catch (Exception $e) {
             $logger->error($e->getMessage());
         }

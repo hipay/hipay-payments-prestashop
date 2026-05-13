@@ -61,7 +61,7 @@ class TransactionDetailsService
     {
         try {
             if (!\Validate::isLoadedObject($hipayPaymentsOrder)) {
-                throw new \Exception('Cannot retrieve transaction details');
+                throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
             }
             $order = new \Order((int) $hipayPaymentsOrder->id_order);
             $transaction = $this->sdk
@@ -70,12 +70,12 @@ class TransactionDetailsService
                 ->requestTransactionInformation($hipayPaymentsOrder->hipay_transaction_reference);
 
             if (null === $transaction) {
-                throw new \Exception();
+                throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
             }
 
             return $this->adminTransactionPresenter->present($transaction);
         } catch (\Exception $e) {
-            throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
+            throw new \Exception($e->getMessage());
         }
     }
 }

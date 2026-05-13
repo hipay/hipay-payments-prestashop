@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-docblock/src', $vendorDir . '/phpdocumentor/type-resolver/src', $vendorDir . '/phpdocumentor/reflection-common/src'),
+    'libphonenumber\\' => array($vendorDir . '/giggsey/libphonenumber-for-php/src'),
     'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
@@ -34,6 +35,7 @@ return array(
     'Koriym\\HttpConstants\\' => array($vendorDir . '/koriym/http-constants/src'),
     'HiPay\\PrestaShop\\' => array($baseDir . '/src'),
     'HiPay\\Fullservice\\' => array($vendorDir . '/hipay/hipay-fullservice-sdk-php/lib/HiPay/Fullservice'),
+    'Giggsey\\Locale\\' => array($vendorDir . '/giggsey/locale/src'),
     'Alcohol\\' => array($vendorDir . '/alcohol/iso4217'),
     'AG\\PSModuleUtils\\' => array($vendorDir . '/anthogirard/ps-module-utils/lib'),
 );

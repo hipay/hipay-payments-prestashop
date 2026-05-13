@@ -54,7 +54,7 @@ build:
 include:
   - template: Security/SAST.gitlab-ci.yml
   - project: 'pi-ecommerce/cms/cms-template-ci'
-    ref: '1.1.0'
+    ref: '1.2.0'
     file: 'release.yaml'
 
 ############
@@ -251,6 +251,7 @@ infection-7.4:
 sonar-7.4:
   stage: sonar
   image: mileschou/xdebug:7.4
+  allow_failure: true
   cache:
     <<: *global_cache
   variables:

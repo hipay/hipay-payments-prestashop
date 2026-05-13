@@ -186,7 +186,7 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
             }
         }
 
-        $ch = curl_init('https://api.github.com/repos/hipay/hipay-enterprise-sdk-prestashop/releases');
+        $ch = curl_init('https://api.github.com/repos/hipay/hipay-payments-prestashop/releases');
         if (false === $ch) {
             return;
         }
@@ -203,31 +203,31 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
+        $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
         if ($httpCode === 200 && $response !== false) {
             $releases = json_decode((string) $response, true);
 
             if (is_array($releases)) {
                 foreach ($releases as $release) {
                     $branch = $release['target_commitish'];
-                    if ('1.7' !== $branch) {
+                    if ('ps1.7' !== $branch) {
                         continue;
                     }
 
-                    $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
                     $settings->moduleInfo->latestVersionAvailable = $release['tag_name'];
                     $settings->moduleInfo->releaseUrl = $release['html_url'];
                     $settings->moduleInfo->assetUrl = isset($release['assets']) && is_array($release['assets']) ? $release['assets'][0]['browser_download_url'] : '';
 
-                    /** @var \HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater $updater */
-                    $updater = $this->module->getService('hp.settings.module_info.updater');
-                    try {
-                        $updater->updateObject($settings->moduleInfo);
-                    } catch (ExceptionList $e) {
-                        return;
-                    }
                     break;
                 }
             }
+        }
+        /** @var \HiPay\PrestaShop\Settings\Updater\ModuleInfoUpdater $updater */
+        $updater = $this->module->getService('hp.settings.module_info.updater');
+        try {
+            $updater->updateObject($settings->moduleInfo);
+        } catch (ExceptionList $e) {
+            return;
         }
     }
 

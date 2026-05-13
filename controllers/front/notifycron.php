@@ -13,6 +13,7 @@
  */
 
 use HiPay\PrestaShop\Processor\NotificationProcessor;
+use HiPay\PrestaShop\Utils\MySqlLock;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -59,8 +60,6 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
      */
     private function processQueue(\Monolog\Logger $logger)
     {
-        /** @var \Symfony\Component\Lock\LockFactory $lockFactory */
-        $lockFactory = $this->module->getService('hp.notification.lock_factory');
         $dbQuery = (new \DbQuery())
             ->select('*')
             ->from(pSQL(NotificationProcessor::QUEUED_NOTIFICATIONS_TABLE_NAME))
@@ -86,10 +85,11 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
             $notificationProcessor = $this->module->getService('hp.notification.processor');
             try {
                 $lockKey = sprintf('hipaypayments_lock_%s', $transaction->getTransactionReference());
-                $lock = $lockFactory->createLock($lockKey, 30);
-                if ($lock->acquire()) {
+                $lock = new MySqlLock();
+                if ($lock->acquire($lockKey)) {
                     $logger->debug(sprintf('Process transaction reference %s', $transaction->getTransactionReference()));
                     $notificationProcessor->cart = $cart;
+                    $notificationProcessor->logger = $logger;
                     $notificationProcessor->processQueuedNotifications($transaction->getTransactionReference());
                 } else {
                     continue;
