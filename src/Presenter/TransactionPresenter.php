@@ -239,7 +239,60 @@ class TransactionPresenter implements PresenterInterface
         $this->dataPresented->updateStatus = true;
         $this->dataPresented->newStatus = (int) $idOrderState;
 
+        // PrestaShop sets the order to a "backorder" state at validation time when a product
+        // is out of stock. After we apply the HiPay status normally, we must re-impose a
+        // backorder state in the order history so downstream consumers (ERP sync, etc.) keep
+        // seeing the order as backorder. Upgrade unpaid → paid when the HiPay notification
+        // reports a successful payment.
+        // Exception: refund/chargeback are final payment outcomes — once reached, do not
+        // re-apply backorder, leave the order on its final HiPay status.
+        $currentState = (int) $order->current_state;
+        $outOfStockPaid = (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
+        $outOfStockUnpaid = (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID');
+
+        if (in_array($currentState, [$outOfStockPaid, $outOfStockUnpaid], true) && !$this->isFinalPaymentStatus($transaction)) {
+            $this->dataPresented->needOOSChange = true;
+            $this->dataPresented->oosStatus = $this->isNewStatusPaid($transaction)
+                ? $outOfStockPaid
+                : $outOfStockUnpaid;
+        }
+
         return $this->dataPresented;
+    }
+
+    /**
+     * @param Transaction $transaction
+     * @return bool
+     */
+    private function isNewStatusPaid(Transaction $transaction): bool
+    {
+        $statusId = $transaction->getStatus();
+        switch ($statusId) {
+            case self::STATUS_CAPTURED:
+            case self::STATUS_PARTIALLY_CAPTURED:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * @param Transaction $transaction
+     * @return bool
+     */
+    private function isFinalPaymentStatus(Transaction $transaction): bool
+    {
+        $statusId = $transaction->getStatus();
+        switch ($statusId) {
+            case self::STATUS_REFUNDED:
+            case self::STATUS_PARTIALLY_REFUNDED:
+            case self::STATUS_CHARGED_BACK_DEPRECATED:
+            case self::STATUS_CHARGED_BACK:
+            case self::STATUS_PARTIALLY_CHARGED_BACK:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

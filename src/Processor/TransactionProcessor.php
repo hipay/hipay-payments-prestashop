@@ -91,12 +91,19 @@ class TransactionProcessor
                 }
             }
         } elseif ($transactionPresented->updateStatus) {
-            $logger->debug(sprintf('Transaction %s - begin Process::updateOrderStatus', $transactionPresented->transaction['transactionReference']), ['time' => date('H:i:s')]);
+            $logger->debug(sprintf('Transaction %s - begin Process::updateOrderStatus', $transactionPresented->transaction['transactionReference']), ['time' => date('H:i:s'), 'needOOSChange' => $transactionPresented->needOOSChange]);
             $order = new \Order((int) $transactionPresented->orderId);
             $orderHistory = new \OrderHistory();
             $orderHistory->id_order = (int) $order->id;
             $orderHistory->changeIdOrderState((int) $transactionPresented->newStatus, (int) $order->id, true);
             $orderHistory->addWithemail();
+            if ($transactionPresented->needOOSChange) {
+                $oosHistory = new \OrderHistory();
+                $oosHistory->id_order = (int) $order->id;
+                $oosHistory->changeIdOrderState((int) $transactionPresented->oosStatus, (int) $order->id, true);
+                $oosHistory->addWithemail();
+                $logger->debug(sprintf('Transaction %s - re-applied backorder state %d after status update', $transactionPresented->transaction['transactionReference'], $transactionPresented->oosStatus));
+            }
             $logger->debug(sprintf('Transaction %s - end of Process::updateOrderStatus', $transactionPresented->transaction['transactionReference']), ['time' => date('H:i:s')]);
         } elseif ($transactionPresented->saveMotoTransaction) {
             $order = new \Order((int) $transactionPresented->orderId);
