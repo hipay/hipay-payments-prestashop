@@ -67,4 +67,10 @@ class TransactionPresented
 
     /** @var bool */
     public $saveMotoTransaction = false;
+
+    /** @var bool */
+    public $needOOSChange = false;
+
+    /** @var int */
+    public $oosStatus = 0;
 }
