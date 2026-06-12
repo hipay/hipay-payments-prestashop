@@ -1,0 +1,7 @@
+{
+    "require": {
+        "phpstan/phpstan": "*",
+        "phpstan/phpstan-deprecation-rules": "*",
+        "phpstan/phpstan-strict-rules": "*"
+    }
+}

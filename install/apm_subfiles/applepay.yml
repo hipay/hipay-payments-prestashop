@@ -1,0 +1,17 @@
+className: 'ApplePay'
+defaults:
+  enabled: false
+  code: 'applepay'
+  name: 'Apple Pay'
+  merchantIdentifier: ''
+  minAmount: 0.00
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: []
+  countries: []
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: false
+  countriesForced: false
+  displayMode: 'binary'
+  canRefund: true
