@@ -16,6 +16,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
       - name: Build ZIP
         run: |
           rsync -a --exclude='.git' --exclude='.github' --exclude='dist' . hipaypayments/
