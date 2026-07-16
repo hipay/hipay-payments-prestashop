@@ -193,3 +193,5 @@ configuration:
       file: 'oney3x-no-fees.yml'
     - code: '4xcb-no-fees'
       file: 'oney4x-no-fees.yml'
+    - code: 'bancomatpay'
+      file: 'bancomatpay.yml'

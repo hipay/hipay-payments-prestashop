@@ -297,3 +297,13 @@ $_MODULE['<{hipaypayments}prestashop>adminhipaypaymentsconfigurationcontroller_0
 $_MODULE['<{hipaypayments}prestashop>storedcards_0d02a983cd676aa3b4d555cb6918dff5'] = 'Impossibile eliminare la carta memorizzata.';
 $_MODULE['<{hipaypayments}prestashop>storedcards_70f6d9f3075b1ecd1768624894a94472'] = 'Carta eliminata con successo.';
 $_MODULE['<{hipaypayments}prestashop>payment_adfce183160e8bf993d60270b82ad318'] = 'Si è verificato un errore durante l’elaborazione del pagamento. Riprova o contatta il supporto clienti';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_9a733784eaefa30eb3822fb8e372f132'] = 'Attendere, verrete reindirizzati a breve.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_e824ef7f592e1579dd444bc72890baed'] = 'Pagamento in attesa';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_94d0fb72c2118aee649ac3ec50b64646'] = 'Il pagamento dovrà essere convalidato sulla tua applicazione Bancomat Pay.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_0f85792be3c61eb0d1ad0bbaccb36490'] = 'Questa pagina si aggiornerà automaticamente una volta confermato il pagamento.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_385bd916f56ffa447cd78984f983c93c'] = 'Pagamento confermato';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_506a9e67fb2ea185a979e6a345f396ac'] = 'Grazie! Il tuo ordine è ora in elaborazione.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_1305a2b0c6c0eaf556d3ac2b18e25155'] = 'Pagamento non riuscito';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05ccedf11e72'] = 'Il pagamento non ha potuto essere elaborato. Riprova o contatta il nostro servizio clienti.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Il tuo ordine richiede più tempo del previsto. Contatta il nostro servizio clienti se il pagamento è stato accettato.';
+$_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'Il pagamento dovrà essere convalidato sulla tua applicazione Bancomat Pay.';
