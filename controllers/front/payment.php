@@ -95,8 +95,12 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
                 $orderRequest->one_click = 1;
             }
 
+            $credentialsType = ('applepay' === $paymentMethodCode || 'APPLE-PAY' === ($data['source'] ?? ''))
+                ? \HiPay\PrestaShop\Api\Credentials::CREDENTIALS_TYPE_APPLE_PAY
+                : \HiPay\PrestaShop\Api\Credentials::CREDENTIALS_TYPE_MAIN;
+
             $transaction = $sdk
-                ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
+                ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group, $credentialsType)
                 ->server()
                 ->requestNewOrder($orderRequest);
             if ($transaction->getState() === 'forwarding') {

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed min/max amount validation
 - Added Apple Pay Multibrowser
 - Fixed Payment Methods on Multi Store
+- Fixed Apple Pay Credentials issue
 
 
 
