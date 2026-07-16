@@ -297,3 +297,13 @@ $_MODULE['<{hipaypayments}prestashop>adminhipaypaymentsconfigurationcontroller_0
 $_MODULE['<{hipaypayments}prestashop>storedcards_0d02a983cd676aa3b4d555cb6918dff5'] = 'Impossible de supprimer la carte enregistrée.';
 $_MODULE['<{hipaypayments}prestashop>storedcards_70f6d9f3075b1ecd1768624894a94472'] = 'Carte supprimée avec succès.';
 $_MODULE['<{hipaypayments}prestashop>payment_adfce183160e8bf993d60270b82ad318'] = 'Une erreur s\'est produite lors du traitement de votre paiement. Veuillez réessayer ou contacter notre service clientèle.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_9a733784eaefa30eb3822fb8e372f132'] = 'Veuillez patienter, vous allez être redirigé dans quelques instants.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_e824ef7f592e1579dd444bc72890baed'] = 'Paiement en attente';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_94d0fb72c2118aee649ac3ec50b64646'] = 'Le paiement devra être validé sur votre application Bancomat Pay.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_0f85792be3c61eb0d1ad0bbaccb36490'] = 'Cette page se mettra à jour automatiquement une fois le paiement confirmé.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_385bd916f56ffa447cd78984f983c93c'] = 'Paiement confirmé';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_506a9e67fb2ea185a979e6a345f396ac'] = 'Merci ! Votre commande est maintenant en cours de traitement.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_1305a2b0c6c0eaf556d3ac2b18e25155'] = 'Paiement échoué';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05ccedf11e72'] = 'Votre paiement n\'a pas pu être traité. Veuillez réessayer ou contacter notre service clientèle.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Votre commande prend plus de temps que prévu. Veuillez contacter notre service clientèle si votre paiement a été accepté.';
+$_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'Le paiement devra être validé sur votre application Bancomat Pay.';

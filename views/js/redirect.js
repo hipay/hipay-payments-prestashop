@@ -17,7 +17,12 @@ const CONFIG = {
     MAX_ATTEMPTS: 10,
     TIMEOUT_MESSAGE_ID: 'js-hipay-timeout-message',
     LOADER_ID: 'js-hipay-loader'
-  };
+};
+
+const BANCOMAT_CONFIG = {
+    POLL_INTERVAL: 10000,
+    MAX_ATTEMPTS: 30,
+};
 
 /**
  * Makes a request to check HiPay order status and get redirect URL
@@ -92,7 +97,11 @@ function handleRedirectResponse(result) {
 async function handleTimeout() {
   console.warn('HiPay polling timeout reached');
 
-  // Show timeout message and hide loader
+  if (typeof paymentProduct !== 'undefined' && paymentProduct === 'bancomatpay') {
+    showBancomatState('timeout');
+    return;
+  }
+
   toggleElement(CONFIG.TIMEOUT_MESSAGE_ID, true);
   toggleElement(CONFIG.LOADER_ID, false);
 
@@ -101,7 +110,6 @@ async function handleTimeout() {
     handleRedirectResponse(result);
   } catch (error) {
     console.error('Timeout redirect failed:', error);
-    // Could show additional error message to user here
   }
 }
 
@@ -156,9 +164,81 @@ function initializeHiPayCheck() {
   );
 }
 
+/**
+ * Shows the given BancomatPay state and hides the others.
+ * @param {string} state - 'pending' | 'success' | 'failed' | 'timeout'
+ */
+function showBancomatState(state) {
+  document.querySelectorAll('.js-hipay-bancomat-state').forEach(function (el) {
+    el.style.display = 'none';
+  });
+  const target = document.querySelector('.js-hipay-bancomat-state--' + state);
+  if (target) {
+    target.style.display = '';
+  }
+}
+
+/**
+ * Polls the checkBancomatPayStatus endpoint until the order is confirmed or failed.
+ */
+async function pollBancomatPayStatus() {
+  const formData = new FormData();
+  formData.append('action', 'checkBancomatPayStatus');
+  formData.append('token', hipayCustomerToken);
+  formData.append('idCart', idCart);
+  formData.append('cartSecureKey', cartSecureKey);
+
+  try {
+    const response = await fetch(hipayPaymentControllerUrl, {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    });
+    if (!response.ok) {
+      return;
+    }
+    const data = await response.json();
+    if (!data.success) {
+      return;
+    }
+    if (data.status === 'success') {
+      showBancomatState('success');
+      setTimeout(function () {
+        window.location.href = data.redirectUrl;
+      }, 2000);
+    } else if (data.status === 'failed') {
+      showBancomatState('failed');
+    }
+    // 'pending' → keep polling
+  } catch (e) {
+    // network error — keep polling
+  }
+}
+
+/**
+ * Starts the BancomatPay-specific polling loop.
+ */
+function initializeBancomatPayCheck() {
+  startPolling(
+    pollBancomatPayStatus,
+    BANCOMAT_CONFIG.POLL_INTERVAL,
+    BANCOMAT_CONFIG.MAX_ATTEMPTS
+  );
+}
+
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeHiPayCheck);
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof paymentProduct !== 'undefined' && paymentProduct === 'bancomatpay') {
+      initializeBancomatPayCheck();
+    } else {
+      initializeHiPayCheck();
+    }
+  });
 } else {
-  initializeHiPayCheck();
+  if (typeof paymentProduct !== 'undefined' && paymentProduct === 'bancomatpay') {
+    initializeBancomatPayCheck();
+  } else {
+    initializeHiPayCheck();
+  }
 }

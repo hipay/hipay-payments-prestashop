@@ -297,3 +297,13 @@ $_MODULE['<{hipaypayments}prestashop>adminhipaypaymentsconfigurationcontroller_0
 $_MODULE['<{hipaypayments}prestashop>storedcards_0d02a983cd676aa3b4d555cb6918dff5'] = 'No se pudo eliminar la tarjeta almacenada.';
 $_MODULE['<{hipaypayments}prestashop>storedcards_70f6d9f3075b1ecd1768624894a94472'] = 'Tarjeta eliminada correctamente';
 $_MODULE['<{hipaypayments}prestashop>payment_adfce183160e8bf993d60270b82ad318'] = 'Se produjo un error al procesar su pago. Vuelva a intentarlo o contacte con nuestro servicio de atención al cliente.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_9a733784eaefa30eb3822fb8e372f132'] = 'Por favor espere, será redirigido en breve.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_e824ef7f592e1579dd444bc72890baed'] = 'Pago pendiente';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_94d0fb72c2118aee649ac3ec50b64646'] = 'El pago deberá ser validado en su aplicación Bancomat Pay.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_0f85792be3c61eb0d1ad0bbaccb36490'] = 'Esta página se actualizará automáticamente una vez confirmado el pago.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_385bd916f56ffa447cd78984f983c93c'] = 'Pago confirmado';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_506a9e67fb2ea185a979e6a345f396ac'] = '¡Gracias! Su pedido está siendo procesado.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_1305a2b0c6c0eaf556d3ac2b18e25155'] = 'Pago fallido';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05ccedf11e72'] = 'Su pago no pudo ser procesado. Por favor, inténtelo de nuevo o póngase en contacto con nuestro servicio de atención al cliente.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Su pedido está tardando más de lo esperado. Póngase en contacto con nuestro servicio de atención al cliente si su pago fue aceptado.';
+$_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'El pago deberá ser validado en su aplicación Bancomat Pay.';

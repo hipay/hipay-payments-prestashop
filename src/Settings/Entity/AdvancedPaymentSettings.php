@@ -37,6 +37,7 @@ class AdvancedPaymentSettings
         'alma-3x' => ['name' => 'Alma 3x', 'builder' => Builder\Alma3xRequestBuilder::class, 'discriminatorMap' => APM\Alma3x::class],
         'alma-4x' => ['name' => 'Alma 4x', 'builder' => Builder\Alma4xRequestBuilder::class, 'discriminatorMap' => APM\Alma4x::class],
         'applepay' => ['name' => 'Apple Pay', 'builder' => Builder\ApplePayRequestBuilder::class, 'discriminatorMap' => APM\ApplePay::class],
+        'bancomatpay' => ['name' => 'Bancomat Pay', 'builder' => Builder\BancomatPayRequestBuilder::class, 'discriminatorMap' => APM\BancomatPay::class],
         'przelewy24' => ['name' => 'Przelewy24', 'builder' => Builder\P24RequestBuilder::class, 'discriminatorMap' => APM\P24::class],
         'illicado' => ['name' => 'Illicado', 'builder' => Builder\IllicadoRequestBuilder::class, 'discriminatorMap' => APM\Illicado::class],
         'klarna' => ['name' => 'Klarna', 'builder' => Builder\KlarnaRequestBuilder::class, 'discriminatorMap' => APM\Klarna::class],

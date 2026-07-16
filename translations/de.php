@@ -297,3 +297,13 @@ $_MODULE['<{hipaypayments}prestashop>adminhipaypaymentsconfigurationcontroller_0
 $_MODULE['<{hipaypayments}prestashop>storedcards_0d02a983cd676aa3b4d555cb6918dff5'] = 'Gespeicherte Karte konnte nicht gelöscht werden';
 $_MODULE['<{hipaypayments}prestashop>storedcards_70f6d9f3075b1ecd1768624894a94472'] = 'Karte wurde erfolgreich gelöscht';
 $_MODULE['<{hipaypayments}prestashop>payment_adfce183160e8bf993d60270b82ad318'] = 'Bei der Bearbeitung Ihrer Zahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder wenden Sie sich an unseren Kundensupport.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_9a733784eaefa30eb3822fb8e372f132'] = 'Bitte warten Sie, Sie werden in Kürze weitergeleitet.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_e824ef7f592e1579dd444bc72890baed'] = 'Zahlung ausstehend';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_94d0fb72c2118aee649ac3ec50b64646'] = 'Die Zahlung muss in Ihrer Bancomat Pay App bestätigt werden.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_0f85792be3c61eb0d1ad0bbaccb36490'] = 'Diese Seite wird automatisch aktualisiert, sobald die Zahlung bestätigt ist.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_385bd916f56ffa447cd78984f983c93c'] = 'Zahlung bestätigt';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_506a9e67fb2ea185a979e6a345f396ac'] = 'Vielen Dank! Ihre Bestellung wird nun bearbeitet.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_1305a2b0c6c0eaf556d3ac2b18e25155'] = 'Zahlung fehlgeschlagen';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05ccedf11e72'] = 'Ihre Zahlung konnte nicht verarbeitet werden. Bitte versuchen Sie es erneut oder kontaktieren Sie unseren Kundendienst.';
+$_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Ihre Bestellung nimmt mehr Zeit als erwartet in Anspruch. Bitte kontaktieren Sie unseren Kundendienst, wenn Ihre Zahlung akzeptiert wurde.';
+$_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'Die Zahlung muss in Ihrer Bancomat Pay App bestätigt werden.';

@@ -44,6 +44,9 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
             case 'sendHFPayment':
                 $this->sendHostedFieldsPayment();
                 break;
+            case 'checkBancomatPayStatus':
+                $this->checkBancomatPayStatus();
+                break;
             default:
                 break;
         }
@@ -108,6 +111,7 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
                     'reference' => $transaction->getTransactionReference(),
                     'action' => 'redirectFromPayment',
                     'returnType' => $transaction->getState(),
+                    'paymentProduct' => $paymentMethodCode,
                 ];
                 $returnedData = [
                     'success' => true,
@@ -118,10 +122,68 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
             $logger->error($e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
             $returnedData = [
                 'success' => false,
+                'errorUrl' => $this->context->link->getModuleLink((string) $this->module->name, 'redirect', ['action' => 'paymentError']),
                 'message' => $this->module->l('An error occurred while processing your payment. Please try again or contact our customer support', 'payment'),
             ];
         }
 
         die(json_encode($returnedData));
+    }
+
+    /**
+     * @return void
+     */
+    private function checkBancomatPayStatus(): void
+    {
+        $idCart = (int) Tools::getValue('idCart');
+        $token = Tools::getValue('token');
+        $cartSecureKey = Tools::getValue('cartSecureKey');
+
+        if (!Validate::isUnsignedId($idCart) || $token !== Tools::getToken()) {
+            die(json_encode(['success' => false]));
+        }
+
+        $cart = new Cart($idCart);
+        if (!Validate::isLoadedObject($cart) || !hash_equals($cart->secure_key, $cartSecureKey)) {
+            die(json_encode(['success' => false]));
+        }
+
+        $order = \HiPay\PrestaShop\Utils\Tools::getOrderByCartId($idCart);
+        if (!\Validate::isLoadedObject($order)) {
+            die(json_encode(['success' => true, 'status' => 'pending']));
+        }
+
+        $currentState = (int) $order->current_state;
+
+        $failedStates = [
+            (int) \Configuration::getGlobalValue('PS_OS_CANCELED'),
+            (int) \Configuration::getGlobalValue('PS_OS_ERROR'),
+        ];
+        $successStates = [
+            (int) \Configuration::getGlobalValue('PS_OS_PAYMENT'),
+            (int) \Configuration::getGlobalValue('HIPAYPAYMENTS_OS_PENDING_CAPTURE'),
+        ];
+
+        if (in_array($currentState, $failedStates)) {
+            die(json_encode(['success' => true, 'status' => 'failed']));
+        }
+
+        if (!in_array($currentState, $successStates)) {
+            die(json_encode(['success' => true, 'status' => 'pending']));
+        }
+
+        $customer = new Customer($order->id_customer);
+        $redirectUrl = $this->context->link->getPageLink(
+            'order-confirmation',
+            null,
+            null,
+            [
+                'id_cart' => $idCart,
+                'id_module' => $this->module->id,
+                'key' => $customer->secure_key,
+            ]
+        );
+
+        die(json_encode(['success' => true, 'status' => 'success', 'redirectUrl' => $redirectUrl]));
     }
 }
