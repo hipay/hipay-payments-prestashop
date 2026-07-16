@@ -47,6 +47,9 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
             case 'checkBancomatPayStatus':
                 $this->checkBancomatPayStatus();
                 break;
+            case 'checkBizumStatus':
+                $this->checkBizumStatus();
+                break;
             default:
                 break;
         }
@@ -138,6 +141,23 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
      * @return void
      */
     private function checkBancomatPayStatus(): void
+    {
+        $this->checkPendingAppPaymentStatus();
+    }
+
+    /**
+     * @return void
+     */
+    private function checkBizumStatus(): void
+    {
+        $this->checkPendingAppPaymentStatus();
+    }
+
+    /**
+     * Generic status poll for payments that require mobile app confirmation (Bancomat Pay, Bizum, …).
+     * @return void
+     */
+    private function checkPendingAppPaymentStatus(): void
     {
         $idCart = (int) Tools::getValue('idCart');
         $token = Tools::getValue('token');

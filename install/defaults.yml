@@ -195,3 +195,7 @@ configuration:
       file: 'oney4x-no-fees.yml'
     - code: 'bancomatpay'
       file: 'bancomatpay.yml'
+    - code: 'bizum'
+      file: 'bizum.yml'
+    - code: 'bancomatpay'
+      file: 'bancomatpay.yml'

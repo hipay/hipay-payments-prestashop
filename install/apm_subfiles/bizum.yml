@@ -1,0 +1,16 @@
+className: 'Bizum'
+defaults:
+  enabled: false
+  code: 'bizum'
+  name: 'Bizum'
+  minAmount: 0.50
+  maxAmount: 0.00
+  currenciesCountriesManaged: true
+  currencies: ['EUR']
+  countries: ['ES']
+  minAmountForced: false
+  maxAmountForced: false
+  currenciesForced: true
+  countriesForced: true
+  displayMode: 'hosted_fields'
+  canRefund: true

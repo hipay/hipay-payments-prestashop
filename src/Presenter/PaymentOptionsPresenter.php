@@ -204,6 +204,14 @@ class PaymentOptionsPresenter implements PresenterInterface
                             }
                         }
 
+                        if ('bancomatpay' === $availableProduct->code) {
+                            $extraMessage .= $this->context->smarty->fetch('module:hipaypayments/views/templates/front/bancomatPayMessage.tpl');
+                        }
+
+                        if ('bizum' === $availableProduct->code) {
+                            $extraMessage .= $this->context->smarty->fetch('module:hipaypayments/views/templates/front/bizumMessage.tpl');
+                        }
+
                         $paymentOption = (new \PrestaShop\PrestaShop\Core\Payment\PaymentOption())
                             ->setCallToActionText(sprintf($this->module->l('Pay with %s', 'PaymentOptionsPresenter'), $availableProduct->name))
                             ->setLogo(sprintf('%sviews/img/logos/%s.svg', $this->module->getPathUri(), $availableProduct->code))

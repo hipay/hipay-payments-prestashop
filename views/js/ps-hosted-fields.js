@@ -501,6 +501,15 @@
           }
         }
 
+        if ('bizum' === code) {
+          hipayPaymentsConfig[code].fields = {
+            ...hipayPaymentsConfig[code].fields,
+            phone: {
+              defaultCountry: 'ES',
+            },
+          };
+        }
+
         hipayPaymentsInstances[code] = hipayPayments.create(code, hipayPaymentsConfig[code]);
       });
 
@@ -508,11 +517,14 @@
         window.removeEventListener('unhandledrejection', promiseErrorHandlerPayPal);
       }, 3000);
 
+      const hipayFormIsValid = {};
+
       Object.keys(hipayPaymentsInstances).forEach(( code) => {
         if (null === hipayPaymentsInstances[code]) {
           return;
         }
         hipayPaymentsInstances[code].on('change', (event) => {
+          hipayFormIsValid[code] = event.valid;
           if (!event.valid) {
             document.querySelector('#payment-confirmation button').disabled = true;
           } else if (document.querySelector('input[name="conditions_to_approve[terms-and-conditions]"]').checked) {
@@ -521,7 +533,26 @@
             document.getElementById(`js-hipay-payments-${code}-error-message`).style.display = 'none';
           }
         });
-      })
+      });
+
+      ['bancomatpay', 'bizum'].forEach(function(apmCode) {
+        hipayFormIsValid[apmCode] = false;
+
+        const btn = document.querySelector('#payment-confirmation button');
+        if (!btn) {
+          return;
+        }
+
+        new MutationObserver(function() {
+          const form = document.getElementById('js-hipay-payments-form-' + apmCode);
+          if (!form || !form.offsetParent) {
+            return;
+          }
+          if (!hipayFormIsValid[apmCode] && !btn.disabled) {
+            btn.disabled = true;
+          }
+        }).observe(btn, { attributes: true, attributeFilter: ['disabled'] });
+      });
 
       Object.keys(hipayPaymentsInstances).forEach(( code) => {
         $('#js-hipay-payments-form-'+code).one('submit', (event) => {
