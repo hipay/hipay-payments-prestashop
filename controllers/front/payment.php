@@ -96,7 +96,7 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
             }
 
             $transaction = $sdk
-                ->init()
+                ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
                 ->server()
                 ->requestNewOrder($orderRequest);
             if ($transaction->getState() === 'forwarding') {

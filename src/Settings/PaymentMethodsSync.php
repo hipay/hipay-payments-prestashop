@@ -46,6 +46,10 @@ class PaymentMethodsSync
         $loggerFactory = $this->module->getService('hp.logger.factory');
         $logger = $loggerFactory->withChannel('PaymentMethodsSync');
 
+        $isContextAll = \Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL;
+        $idShop = $isContextAll ? null : (int) \Context::getContext()->shop->id;
+        $idShopGroup = $isContextAll ? null : (int) \Context::getContext()->shop->id_shop_group;
+
         /** @var \HiPay\PrestaShop\Api\PrestaShopSDK $sdk */
         $sdk = $this->module->getService('hp.sdk.gateway');
         try {
@@ -53,7 +57,7 @@ class PaymentMethodsSync
             $availableProductsRequest->with_options = true;
             /** @var \HiPay\Fullservice\Gateway\Model\AvailablePaymentProduct[] $availableProducts */
             $availableProducts = $sdk
-                ->init()
+                ->init($idShop, $idShopGroup)
                 ->server()
                 ->requestAvailablePaymentProduct($availableProductsRequest);
         } catch (\Exception $e) {
@@ -68,7 +72,7 @@ class PaymentMethodsSync
         /** @var SettingsLoader $settingsLoader */
         $settingsLoader = $this->module->getService('hp.settings.loader');
         /** @var Settings $settings */
-        $settings = $settingsLoader->load();
+        $settings = $settingsLoader->withContext($idShop, $idShopGroup, true);
 
         $cardPaymentSettings = $settings->cardPaymentSettings;
         foreach ($availableProducts as $availableProduct) {

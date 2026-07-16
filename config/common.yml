@@ -33,7 +33,7 @@ services:
     public: true
     arguments:
       - '@hp.module'
-      - '@hp.settings'
+      - '@hp.settings.loader'
       - '@hp.context'
 
   hp.payment_request.builder:

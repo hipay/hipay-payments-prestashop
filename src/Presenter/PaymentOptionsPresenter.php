@@ -18,6 +18,7 @@ use HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod;
 use HiPay\PrestaShop\Settings\Entity\AccountSettings;
 use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
 use HiPay\PrestaShop\Settings\Settings;
+use HiPay\PrestaShop\Settings\SettingsLoader;
 use libphonenumber\NumberParseException;
 use PrestaShop\PrestaShop\Adapter\Presenter\PresenterInterface;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
@@ -37,6 +38,9 @@ class PaymentOptionsPresenter implements PresenterInterface
     /** @var Settings */
     private $settings;
 
+    /** @var SettingsLoader */
+    private $settingsLoader;
+
     /** @var \Context */
     private $context;
 
@@ -44,16 +48,16 @@ class PaymentOptionsPresenter implements PresenterInterface
      * PaymentOptionsPresenter Constructor.
      *
      * @param \HiPayPayments $module
-     * @param Settings       $settings
+     * @param SettingsLoader $settingsLoader
      * @param \Context       $context
      */
     public function __construct(
         \HiPayPayments $module,
-        Settings       $settings,
+        SettingsLoader $settingsLoader,
         \Context       $context
     ) {
         $this->module = $module;
-        $this->settings = $settings;
+        $this->settingsLoader = $settingsLoader;
         $this->context = $context;
     }
 
@@ -64,6 +68,12 @@ class PaymentOptionsPresenter implements PresenterInterface
      */
     public function present($object = null): array
     {
+        $this->settings = $this->settingsLoader->withContext(
+            (int) $this->context->cart->id_shop,
+            (int) $this->context->cart->id_shop_group,
+            true
+        );
+
         $environmentText = false;
         $environmentBlockHTML = '';
         if ($this->settings->accountSettings->useDemoMode) {

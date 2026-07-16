@@ -55,6 +55,11 @@ class OtherPMSettingsUpdater extends AbstractSettingsUpdater
     protected function save(int $idShop = null, int $idShopGroup = null)
     {
         \Configuration::updateValue(Settings::PS_CONFIG_KEY_OTHER_PM, $this->json, false, $idShopGroup, $idShop);
+        if (\Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL) {
+            foreach (\Shop::getShops(true) as $shop) {
+                \Configuration::updateValue(Settings::PS_CONFIG_KEY_OTHER_PM, $this->json, false, (int) $shop['id_shop_group'], (int) $shop['id_shop']);
+            }
+        }
     }
 
     /**
