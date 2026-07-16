@@ -33,6 +33,9 @@ class PaymentRequestBuilderFactory
     /** @var Settings */
     private $settings;
 
+    /** @var SettingsLoader */
+    private $settingsLoader;
+
     /**
      * @param \HiPayPayments $module
      * @param SettingsLoader $settingsLoader
@@ -40,6 +43,7 @@ class PaymentRequestBuilderFactory
     public function __construct(\HiPayPayments $module, SettingsLoader $settingsLoader)
     {
         $this->module = $module;
+        $this->settingsLoader = $settingsLoader;
         $this->settings = $settingsLoader->withContext(\Context::getContext()->shop->id, \Context::getContext()->shop->id_shop_group, true);
     }
 
@@ -53,6 +57,8 @@ class PaymentRequestBuilderFactory
      */
     public function create(array $data, \Cart $cart, bool $isCardPayment = false)
     {
+        $this->settings = $this->settingsLoader->withContext((int) $cart->id_shop, (int) $cart->id_shop_group, true);
+
         $paymentMethodCode = $data['payment_product'] ?? '';
         if (true === $isCardPayment) {
             return new CardRequestBuilder(

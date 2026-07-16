@@ -101,6 +101,25 @@ class HiPayPayments extends PaymentModule
     public function enable($force_all = false): bool
     {
         if (parent::enable($force_all)) {
+            if (\Shop::isFeatureActive() && !$force_all) {
+                $idShop = (int) \Context::getContext()->shop->id;
+                $idShopGroup = (int) \Context::getContext()->shop->id_shop_group;
+                foreach ([
+                    \HiPay\PrestaShop\Settings\Settings::PS_CONFIG_KEY_ACCOUNT,
+                    \HiPay\PrestaShop\Settings\Settings::PS_CONFIG_KEY_MAIN,
+                    \HiPay\PrestaShop\Settings\Settings::PS_CONFIG_KEY_CARD_PAYMENT,
+                    \HiPay\PrestaShop\Settings\Settings::PS_CONFIG_KEY_OTHER_PM,
+                ] as $key) {
+                    $shopSpecificExists = (bool) \Db::getInstance()->getValue(
+                        'SELECT `id_configuration` FROM `' . _DB_PREFIX_ . 'configuration`
+                         WHERE `name` = "' . pSQL($key) . '" AND `id_shop` = ' . $idShop
+                    );
+                    if (!$shopSpecificExists) {
+                        \Configuration::updateValue($key, '[]', false, $idShopGroup, $idShop);
+                    }
+                }
+            }
+
             return true;
         }
 

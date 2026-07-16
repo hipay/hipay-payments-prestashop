@@ -138,7 +138,10 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
         /** @var \HiPay\PrestaShop\Settings\SettingsLoader $settingsLoader */
         $settingsLoader = $this->module->getService('hp.settings.loader');
         /** @var HiPay\PrestaShop\Settings\Settings $settings */
-        $settings = $settingsLoader->load();
+        $isContextAll = \Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL;
+        $idShop = $isContextAll ? null : (int) $this->context->shop->id;
+        $idShopGroup = $isContextAll ? null : (int) $this->context->shop->id_shop_group;
+        $settings = $settingsLoader->withContext($idShop, $idShopGroup, true);
         $this->handleModuleUpdateDetails($settings);
         if (true === $settings->migrationPageDisplayed && true === (bool) Module::isEnabled('hipay_enterprise')) {
             $this->context->smarty->assign(['displayMigrationContent' => true]);
@@ -342,8 +345,11 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
     {
         /** @var \HiPay\PrestaShop\Settings\SettingsLoader $settingsLoader */
         $settingsLoader = $this->module->getService('hp.settings.loader');
+        $isContextAll = \Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL;
+        $idShop = $isContextAll ? null : (int) $this->context->shop->id;
+        $idShopGroup = $isContextAll ? null : (int) $this->context->shop->id_shop_group;
         /** @var HiPay\PrestaShop\Settings\Settings $settings */
-        $settings = $settingsLoader->load();
+        $settings = $settingsLoader->withContext($idShop, $idShopGroup, true);
         $accountSettings = $settings->accountSettings;
 
         /** @var \HiPay\PrestaShop\Api\PrestaShopSDK $sdk */
@@ -356,7 +362,7 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
         foreach ($credentialsTypes as $credentialsType) {
             try {
                 /** @var \HiPay\Fullservice\Gateway\Model\SecuritySettings $securitySettings */
-                $securitySettings = $sdk->init(null, null, $credentialsType)
+                $securitySettings = $sdk->init($idShop, $idShopGroup, $credentialsType)
                     ->server()
                     ->requestSecuritySettings();
             } catch (Exception $e) {

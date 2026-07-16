@@ -137,6 +137,10 @@ class Settings extends \AG\PSModuleUtils\Settings\AbstractSettings
             $this->accountSettings->motoTestPrivateIdentifiers = new PrivateIdentifiers();
         }
 
+        if ($this->otherPMSettings->paymentMethods) {
+            $this->otherPMSettings->paymentMethods = array_values(array_filter($this->otherPMSettings->paymentMethods));
+        }
+
         if ($this->cardPaymentSettings->paymentMethods) {
             foreach ($this->cardPaymentSettings->paymentMethods as &$paymentMethod) {
                 if (!$paymentMethod->currenciesCountriesManaged) {

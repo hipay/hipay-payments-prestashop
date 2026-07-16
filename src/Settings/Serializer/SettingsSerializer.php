@@ -120,6 +120,8 @@ class SettingsSerializer extends AbstractSettingsSerializer
                         $concreteClass = $this->discriminatorMap[$data['code']];
                         return $this->objectNormalizer->denormalize($data, $concreteClass, $format, $context);
                     }
+
+                    return null;
                 }
 
                 return $this->objectNormalizer->denormalize($data, $type, $format, $context);

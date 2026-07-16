@@ -100,7 +100,7 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
                 : \HiPay\PrestaShop\Api\Credentials::CREDENTIALS_TYPE_MAIN;
 
             $transaction = $sdk
-                ->init(null, null, $credentialsType)
+                ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group, $credentialsType)
                 ->server()
                 ->requestNewOrder($orderRequest);
             if ($transaction->getState() === 'forwarding') {

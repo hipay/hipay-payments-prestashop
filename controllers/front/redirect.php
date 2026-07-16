@@ -131,7 +131,7 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
         $sdk = $this->module->getService('hp.sdk.gateway');
 
         $transaction = $sdk
-            ->init()
+            ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
             ->server()
             ->requestHostedPaymentPage($hostedPaymentRequest);
         $forwardUrl = $transaction->getForwardUrl();
@@ -171,7 +171,7 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
         $sdk = $this->module->getService('hp.sdk.gateway');
 
         $transaction = $sdk
-            ->init()
+            ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
             ->server()
             ->requestHostedPaymentPage($hostedPaymentRequest);
         $forwardUrl = $transaction->getForwardUrl();
