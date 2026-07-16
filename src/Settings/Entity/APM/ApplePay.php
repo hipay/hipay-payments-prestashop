@@ -27,4 +27,10 @@ class ApplePay extends AbstractAdvancedPaymentMethod
 {
     /** @var string */
     public $merchantIdentifier;
+
+    /** @var bool */
+    public $multiBrowserEnabled = true;
+
+    /** @var string */
+    public $multiBrowserDisplayMode = 'popup';
 }
