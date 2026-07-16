@@ -16,7 +16,7 @@ function hipayFormatAmountComplete(input) {
   let value = input.value.replace(/,/g, '.');
 
   if (value && !isNaN(parseFloat(value))) {
-    input.value = parseFloat(value).toFixed(decimals);
+    input.value = Math.max(0, parseFloat(value)).toFixed(decimals);
   }
 }
 

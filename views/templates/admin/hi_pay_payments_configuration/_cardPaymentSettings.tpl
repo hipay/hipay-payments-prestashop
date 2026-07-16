@@ -378,8 +378,10 @@
                                     <div class="col-lg-9">
                                         <div class="input-group">
                                             <span class="input-group-addon">{$data.extra.currencies.defaultIso|escape:'html':'UTF-8'}</span>
-                                            <input type="text"
+                                            <input type="number"
                                                    class="fixed-width-md"
+                                                   min="0"
+                                                   step="any"
                                                    name="hpCardPaymentSettings[paymentMethods][{$k|intval}][minAmount]"
                                                    onchange="hipayFormatAmountComplete(this)"
                                                    data-decimals="{$data.extra.currencies.defaultIsoDecimals|intval}"
@@ -397,8 +399,10 @@
                                     <div class="col-lg-9">
                                         <div class="input-group">
                                             <span class="input-group-addon">{$data.extra.currencies.defaultIso|escape:'html':'UTF-8'}</span>
-                                            <input type="text"
+                                            <input type="number"
                                                    class="fixed-width-md"
+                                                   min="0"
+                                                   step="any"
                                                    name="hpCardPaymentSettings[paymentMethods][{$k|intval}][maxAmount]"
                                                    onchange="hipayFormatAmountComplete(this)"
                                                    data-decimals="{$data.extra.currencies.defaultIsoDecimals|intval}"

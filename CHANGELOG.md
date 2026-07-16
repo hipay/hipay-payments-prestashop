@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.3.0] - 2026-07-16
 ### Added
 
-- **Add** : Added Bancomat Pay
+- Added Bancomat Pay
+- Fixed min/max amount validation
+
 
 
 ## [4.2.4] - 2026-07-09
