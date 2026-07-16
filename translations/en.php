@@ -20,3 +20,4 @@ $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_1305a2b0c6c0eaf556d3ac2
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05ccedf11e72'] = 'Your payment could not be processed. Please try again or contact our customer support.';
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Your order takes more time than expected to be completed. Please contact our customer support if your payment was accepted.';
 $_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'The payment will need to be validated on your Bancomat Pay application.';
+$_MODULE['<{hipaypayments}prestashop>bizummessage_daab393da9e10fc8b96ffffc3f8d18c5'] = 'The payment will need to be validated on your Bizum banking application.';

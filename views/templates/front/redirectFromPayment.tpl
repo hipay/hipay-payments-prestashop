@@ -29,12 +29,16 @@
 {/block}
 
 {block name='page_content_container'}
-    {if $paymentProduct === 'bancomatpay'}
+    {if $paymentProduct === 'bancomatpay' || $paymentProduct === 'bizum'}
         <div id="js-hipay-bancomat-status">
             <div class="js-hipay-bancomat-state js-hipay-bancomat-state--pending">
                 <img id="js-hipay-loader" src="{$smarty.const.BASE_URL|escape:'htmlall':'UTF-8'}/modules/hipaypayments/views/img/icons/loader.svg" alt="" />
                 <h2>{l s='Payment pending' mod='hipaypayments'}</h2>
-                <p>{l s='The payment will need to be validated on your Bancomat Pay application.' mod='hipaypayments'}</p>
+                {if $paymentProduct === 'bizum'}
+                    <p>{l s='The payment will need to be validated on your Bizum application.' mod='hipaypayments'}</p>
+                {else}
+                    <p>{l s='The payment will need to be validated on your Bancomat Pay application.' mod='hipaypayments'}</p>
+                {/if}
                 <p>{l s='This page will update automatically once the payment is confirmed.' mod='hipaypayments'}</p>
             </div>
             <div class="js-hipay-bancomat-state js-hipay-bancomat-state--success" style="display:none">

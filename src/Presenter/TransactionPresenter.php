@@ -32,8 +32,12 @@ if (!defined('_PS_VERSION_')) {
  */
 class TransactionPresenter implements PresenterInterface
 {
+    const STATUS_DENIED = 111;
+    const STATUS_REFUSED = 113;
+    const STATUS_CANCELLED = 115;
     const STATUS_AUTHORIZED = 116;
     const STATUS_AUTHORIZATION_REQUESTED = 142;
+    const STATUS_AUTHORIZATION_REFUSED = 163;
     const STATUS_CAPTURE_REQUEST = 117;
     const STATUS_CAPTURED = 118;
     const STATUS_PARTIALLY_CAPTURED = 119;
@@ -150,7 +154,12 @@ class TransactionPresenter implements PresenterInterface
             case self::STATUS_PARTIALLY_CAPTURED:
                 return $this->settings->partiallyCapturedStatusId;
             case self::STATUS_EXPIRED:
+            case self::STATUS_CANCELLED:
                 return $newOrder ? false : (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
+            case self::STATUS_DENIED:
+            case self::STATUS_REFUSED:
+            case self::STATUS_AUTHORIZATION_REFUSED:
+                return $newOrder ? false : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
             default:
                 return false;
         }

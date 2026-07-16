@@ -24,6 +24,8 @@ const BANCOMAT_CONFIG = {
     MAX_ATTEMPTS: 30,
 };
 
+const PENDING_APP_PAYMENT_PRODUCTS = ['bancomatpay', 'bizum'];
+
 /**
  * Makes a request to check HiPay order status and get redirect URL
  * @param {boolean} isTimeout - Whether this is a timeout request
@@ -97,7 +99,7 @@ function handleRedirectResponse(result) {
 async function handleTimeout() {
   console.warn('HiPay polling timeout reached');
 
-  if (typeof paymentProduct !== 'undefined' && paymentProduct === 'bancomatpay') {
+  if (typeof paymentProduct !== 'undefined' && PENDING_APP_PAYMENT_PRODUCTS.includes(paymentProduct)) {
     showBancomatState('timeout');
     return;
   }
@@ -179,11 +181,12 @@ function showBancomatState(state) {
 }
 
 /**
- * Polls the checkBancomatPayStatus endpoint until the order is confirmed or failed.
+ * Polls the pending-app-payment status endpoint until the order is confirmed or failed.
  */
 async function pollBancomatPayStatus() {
+  const action = paymentProduct === 'bizum' ? 'checkBizumStatus' : 'checkBancomatPayStatus';
   const formData = new FormData();
-  formData.append('action', 'checkBancomatPayStatus');
+  formData.append('action', action);
   formData.append('token', hipayCustomerToken);
   formData.append('idCart', idCart);
   formData.append('cartSecureKey', cartSecureKey);
@@ -229,14 +232,14 @@ function initializeBancomatPayCheck() {
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function () {
-    if (typeof paymentProduct !== 'undefined' && paymentProduct === 'bancomatpay') {
+    if (typeof paymentProduct !== 'undefined' && PENDING_APP_PAYMENT_PRODUCTS.includes(paymentProduct)) {
       initializeBancomatPayCheck();
     } else {
       initializeHiPayCheck();
     }
   });
 } else {
-  if (typeof paymentProduct !== 'undefined' && paymentProduct === 'bancomatpay') {
+  if (typeof paymentProduct !== 'undefined' && PENDING_APP_PAYMENT_PRODUCTS.includes(paymentProduct)) {
     initializeBancomatPayCheck();
   } else {
     initializeHiPayCheck();

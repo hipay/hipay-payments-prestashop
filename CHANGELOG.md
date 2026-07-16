@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Apple Pay Multibrowser
 - Fixed Payment Methods on Multi Store
 - Fixed Apple Pay Credentials issue
-
+- Added Bizum
 
 
 ## [4.2.4] - 2026-07-09

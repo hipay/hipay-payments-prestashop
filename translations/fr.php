@@ -307,3 +307,4 @@ $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_1305a2b0c6c0eaf556d3ac2
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05ccedf11e72'] = 'Votre paiement n\'a pas pu être traité. Veuillez réessayer ou contacter notre service clientèle.';
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Votre commande prend plus de temps que prévu. Veuillez contacter notre service clientèle si votre paiement a été accepté.';
 $_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'Le paiement devra être validé sur votre application Bancomat Pay.';
+$_MODULE['<{hipaypayments}prestashop>bizummessage_daab393da9e10fc8b96ffffc3f8d18c5'] = 'Le paiement devra être validé sur votre application bancaire Bizum.';
