@@ -40,7 +40,7 @@ $_MODULE['<{hipaypayments}prestashop>healthcheckpresenter_0cbc6611f5540bd0809a38
 $_MODULE['<{hipaypayments}prestashop>healthcheckpresenter_756d97bb256b8580d4d71ee0c547804e'] = 'Test Produktion';
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_fe01ce2a7fbac8fafaed7c982a04e229'] = 'Demo';
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_098f6bcd4621d373cade4e832627b4f6'] = 'Test';
-$_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_9ce416f1f749e9121a998b601086edd9'] = 'Sie verwenden die % Umgebung';
+$_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_9ce416f1f749e9121a998b601086edd9'] = 'Sie verwenden die %s Umgebung';
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_112cee51bc7d0712033e013bf5154d97'] = 'Bezahlen Sie mit Kredit- oder Debitkarte';
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_35895cff7df70dab18783453e2bd241f'] = 'Bezahlen Sie mit %s';
 $_MODULE['<{hipaypayments}prestashop>cardpaymentsettingsvalidation_07030ea3700e42f4587c829e8ba9fa21'] = 'Der Höchstbetrag muss größer sein als der Mindestbetrag für die Zahlungsmethode %s';

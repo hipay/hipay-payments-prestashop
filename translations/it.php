@@ -42,7 +42,7 @@ $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_fe01ce2a7fbac8fafae
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_098f6bcd4621d373cade4e832627b4f6'] = 'test';
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_9ce416f1f749e9121a998b601086edd9'] = 'Stai utilizzando l’ambiente %s.';
 $_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_112cee51bc7d0712033e013bf5154d97'] = 'Paga con carta di credito o debito';
-$_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_35895cff7df70dab18783453e2bd241f'] = 'Paga con %';
+$_MODULE['<{hipaypayments}prestashop>paymentoptionspresenter_35895cff7df70dab18783453e2bd241f'] = 'Paga con %s';
 $_MODULE['<{hipaypayments}prestashop>cardpaymentsettingsvalidation_07030ea3700e42f4587c829e8ba9fa21'] = 'L\'importo massimo deve essere maggiore dell\'importo minimo per il metodo di pagamento %s';
 $_MODULE['<{hipaypayments}prestashop>otherpmsettingsvalidation_07030ea3700e42f4587c829e8ba9fa21'] = 'L\'importo massimo deve essere maggiore dell\'importo minimo per il metodo di pagamento %s';
 $_MODULE['<{hipaypayments}prestashop>installer_3f501d96438cf202a1607f1caf6714f5'] = 'Devi abilitare l’estensione cURL per usare questo modulo.';
