@@ -93,6 +93,9 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
             case 'redirectFromPayment':
                 $this->redirectFromPayment();
                 break;
+            case 'paymentError':
+                $this->paymentError();
+                break;
             default:
                 break;
         }
@@ -213,6 +216,15 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
             'hipayOrderId' => Tools::getValue('orderid'),
             'idCart' => $idCart,
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function paymentError(): void
+    {
+        \Tools::redirect($this->context->link->getPageLink('order', null, null, ['step' => 3, 'hipayError' => 1]));
+        exit;
     }
 
     /**

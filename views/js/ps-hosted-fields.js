@@ -90,9 +90,39 @@
         hipayPaymentsInstances['card'] = hipayPayments.create('card', hipayPaymentsConfig['card']);
       }
 
+      function hideApplePayButton() {
+        const applePayDeviceMessage = document.querySelector('.js-hipay-payments-applepay-device-message');
+        if (applePayDeviceMessage) {
+          applePayDeviceMessage.style.display = 'block';
+
+          const tcMessage = applePayDeviceMessage.previousElementSibling;
+          if (tcMessage && tcMessage.classList.contains('js-hipay-payments-tc-message')) {
+            tcMessage.style.display = 'none';
+          }
+        }
+        const applePayForm = document.querySelector('#js-hipay-payments-hosted-fields-form-applepay');
+        if (applePayForm) {
+          applePayForm.remove();
+        }
+      }
+
       // Function to attach Apple Pay event handlers
       function attachApplePayEvents() {
         console.debug('Attach events for ApplePay');
+
+        hipayPaymentsInstances['applepay'].on('ready', () => {
+          console.debug('ApplePay button is ready');
+        });
+
+        hipayPaymentsInstances['applepay'].on('error', (error) => {
+          console.error('ApplePay error:', error);
+          hideApplePayButton();
+        });
+
+        hipayPaymentsInstances['applepay'].on('notEligible', (info) => {
+          console.warn('ApplePay not eligible on this device:', info);
+          hideApplePayButton();
+        });
 
         hipayPaymentsInstances['applepay'].on('paymentAuthorized', (applepayData) => {
           console.debug('ApplePay payment authorized');
@@ -117,22 +147,39 @@
                 window.top.location.href = data.redirectUrl;
               } else {
                 hipayPaymentsInstances['applepay'].completePaymentWithFailure();
-                document.querySelector('.js-hipay-payments-hosted-fields-overlay-paypal').style.display = 'none';
-                document.getElementById('js-hipay-payments-paypal-error-message').innerHTML = data.message;
-                document.getElementById('js-hipay-payments-paypal-error-message').style.display = 'block';
+                if (PSHiPayData.applePaySpecifics.multiBrowserEnabled) {
+                  const errorUrl = PSHiPayData.applePaySpecifics.paymentErrorUrl;
+                  if (errorUrl) {
+                    window.top.location.href = errorUrl;
+                    return;
+                  }
+                }
+                document.querySelector('.js-hipay-payments-hosted-fields-overlay-applepay').style.display = 'none';
+                document.getElementById('js-hipay-payments-applepay-error-message').innerHTML = data.message;
+                document.getElementById('js-hipay-payments-applepay-error-message').style.display = 'block';
               }
             })
             .catch(error => {
               hipayPaymentsInstances['applepay'].completePaymentWithFailure();
               console.error('Fetch request failed:', error);
-              document.querySelector('.js-hipay-payments-hosted-fields-overlay-paypal').style.display = 'none';
-              document.getElementById('js-hipay-payments-paypal-error-message').innerHTML = 'Request failed: ' + error.message;
-              document.getElementById('js-hipay-payments-paypal-error-message').style.display = 'block';
+              if (PSHiPayData.applePaySpecifics.multiBrowserEnabled) {
+                const errorUrl = PSHiPayData.applePaySpecifics.paymentErrorUrl;
+                if (errorUrl) {
+                  window.top.location.href = errorUrl;
+                  return;
+                }
+              }
+              document.querySelector('.js-hipay-payments-hosted-fields-overlay-applepay').style.display = 'none';
+              document.getElementById('js-hipay-payments-applepay-error-message').innerHTML = 'Request failed: ' + error.message;
+              document.getElementById('js-hipay-payments-applepay-error-message').style.display = 'block';
             });
         });
 
         hipayPaymentsInstances['applepay'].on('cancel', () => {
           console.debug('ApplePay payment cancelled');
+          if (PSHiPayData.applePaySpecifics.multiBrowserEnabled) {
+            return;
+          }
           hipayPaymentsInstances['applepay'].completePaymentWithFailure();
           hipayPaymentsInstances['applepay'].destroy();
           window.location.reload();
@@ -279,18 +326,8 @@
           return;
         }
         if ('applepay' === code) {
-          const applePayDeviceMessage = document.querySelector('.js-hipay-payments-applepay-device-message');
-
-          if (!window.ApplePaySession) {
-            if (applePayDeviceMessage) {
-              applePayDeviceMessage.style.display = 'block';
-
-              const tcMessage = applePayDeviceMessage.previousElementSibling;
-              if (tcMessage && tcMessage.classList.contains('js-hipay-payments-tc-message')) {
-                tcMessage.style.display = 'none';
-              }
-            }
-            document.querySelector('#js-hipay-payments-hosted-fields-form-applepay').remove();
+          if (!PSHiPayData.applePaySpecifics.multiBrowserEnabled && !window.ApplePaySession) {
+            hideApplePayButton();
 
             return;
           }
@@ -326,7 +363,120 @@
             lang: prestashop.language.iso_code,
           });
 
-          if (PSHiPayData.applePaySpecifics.merchantIdentifier) {
+          if (PSHiPayData.applePaySpecifics.multiBrowserEnabled) {
+            const applePayOuterContainer = document.getElementById('js-hipay-payments-hosted-fields-form-applepay');
+            const applePayBinaryArea = document.querySelector('.hipay-payments-apm-applepay');
+            let applePayUnhandledRejectionHandler = null;
+
+            function removeApplePayUnhandledRejection() {
+              if (applePayUnhandledRejectionHandler) {
+                window.removeEventListener('unhandledrejection', applePayUnhandledRejectionHandler);
+                applePayUnhandledRejectionHandler = null;
+              }
+            }
+
+            function destroyApplePayButton() {
+              removeApplePayUnhandledRejection();
+              if (hipayPaymentsInstances['applepay']) {
+                try { hipayPaymentsInstances['applepay'].destroy(); } catch (e) {}
+                hipayPaymentsInstances['applepay'] = null;
+              }
+              if (applePayOuterContainer) {
+                applePayOuterContainer.innerHTML = '';
+              }
+            }
+
+            function initApplePayButton() {
+              if (!applePayOuterContainer) { return; }
+              destroyApplePayButton();
+
+              const containerId = 'hipay-applepay-' + Math.random().toString(36).substr(2, 9);
+              const innerDiv = document.createElement('div');
+              innerDiv.id = containerId;
+              applePayOuterContainer.appendChild(innerDiv);
+
+              applePayUnhandledRejectionHandler = (event) => {
+                const msg = (event.reason && (event.reason.message || String(event.reason))) || '';
+                if (msg === 'HIPAY_PAYMENT_PRODUCT_NOT_AVAILABLE' || msg.indexOf('HIPAY_SELECTOR_NOT_FOUND') === 0) {
+                  event.preventDefault();
+                  removeApplePayUnhandledRejection();
+                }
+              };
+              window.addEventListener('unhandledrejection', applePayUnhandledRejectionHandler);
+
+              try {
+                const hipayApplePay = HiPay({
+                  username: PSHiPayData.applePaySpecifics.credentials.username,
+                  password: PSHiPayData.applePaySpecifics.credentials.password,
+                  environment: PSHiPayData.applePaySpecifics.credentials.env,
+                  lang: prestashop.language.iso_code,
+                });
+
+                const createOptions = {
+                  displayName: PSHiPayData.cartDetails.shopName,
+                  request: {
+                    countryCode: PSHiPayData.cartDetails.countryCode,
+                    currencyCode: PSHiPayData.cartDetails.currencyCode,
+                    total: {
+                      label: PSHiPayData.translations.total,
+                      amount: String(PSHiPayData.cartDetails.total),
+                    },
+                    supportedNetworks: ['visa', 'masterCard', 'cartesBancaires', 'maestro'],
+                  },
+                  applePayStyle: { type: 'plain', color: 'black' },
+                  selector: containerId,
+                  multiBrowsers: true,
+                };
+                if (PSHiPayData.applePaySpecifics.multiBrowserDisplayMode) {
+                  createOptions.displayMode = PSHiPayData.applePaySpecifics.multiBrowserDisplayMode;
+                }
+
+                const created = hipayApplePay.create('paymentRequestButton', createOptions);
+                Promise.resolve(created)
+                  .then((instance) => {
+                    if (!instance) { removeApplePayUnhandledRejection(); return; }
+                    hipayPaymentsInstances['applepay'] = instance;
+                    attachApplePayEvents();
+                  })
+                  .catch((err) => {
+                    removeApplePayUnhandledRejection();
+                    console.error('Apple Pay init error:', err);
+                  });
+              } catch (err) {
+                removeApplePayUnhandledRejection();
+                console.error('Apple Pay init exception:', err);
+              }
+            }
+
+            function isApplePayReady() {
+              return applePayBinaryArea &&
+                applePayBinaryArea.offsetParent !== null &&
+                !applePayBinaryArea.classList.contains('disabled');
+            }
+
+            function onPaymentContextChange() {
+              if (isApplePayReady()) {
+                if (!hipayPaymentsInstances['applepay']) {
+                  initApplePayButton();
+                }
+              } else {
+                destroyApplePayButton();
+              }
+            }
+
+            const deferredContextChange = () => setTimeout(onPaymentContextChange, 50);
+            document.querySelectorAll('input[name="payment-option"]').forEach((radio) => {
+              radio.addEventListener('change', deferredContextChange);
+            });
+
+            // T&C checkbox change
+            const termsCheckbox = document.querySelector(prestashop.selectors.checkout.termsCheckboxSelector);
+            if (termsCheckbox) {
+              termsCheckbox.addEventListener('change', deferredContextChange);
+            }
+
+            onPaymentContextChange();
+          } else if (PSHiPayData.applePaySpecifics.merchantIdentifier) {
             hipayPaymentsApplePayInstance.canMakePaymentsWithActiveCard(PSHiPayData.applePaySpecifics.merchantIdentifier).then((canMakePayments) => {
               if (canMakePayments) {
                 hipayPaymentsInstances[code] = hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]);
@@ -334,15 +484,7 @@
                   attachApplePayEvents();
                 }
               } else {
-                if (applePayDeviceMessage) {
-                  applePayDeviceMessage.style.display = 'block';
-
-                  const tcMessage = applePayDeviceMessage.previousElementSibling;
-                  if (tcMessage && tcMessage.classList.contains('js-hipay-payments-tc-message')) {
-                    tcMessage.style.display = 'none';
-                  }
-                }
-                document.querySelector('#js-hipay-payments-hosted-fields-form-applepay').remove();
+                hideApplePayButton();
               }
             });
           } else {
@@ -352,15 +494,7 @@
                 attachApplePayEvents();
               }
             } else {
-              if (applePayDeviceMessage) {
-                applePayDeviceMessage.style.display = 'block';
-
-                const tcMessage = applePayDeviceMessage.previousElementSibling;
-                if (tcMessage && tcMessage.classList.contains('js-hipay-payments-tc-message')) {
-                  tcMessage.style.display = 'none';
-                }
-              }
-              document.querySelector('#js-hipay-payments-hosted-fields-form-applepay').remove();
+              hideApplePayButton();
             }
           }
 

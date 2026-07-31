@@ -35,7 +35,7 @@ class HiPayPayments extends PaymentModule
     {
         $this->name = 'hipaypayments';
         $this->author = 'HiPay';
-        $this->version = '5.0.2';
+        $this->version = '5.1.0';
         $this->tab = 'payments_gateways';
         $this->ps_versions_compliancy = [
             'min' => '9.0',
@@ -274,6 +274,9 @@ class HiPayPayments extends PaymentModule
                                 'env' => $settings->getPublicCredentials(\HiPay\PrestaShop\Api\Credentials::CREDENTIALS_TYPE_APPLE_PAY)->env,
                             ],
                             'merchantIdentifier' => false !== $applePaySettings ? $applePayMerchantIdentifier : '',
+                            'multiBrowserEnabled' => false !== $applePaySettings ? $applePaySettings->multiBrowserEnabled : false,
+                            'multiBrowserDisplayMode' => false !== $applePaySettings ? $applePaySettings->multiBrowserDisplayMode : 'popup',
+                            'paymentErrorUrl' => $this->context->link->getModuleLink((string) $this->name, 'redirect', ['action' => 'paymentError']),
                         ],
                         'apmCodes' => $apmCodes,
                         'paymentControllerUrl' => $this->context->link->getModuleLink((string) $this->name, 'payment', ['token' => \Tools::getToken(), 'action' => 'sendHFPayment']),

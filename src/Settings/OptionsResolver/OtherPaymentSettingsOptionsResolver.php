@@ -72,6 +72,8 @@ class OtherPaymentSettingsOptionsResolver extends AbstractSettingsResolver
                 'position',
                 'expirationLimit',
                 'merchantIdentifier',
+                'multiBrowserEnabled',
+                'multiBrowserDisplayMode',
             ])
             ->setNormalizer(
                 'code',
@@ -173,6 +175,19 @@ class OtherPaymentSettingsOptionsResolver extends AbstractSettingsResolver
                 'merchantIdentifier',
                 function (Options $options, $value) {
                     return trim($value);
+                }
+            )
+            ->setNormalizer(
+                'multiBrowserEnabled',
+                function (Options $options, $value) {
+                    return (bool) $value;
+                }
+            )
+            ->setNormalizer(
+                'multiBrowserDisplayMode',
+                function (Options $options, $value) {
+                    $value = trim($value);
+                    return in_array($value, ['popup', 'modal'], true) ? $value : 'popup';
                 }
             );
     }
