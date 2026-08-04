@@ -1,0 +1,62 @@
+#checkout-payment-step .hipay-payments-hostedpage.disabled iframe {
+  display: none;
+}
+
+.hipay-hp-logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.hipay-hp-logos img {
+  height: 22px;
+  width: auto;
+}
+
+.hipay-hp-more {
+  position: relative;
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #666;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  cursor: default;
+}
+
+.hipay-hp-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  padding: 8px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.hipay-hp-more:hover .hipay-hp-tooltip {
+  display: block;
+}
+
+.hipay-hp-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  font-weight: normal;
+  color: #333;
+}
+
+.hipay-hp-tooltip-row img {
+  height: 18px;
+  width: auto;
+}

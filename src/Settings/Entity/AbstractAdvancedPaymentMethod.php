@@ -27,6 +27,9 @@ abstract class AbstractAdvancedPaymentMethod extends PaymentMethod
     const APM_DISPLAY_HOSTED_FIELDS = 'hosted_fields';
     const APM_DISPLAY_BINARY = 'binary';
 
+    const CHANNEL_HOSTED_FIELDS = 'hosted_fields';
+    const CHANNEL_HOSTED_PAGE = 'hosted_page';
+
     /** @var bool */
     public $minAmountForced;
 
@@ -47,4 +50,7 @@ abstract class AbstractAdvancedPaymentMethod extends PaymentMethod
 
     /** @var int */
     public $position;
+
+    /** @var string */
+    public $channel = self::CHANNEL_HOSTED_FIELDS;
 }

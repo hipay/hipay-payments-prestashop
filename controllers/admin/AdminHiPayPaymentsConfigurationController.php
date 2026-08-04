@@ -13,6 +13,7 @@
  */
 
 use AG\PSModuleUtils\Exception\ExceptionList;
+use HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod;
 use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -375,7 +376,9 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
      */
     public function processSaveMainSettingsForm()
     {
-        $this->activeTab = self::TAB_MAIN_SETTINGS;
+        $this->activeTab = Tools::isSubmit('submitSaveHostedPageDisplayForm')
+            ? self::TAB_OTHER_PM
+            : self::TAB_MAIN_SETTINGS;
         /** @var \HiPay\PrestaShop\Settings\Updater\MainSettingsUpdater $updater */
         $updater = $this->module->getService('hp.settings.main.updater');
         $form = Tools::getValue('hpMainSettings');
@@ -391,9 +394,45 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
 
             return;
         }
+        $this->resetHostedPageChannel();
         //@formatter:off
         $this->confirmations[] = $this->module->l('Main settings saved successfully.', 'AdminHiPayPaymentsConfigurationController');
         //@formatter:on
+    }
+
+    /**
+     * @return void
+     */
+    private function resetHostedPageChannel(): void
+    {
+        $isContextAll = \Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL;
+        $idShop = $isContextAll ? null : (int) $this->context->shop->id;
+        $idShopGroup = $isContextAll ? null : (int) $this->context->shop->id_shop_group;
+        /** @var \HiPay\PrestaShop\Settings\SettingsLoader $settingsLoader */
+        $settingsLoader = $this->module->getService('hp.settings.loader');
+        $settings = $settingsLoader->withContext($idShop, $idShopGroup, true);
+
+        if (true === $settings->mainSettings->hostedPageEnabled) {
+            return;
+        }
+
+        $channelReset = false;
+        foreach ($settings->otherPMSettings->paymentMethods as $paymentMethod) {
+            if (AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_PAGE === $paymentMethod->channel) {
+                $paymentMethod->channel = AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_FIELDS;
+                $channelReset = true;
+            }
+        }
+        if (!$channelReset) {
+            return;
+        }
+        /** @var \HiPay\PrestaShop\Settings\Updater\OtherPMSettingsUpdater $otherPMUpdater */
+        $otherPMUpdater = $this->module->getService('hp.settings.other_pm.updater');
+        try {
+            $otherPMUpdater->updateObject($settings->otherPMSettings);
+        } catch (ExceptionList $e) {
+            $this->errors += $e->getExceptionsMessages();
+        }
     }
 
     /**

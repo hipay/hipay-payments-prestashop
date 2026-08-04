@@ -28,6 +28,7 @@ class HiPayFormManager {
       selectedEnv: null,
       selectedDisplayMode: null,
       oneClickEnabled: false,
+      hostedPageEnabled: false,
       cpmSpecificsEnabled: new Map()
     };
 
@@ -35,7 +36,7 @@ class HiPayFormManager {
     this.selectors = {
       forms: {
         account: '.js-hipay-account-form',
-        mainSettings: '.js-hipay-main-form',
+        mainSettings: '.js-hipay-main-settings-form',
         cardPaymentSettings: '.js-hipay-card-payment-form',
         cards: '.js-hipay-cards-form',
         otherPMSettings: '.js-hipay-other-pm-form'
@@ -47,20 +48,42 @@ class HiPayFormManager {
         displayModeHostedFields: '#js-hipay-mode-hosted-fields-block',
         oneClickEnabled: '.js-hipay-one-click-enabled-block',
         enableDemoMode: '.js-hipay-enable-demo-mode-block',
-        enableOneClick: '.js-hipay-one-click-block'
+        enableOneClick: '.js-hipay-one-click-block',
+        hostedPageOptions: '#js-hipay-hosted-page-options-block',
+        hostedPageDisplayModeRadio: '.js-hp-mode-hosted-page-radio',
+        hostedPageDisabledMessage: '.js-hp-hosted-page-disabled-message',
+        hostedPagePM: '.js-hipay-hosted-page-pm-block',
+        hostedPageDisplay: '.js-hipay-hosted-page-display-block',
+        cardHostedPageType: '.js-hp-card-hostedpage-type-block',
+        cardCancelButton: '.js-hp-card-cancelbutton-block',
+        cardThreeDS: '.js-hp-card-threeds-block',
+        cardHostedPageInheritedMessage: '.js-hp-card-hostedpage-inherited-message'
       },
       inputs: {
         environment: 'input[name="hpAccountSettings[environment]"]',
         demoMode: 'input[name="hpAccountSettings[useDemoMode]"]',
         displayMode: 'input[name="hpCardPaymentSettings[displayMode]"]',
         oneClick: 'input[name="hpCardPaymentSettings[oneClickEnabled]"]',
+        hostedPageEnabled: 'input[name="hpMainSettings[hostedPageEnabled]"]',
+        apmChannel: 'input[name*="[channel]"]',
+        hostedFieldsDisplayMode: '#hp-mode-hosted-fields',
+        hostedPageDisplayMode: '#hp-mode-hosted-page',
         environmentDisableable: '.js-hp-environment-radio-block input',
         environmentReadOnlyable: '#js-hipay-env-test-block input, #js-hipay-env-prod-block input',
+        hostedPageLangInput: '.hipay-lang-input',
+        hostedPageLangBtn: '.js-hipay-lang-btn',
+        cardHostedPageType: 'input[name="hpCardPaymentSettings[hostedPageType]"]',
+        cardCancelButtonDisplayed: 'input[name="hpCardPaymentSettings[cancelButtonDisplayed]"]',
+        cardThreeDSMode: '#hpCardPaymentSettings_threeDSMode',
+        mainHostedPageType: 'input[name="hpMainSettings[hostedPageType]"]',
+        mainCancelButtonDisplayed: 'input[name="hpMainSettings[cancelButtonDisplayed]"]',
+        mainThreeDSMode: '#hpMainSettings_threeDSMode'
       },
       switches: {
         demoMode: '.js-hipay-enable-demo-mode-switch',
         oneClick: '.js-hipay-one-click-switch',
-        cpmSpecifics: '.js-hipay-cpm-specifics-switch'
+        cpmSpecifics: '.js-hipay-cpm-specifics-switch',
+        hostedPage: '.js-hipay-hosted-page-switch'
       },
       orderable: {
         panels: '.js-panel-orderable',
@@ -87,6 +110,8 @@ class HiPayFormManager {
       this.initializeDemoModeHandling();
       this.initializeDisplayModeHandling();
       this.initializeOneClickHandling();
+      this.initializeHostedPageHandling();
+      this.initializeHostedPageDisplayHandling();
       this.initializeCPMHandling();
       this.initializeOrderableHandling();
       this.initializeModalsHandling();
@@ -183,6 +208,58 @@ class HiPayFormManager {
     this.toggleElementVisibility(hostedFieldsBlock, selectedDisplayMode !== 'hosted_page');
 
     this.state.selectedDisplayMode = selectedDisplayMode;
+
+    this.toggleCardHostedPageInheritance(this.state.hostedPageEnabled && selectedDisplayMode === 'hosted_page');
+  }
+
+  /**
+   * @param {boolean} inherited
+   */
+  toggleCardHostedPageInheritance(inherited) {
+    if (!this.forms.cardPaymentSettings || !this.forms.mainSettings) return;
+
+    const cardHostedPageTypeInputs = this.forms.cardPaymentSettings.querySelectorAll(this.selectors.inputs.cardHostedPageType);
+    const cardCancelButtonInputs = this.forms.cardPaymentSettings.querySelectorAll(this.selectors.inputs.cardCancelButtonDisplayed);
+    const cardThreeDSSelect = this.forms.cardPaymentSettings.querySelector(this.selectors.inputs.cardThreeDSMode);
+
+    cardHostedPageTypeInputs.forEach(input => { input.disabled = inherited; });
+    cardCancelButtonInputs.forEach(input => { input.disabled = inherited; });
+    if (cardThreeDSSelect) cardThreeDSSelect.disabled = inherited;
+
+    [
+      this.selectors.blocks.cardHostedPageType,
+      this.selectors.blocks.cardCancelButton,
+      this.selectors.blocks.cardThreeDS
+    ].forEach(selector => {
+      const block = this.forms.cardPaymentSettings.querySelector(selector);
+      if (!block) return;
+      block.style.opacity = inherited ? '0.5' : '';
+    });
+
+    this.forms.cardPaymentSettings.querySelectorAll(this.selectors.blocks.cardHostedPageInheritedMessage).forEach(message => {
+      this.toggleElementVisibility(message, inherited);
+    });
+
+    if (!inherited) return;
+
+    const mainHostedPageType = this.getCheckedRadioValue(this.forms.mainSettings, this.selectors.inputs.mainHostedPageType);
+    if (mainHostedPageType !== null) {
+      cardHostedPageTypeInputs.forEach(input => {
+        input.checked = (input.getAttribute('data-value') || input.value) === mainHostedPageType;
+      });
+    }
+
+    const mainCancelButtonValue = this.getCheckedRadioValue(this.forms.mainSettings, this.selectors.inputs.mainCancelButtonDisplayed);
+    if (mainCancelButtonValue !== null) {
+      cardCancelButtonInputs.forEach(input => {
+        input.checked = input.value === mainCancelButtonValue;
+      });
+    }
+
+    const mainThreeDSSelect = this.forms.mainSettings.querySelector(this.selectors.inputs.mainThreeDSMode);
+    if (cardThreeDSSelect && mainThreeDSSelect) {
+      cardThreeDSSelect.value = mainThreeDSSelect.value;
+    }
   }
 
   /**
@@ -193,6 +270,118 @@ class HiPayFormManager {
     const oneClickBlock = document.querySelector(this.selectors.blocks.oneClickEnabled);
     this.toggleElementVisibility(oneClickBlock, oneClickEnabled);
     this.state.oneClickEnabled = oneClickEnabled;
+  }
+
+  /**
+   * @param {boolean} hostedPageEnabled
+   */
+  toggleHostedPage(hostedPageEnabled) {
+    const optionsBlock = document.querySelector(this.selectors.blocks.hostedPageOptions);
+    this.toggleElementVisibility(optionsBlock, hostedPageEnabled);
+    this.state.hostedPageEnabled = hostedPageEnabled;
+    this.toggleCardPaymentModeAvailability(hostedPageEnabled);
+    this.toggleAPMChannelAvailability(hostedPageEnabled);
+
+    const displayBlock = document.querySelector(this.selectors.blocks.hostedPageDisplay);
+    this.toggleElementVisibility(displayBlock, hostedPageEnabled);
+
+    const selectedDisplayMode = this.forms.cardPaymentSettings
+      ? this.getCheckedRadioValue(this.forms.cardPaymentSettings, this.selectors.inputs.displayMode)
+      : null;
+    this.toggleCardHostedPageInheritance(hostedPageEnabled && selectedDisplayMode === 'hosted_page');
+  }
+
+  /**
+   * @param {boolean} hostedPageEnabled
+   */
+  toggleAPMChannelAvailability(hostedPageEnabled) {
+    if (!this.forms.otherPMSettings) return;
+
+    const hostedPagePMBlock = this.forms.otherPMSettings.querySelector(this.selectors.blocks.hostedPagePM);
+    this.toggleElementVisibility(hostedPagePMBlock, hostedPageEnabled);
+
+    if (hostedPageEnabled) return;
+
+    const channelRadios = this.forms.otherPMSettings.querySelectorAll(this.selectors.inputs.apmChannel);
+    channelRadios.forEach(radio => {
+      if (radio.value === 'hosted_fields') {
+        radio.checked = true;
+      } else if (radio.value === 'hosted_page') {
+        radio.checked = false;
+      }
+    });
+  }
+
+  /**
+   * @param {boolean} hostedPageEnabled
+   */
+  toggleCardPaymentModeAvailability(hostedPageEnabled) {
+    if (!this.forms.cardPaymentSettings) return;
+
+    const hostedPageInput = this.forms.cardPaymentSettings.querySelector(this.selectors.inputs.hostedPageDisplayMode);
+    const hostedPageRadioBlock = this.forms.cardPaymentSettings.querySelector(this.selectors.blocks.hostedPageDisplayModeRadio);
+    const hostedFieldsInput = this.forms.cardPaymentSettings.querySelector(this.selectors.inputs.hostedFieldsDisplayMode);
+    const disabledMessage = this.forms.cardPaymentSettings.querySelector(this.selectors.blocks.hostedPageDisabledMessage);
+
+    if (hostedPageInput) {
+      hostedPageInput.disabled = !hostedPageEnabled;
+      if (!hostedPageEnabled && hostedPageInput.checked && hostedFieldsInput) {
+        hostedPageInput.checked = false;
+        hostedFieldsInput.checked = true;
+        this.toggleDisplayMode(hostedFieldsInput.getAttribute('data-value') || hostedFieldsInput.value);
+      }
+    }
+
+    if (hostedPageRadioBlock) {
+      hostedPageRadioBlock.classList.toggle('disabled', !hostedPageEnabled);
+      hostedPageRadioBlock.style.opacity = hostedPageEnabled ? '' : '0.5';
+    }
+
+    this.toggleElementVisibility(disabledMessage, !hostedPageEnabled);
+  }
+
+  initializeHostedPageHandling() {
+    if (!this.forms.mainSettings) return;
+
+    const hostedPageRadios = this.forms.mainSettings.querySelectorAll(this.selectors.inputs.hostedPageEnabled);
+    if (!hostedPageRadios.length) return;
+
+    const readAndApply = () => {
+      const checked = this.forms.mainSettings.querySelector(this.selectors.inputs.hostedPageEnabled + ':checked');
+      if (checked) {
+        this.toggleHostedPage(parseInt(checked.value) === 1);
+      }
+    };
+
+    readAndApply();
+
+    hostedPageRadios.forEach(radio => {
+      radio.addEventListener('change', readAndApply);
+    });
+
+    const hostedPageSwitch = this.forms.mainSettings.querySelector(this.selectors.switches.hostedPage);
+    if (hostedPageSwitch) {
+      hostedPageSwitch.addEventListener('click', () => setTimeout(readAndApply, 10));
+    }
+  }
+
+  initializeHostedPageDisplayHandling() {
+    const langButtons = document.querySelectorAll(this.selectors.inputs.hostedPageLangBtn);
+    if (!langButtons.length) return;
+
+    langButtons.forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+
+        const idLang = btn.getAttribute('data-lang');
+
+        document.querySelectorAll(this.selectors.inputs.hostedPageLangInput).forEach(input => {
+          input.style.display = input.getAttribute('data-lang') === idLang ? '' : 'none';
+        });
+
+        langButtons.forEach(otherBtn => otherBtn.classList.toggle('active', otherBtn === btn));
+      });
+    });
   }
 
   /**

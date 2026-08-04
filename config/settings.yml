@@ -62,6 +62,7 @@ services:
       - '@hp.settings'
       - '@hp.settings.main.validation'
       - '@hp.module'
+      - '@hp.settings.card_payment.updater'
 
   hp.settings.card_payment.validation:
     class: 'HiPay\PrestaShop\Settings\Validation\CardPaymentSettingsValidation'

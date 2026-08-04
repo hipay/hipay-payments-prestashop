@@ -131,6 +131,18 @@ class AdvancedPaymentSettings
     }
 
     /**
+     * @param \Cart $cart
+     * @return AbstractAdvancedPaymentMethod[]
+     */
+    public function getHostedPageAPMDetails(\Cart $cart): array
+    {
+        return array_values(array_filter($this->getAPMDetails($cart), function ($apm) {
+            return AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_PAGE === $apm->channel
+                && 'applepay' !== $apm->code;
+        }));
+    }
+
+    /**
      * @param string[] $modes
      * @return AbstractAdvancedPaymentMethod[]
      */

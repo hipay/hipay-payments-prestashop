@@ -15,6 +15,7 @@
 namespace HiPay\PrestaShop\Settings\OptionsResolver;
 
 use AG\PSModuleUtils\Settings\OptionsResolver\AbstractSettingsResolver;
+use HiPay\PrestaShop\Settings\Entity\MainSettings;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -46,6 +47,12 @@ class MainSettingsOptionsResolver extends AbstractSettingsResolver
             ->setDefined([
                 'verboseLogsEnabled',
                 'captureMode',
+                'hostedPageEnabled',
+                'hostedPageType',
+                'cancelButtonDisplayed',
+                'threeDSMode',
+                'hostedPageLabel',
+                'hostedPagePosition',
             ])
             ->setNormalizer(
                 'verboseLogsEnabled',
@@ -57,6 +64,54 @@ class MainSettingsOptionsResolver extends AbstractSettingsResolver
                 'captureMode',
                 function (Options $options, $value) {
                     return trim($value);
+                }
+            )
+            ->setNormalizer(
+                'hostedPageEnabled',
+                function (Options $options, $value) {
+                    return (bool) $value;
+                }
+            )
+            ->setNormalizer(
+                'hostedPageType',
+                function (Options $options, $value) {
+                    return trim($value);
+                }
+            )
+            ->setNormalizer(
+                'cancelButtonDisplayed',
+                function (Options $options, $value) {
+                    return (bool) $value;
+                }
+            )
+            ->setNormalizer(
+                'threeDSMode',
+                function (Options $options, $value) {
+                    return trim($value);
+                }
+            )
+            ->setNormalizer(
+                'hostedPagePosition',
+                function (Options $options, $value) {
+                    $value = trim($value);
+
+                    return in_array($value, [MainSettings::POSITION_ABOVE, MainSettings::POSITION_BELOW], true)
+                        ? $value
+                        : MainSettings::POSITION_ABOVE;
+                }
+            )
+            ->setNormalizer(
+                'hostedPageLabel',
+                function (Options $options, $value) {
+                    $labels = [];
+                    foreach ((array) $value as $idLang => $label) {
+                        $label = trim((string) $label);
+                        if ('' !== $label) {
+                            $labels[(int) $idLang] = $label;
+                        }
+                    }
+
+                    return $labels;
                 }
             );
     }

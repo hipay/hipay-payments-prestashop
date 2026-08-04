@@ -87,6 +87,32 @@
             </div>
         </div>
         <!-- /Enabled -->
+        <!-- Channel -->
+        {if $data.mainSettings.hostedPageEnabled && $code != 'applepay'}
+            <div class="form-group">
+                <label class="control-label col-lg-3">
+                    {l s='Channel' mod='hipaypayments'}
+                </label>
+                <div class="col-lg-9">
+                    <span class="switch prestashop-switch fixed-width-lg js-hipay-channel-switch">
+                        <input type="radio" value="hosted_fields" name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][channel]"
+                            id="hpAdvancedPaymentSettings_pm_{$k|intval}_channel_hf"
+                            {if $data.otherPMSettings.paymentMethods[$k|intval]['channel'] != 'hosted_page'}checked="checked" {/if}>
+                        <label
+                            for="hpAdvancedPaymentSettings_pm_{$k|intval}_channel_hf">{l s='Hosted Fields' mod='hipaypayments'}</label>
+                        <input type="radio" value="hosted_page" name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][channel]"
+                            id="hpAdvancedPaymentSettings_pm_{$k|intval}_channel_hp"
+                            {if $data.otherPMSettings.paymentMethods[$k|intval]['channel'] == 'hosted_page'}checked="checked" {/if}>
+                        <label
+                            for="hpAdvancedPaymentSettings_pm_{$k|intval}_channel_hp">{l s='Hosted Page' mod='hipaypayments'}</label>
+                        <a class="slide-button btn"></a>
+                    </span>
+                </div>
+            </div>
+        {else}
+            <input type="hidden" name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][channel]" value="hosted_fields" />
+        {/if}
+        <!-- /Channel -->
         <!-- Specifics -->
         {include file="./`$code`.tpl"}
         <!-- /Specifics -->

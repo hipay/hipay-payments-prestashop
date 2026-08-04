@@ -133,6 +133,12 @@ configuration:
   main:
     verboseLogsEnabled: false
     captureMode: 'auto'
+    hostedPageEnabled: false
+    hostedPageType: 'redirect'
+    cancelButtonDisplayed: true
+    threeDSMode: 'disabled'
+    hostedPageLabel: {}
+    hostedPagePosition: 'above'
   cardPaymentSettings:
     displayMode: 'hosted_fields'
     hostedPageType: 'redirect'

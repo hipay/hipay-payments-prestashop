@@ -15,6 +15,7 @@
 namespace HiPay\PrestaShop\Settings\OptionsResolver;
 
 use AG\PSModuleUtils\Settings\OptionsResolver\AbstractSettingsResolver;
+use HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -68,6 +69,7 @@ class OtherPaymentSettingsOptionsResolver extends AbstractSettingsResolver
                 'currenciesForced',
                 'currenciesCountriesManaged',
                 'displayMode',
+                'channel',
                 'canRefund',
                 'position',
                 'expirationLimit',
@@ -163,6 +165,16 @@ class OtherPaymentSettingsOptionsResolver extends AbstractSettingsResolver
                 'position',
                 function (Options $options, $value) {
                     return (int) $value;
+                }
+            )
+            ->setNormalizer(
+                'channel',
+                function (Options $options, $value) {
+                    $value = trim($value);
+
+                    return in_array($value, [AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_FIELDS, AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_PAGE], true)
+                        ? $value
+                        : AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_FIELDS;
                 }
             )
             ->setNormalizer(
