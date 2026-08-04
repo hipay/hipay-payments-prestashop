@@ -30,9 +30,31 @@ class MainSettings
         'manual' => 'Authorization',
     ];
 
+    const POSITION_ABOVE = 'above';
+    const POSITION_BELOW = 'below';
+    const DEFAULT_HOSTED_PAGE_LABEL = 'Secured Payments';
+
     /** @var string */
     public $captureMode;
 
     /** @var bool */
     public $verboseLogsEnabled;
+
+    /** @var bool */
+    public $hostedPageEnabled;
+
+    /** @var string */
+    public $hostedPageType;
+
+    /** @var bool */
+    public $cancelButtonDisplayed;
+
+    /** @var string */
+    public $threeDSMode;
+
+    /** @var string[] */
+    public $hostedPageLabel = [];
+
+    /** @var string */
+    public $hostedPagePosition = self::POSITION_ABOVE;
 }

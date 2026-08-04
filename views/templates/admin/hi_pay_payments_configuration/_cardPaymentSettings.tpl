@@ -24,34 +24,44 @@
             <div class="row">
                 <div class="col-xs-12">
                     <!-- Display mode -->
-                    <div class="form-group js-hp-display-mode-radio-block">
-                        <label class="control-label col-lg-3">
-                            <span>{l s='Payment page display' mod='hipaypayments'}</span>
-                        </label>
-                        <div class="col-lg-9 js-hp-display-mode-switch">
-                            <div class="radio">
-                                <label>
-                                    <input type="radio"
-                                           data-value="{$data.extra.const.DISPLAY_MODE_HOSTED_FIELDS|escape:'htmlall':'UTF-8'}"
-                                           name="hpCardPaymentSettings[displayMode]"
-                                           id="hp-mode-hosted-fields"
-                                           value="{$data.extra.const.DISPLAY_MODE_HOSTED_FIELDS|escape:'htmlall':'UTF-8'}"
-                                           {if $data.extra.const.DISPLAY_MODE_HOSTED_FIELDS === $data.cardPaymentSettings.displayMode}checked="checked"{/if}
-                                    >
-                                    {l s='Hosted Fields' mod='hipaypayments'}
+                    {assign var="hostedPageGloballyEnabled" value=$data.mainSettings.hostedPageEnabled === true}
+                    <div class="panel">
+                        <div class="panel-heading">{l s='Card payment operating mode' mod='hipaypayments'}</div>
+                        <div class="panel-body">
+                            <div class="form-group js-hp-display-mode-radio-block">
+                                <label class="control-label col-lg-3">
+                                    <span>{l s='Operating mode' mod='hipaypayments'}</span>
                                 </label>
-                            </div>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio"
-                                           data-value="{$data.extra.const.DISPLAY_MODE_HOSTED_PAGE|escape:'htmlall':'UTF-8'}"
-                                           name="hpCardPaymentSettings[displayMode]"
-                                           id="hp-mode-hosted-page"
-                                           value="{$data.extra.const.DISPLAY_MODE_HOSTED_PAGE|escape:'htmlall':'UTF-8'}"
-                                           {if $data.extra.const.DISPLAY_MODE_HOSTED_PAGE === $data.cardPaymentSettings.displayMode}checked="checked"{/if}
-                                    >
-                                    {l s='Hosted Page' mod='hipaypayments'}
-                                </label>
+                                <div class="col-lg-9 js-hp-display-mode-switch">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   data-value="{$data.extra.const.DISPLAY_MODE_HOSTED_FIELDS|escape:'htmlall':'UTF-8'}"
+                                                   name="hpCardPaymentSettings[displayMode]"
+                                                   id="hp-mode-hosted-fields"
+                                                   value="{$data.extra.const.DISPLAY_MODE_HOSTED_FIELDS|escape:'htmlall':'UTF-8'}"
+                                                   {if !$hostedPageGloballyEnabled || $data.extra.const.DISPLAY_MODE_HOSTED_FIELDS === $data.cardPaymentSettings.displayMode || !$data.cardPaymentSettings.displayMode}checked="checked"{/if}
+                                            >
+                                            {l s='Hosted Fields' mod='hipaypayments'}
+                                        </label>
+                                    </div>
+                                    <div class="radio js-hp-mode-hosted-page-radio{if !$hostedPageGloballyEnabled} disabled{/if}"{if !$hostedPageGloballyEnabled} style="opacity:0.5"{/if}>
+                                        <label>
+                                            <input type="radio"
+                                                   data-value="{$data.extra.const.DISPLAY_MODE_HOSTED_PAGE|escape:'htmlall':'UTF-8'}"
+                                                   name="hpCardPaymentSettings[displayMode]"
+                                                   id="hp-mode-hosted-page"
+                                                   value="{$data.extra.const.DISPLAY_MODE_HOSTED_PAGE|escape:'htmlall':'UTF-8'}"
+                                                   {if $hostedPageGloballyEnabled && $data.extra.const.DISPLAY_MODE_HOSTED_PAGE === $data.cardPaymentSettings.displayMode}checked="checked"{/if}
+                                                   {if !$hostedPageGloballyEnabled}disabled="disabled"{/if}
+                                            >
+                                            {l s='Hosted Page' mod='hipaypayments'}
+                                        </label>
+                                    </div>
+                                    <p class="help-block js-hp-hosted-page-disabled-message" {if $hostedPageGloballyEnabled}style="display:none"{/if}>
+                                        {l s='The Hosted Page option is not available. Enable the Hosted Page first in Main Settings > Hosted Page.' mod='hipaypayments'}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -208,9 +218,10 @@
                     </div>
                     <!-- /Specific Hosted Fields -->
                     <!-- Specific Hosted Page -->
+                    {assign var="cardHostedPageInherited" value=$hostedPageGloballyEnabled && $data.extra.const.DISPLAY_MODE_HOSTED_PAGE === $data.cardPaymentSettings.displayMode}
                     <div id="js-{$classPrefix|escape:'html':'UTF-8'}-mode-hosted-page-block">
                         <!-- Hosted Page Type -->
-                        <div class="form-group">
+                        <div class="form-group js-hp-card-hostedpage-type-block"{if $cardHostedPageInherited} style="opacity:0.5"{/if}>
                             <label class="control-label col-lg-3">
                                 <span>{l s='Hosted Page type' mod='hipaypayments'}</span>
                             </label>
@@ -222,7 +233,12 @@
                                                name="hpCardPaymentSettings[hostedPageType]"
                                                id="hp-hosted-page-redirect"
                                                value="{$data.extra.const.HOSTED_PAGE_TYPE_REDIRECT|escape:'htmlall':'UTF-8'}"
-                                               {if $data.extra.const.HOSTED_PAGE_TYPE_REDIRECT === $data.cardPaymentSettings.hostedPageType}checked="checked"{/if}
+                                               {if $cardHostedPageInherited}
+                                                   {if $data.extra.const.HOSTED_PAGE_TYPE_REDIRECT === $data.mainSettings.hostedPageType || !$data.mainSettings.hostedPageType}checked="checked"{/if}
+                                                   disabled="disabled"
+                                               {else}
+                                                   {if $data.extra.const.HOSTED_PAGE_TYPE_REDIRECT === $data.cardPaymentSettings.hostedPageType}checked="checked"{/if}
+                                               {/if}
                                         >
                                         {l s='Redirect' mod='hipaypayments'}
                                     </label>
@@ -234,7 +250,12 @@
                                                name="hpCardPaymentSettings[hostedPageType]"
                                                id="hp-hosted-page-iframe"
                                                value="{$data.extra.const.HOSTED_PAGE_TYPE_IFRAME|escape:'htmlall':'UTF-8'}"
-                                               {if $data.extra.const.HOSTED_PAGE_TYPE_IFRAME === $data.cardPaymentSettings.hostedPageType}checked="checked"{/if}
+                                               {if $cardHostedPageInherited}
+                                                   {if $data.extra.const.HOSTED_PAGE_TYPE_IFRAME === $data.mainSettings.hostedPageType}checked="checked"{/if}
+                                                   disabled="disabled"
+                                               {else}
+                                                   {if $data.extra.const.HOSTED_PAGE_TYPE_IFRAME === $data.cardPaymentSettings.hostedPageType}checked="checked"{/if}
+                                               {/if}
                                         >
                                         {l s='Iframe' mod='hipaypayments'}
                                     </label>
@@ -243,7 +264,7 @@
                         </div>
                         <!-- /Hosted Page Type -->
                         <!-- Display cancel button -->
-                        <div class="form-group">
+                        <div class="form-group js-hp-card-cancelbutton-block"{if $cardHostedPageInherited} style="opacity:0.5"{/if}>
                             <label class="control-label col-lg-3 ">
                                 {l s='Display cancel button' mod='hipaypayments'}
                             </label>
@@ -253,35 +274,57 @@
                                            value="1"
                                            name="hpCardPaymentSettings[cancelButtonDisplayed]"
                                            id="hpCardPaymentSettings_cancelButtonDisplayed_on"
-                                           {if $data.cardPaymentSettings.cancelButtonDisplayed === true}checked="checked"{/if}>
+                                           {if $cardHostedPageInherited}
+                                               {if $data.mainSettings.cancelButtonDisplayed === true}checked="checked"{/if}
+                                               disabled="disabled"
+                                           {else}
+                                               {if $data.cardPaymentSettings.cancelButtonDisplayed === true}checked="checked"{/if}
+                                           {/if}>
                                     <label for="hpCardPaymentSettings_cancelButtonDisplayed_on">{l s='Yes' mod='hipaypayments'}</label>
                                     <input type="radio"
                                            value="0"
                                            name="hpCardPaymentSettings[cancelButtonDisplayed]"
                                            id="hpCardPaymentSettings_cancelButtonDisplayed_off"
-                                           {if $data.cardPaymentSettings.cancelButtonDisplayed != true}checked="checked"{/if}>
+                                           {if $cardHostedPageInherited}
+                                               {if $data.mainSettings.cancelButtonDisplayed != true}checked="checked"{/if}
+                                               disabled="disabled"
+                                           {else}
+                                               {if $data.cardPaymentSettings.cancelButtonDisplayed != true}checked="checked"{/if}
+                                           {/if}>
                                     <label for="hpCardPaymentSettings_cancelButtonDisplayed_off">{l s='No' mod='hipaypayments'}</label>
                                     <a class="slide-button btn"></a>
                                 </span>
                             </div>
                         </div>
                         <!-- /Display cancel button -->
+                        <p class="help-block js-hp-card-hostedpage-inherited-message" {if !$cardHostedPageInherited}style="display:none"{/if}>
+                            {l s='These settings are inherited from Main Settings > Hosted Page.' mod='hipaypayments'}
+                        </p>
                     </div>
                     <!-- /Specific Hosted Page -->
                     <!-- 3DS -->
-                    <div class="form-group">
+                    <div class="form-group js-hp-card-threeds-block"{if $cardHostedPageInherited} style="opacity:0.5"{/if}>
                         <label class="control-label col-lg-3" for="hpCardPaymentSettings_threeDSMode">
                             {l s='3DS mode' mod='hipaypayments'}
                         </label>
                         <div class="col-lg-9">
-                            <select name="hpCardPaymentSettings[threeDSMode]" class="fixed-width-xxl" id="hpCardPaymentSettings_threeDSMode">
+                            <select name="hpCardPaymentSettings[threeDSMode]" class="fixed-width-xxl" id="hpCardPaymentSettings_threeDSMode" {if $cardHostedPageInherited}disabled="disabled"{/if}>
                                 {foreach $data.extra.const.THREE_DS_MODES as $k => $mode}
-                                    <option value="{$k|escape:'html':'UTF-8'}" {if $k === $data.cardPaymentSettings.threeDSMode}selected="selected"{/if}>
-                                        {$mode|escape:'html':'UTF-8'}
-                                    </option>
+                                    {if $cardHostedPageInherited}
+                                        <option value="{$k|escape:'html':'UTF-8'}" {if $k === $data.mainSettings.threeDSMode}selected="selected"{/if}>
+                                            {$mode|escape:'html':'UTF-8'}
+                                        </option>
+                                    {else}
+                                        <option value="{$k|escape:'html':'UTF-8'}" {if $k === $data.cardPaymentSettings.threeDSMode}selected="selected"{/if}>
+                                            {$mode|escape:'html':'UTF-8'}
+                                        </option>
+                                    {/if}
                                 {/foreach}
                             </select>
                         </div>
+                        <p class="help-block js-hp-card-hostedpage-inherited-message" {if !$cardHostedPageInherited}style="display:none"{/if}>
+                            {l s='This setting is inherited from Main Settings > Hosted Page.' mod='hipaypayments'}
+                        </p>
                     </div>
                     <!-- /3DS -->
                 </div>

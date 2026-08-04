@@ -15,8 +15,12 @@
 namespace HiPay\PrestaShop\Settings\Updater;
 
 use AG\PSModuleUtils\Settings\AbstractSettingsUpdater;
+use AG\PSModuleUtils\Settings\OptionsResolver\AbstractSettingsResolver;
+use AG\PSModuleUtils\Settings\Validation\AbstractValidationData;
+use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
 use HiPay\PrestaShop\Settings\Entity\MainSettings;
 use HiPay\PrestaShop\Settings\Settings;
+use Symfony\Component\Serializer\Serializer;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -28,6 +32,48 @@ if (!defined('_PS_VERSION_')) {
  */
 class MainSettingsUpdater extends AbstractSettingsUpdater
 {
+    /** @var CardPaymentSettingsUpdater */
+    private $cardPaymentSettingsUpdater;
+
+    /**
+     * @param Serializer $serializer
+     * @param AbstractSettingsResolver $resolver
+     * @param Settings $settings
+     * @param AbstractValidationData $validationData
+     * @param \Module $module
+     * @param CardPaymentSettingsUpdater $cardPaymentSettingsUpdater
+     */
+    public function __construct(
+        Serializer $serializer,
+        AbstractSettingsResolver $resolver,
+        Settings $settings,
+        AbstractValidationData $validationData,
+        \Module $module,
+        CardPaymentSettingsUpdater $cardPaymentSettingsUpdater
+    ) {
+        parent::__construct($serializer, $resolver, $settings, $validationData, $module);
+        $this->cardPaymentSettingsUpdater = $cardPaymentSettingsUpdater;
+    }
+
+    /**
+     * @param mixed[] $array
+     * @return Settings
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws \AG\PSModuleUtils\Exception\ExceptionList
+     */
+    public function update($array)
+    {
+        $settings = parent::update($array);
+
+        if (true !== $this->settings->mainSettings->hostedPageEnabled
+            && CardPaymentSettings::DISPLAY_MODE_HOSTED_PAGE === $this->settings->cardPaymentSettings->displayMode
+        ) {
+            $this->cardPaymentSettingsUpdater->update(['displayMode' => CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS]);
+        }
+
+        return $settings;
+    }
+
     /**
      * @param mixed[] $array
      * @return void

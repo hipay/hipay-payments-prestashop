@@ -160,6 +160,24 @@ class Settings extends \AG\PSModuleUtils\Settings\AbstractSettings
     }
 
     /**
+     * @param \Cart $cart
+     * @return \HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod[]
+     */
+    public function getStandaloneHostedPageAPM(\Cart $cart): array
+    {
+        if (true !== $this->mainSettings->hostedPageEnabled) {
+            return [];
+        }
+
+        $hostedPageAPM = $this->otherPMSettings->getHostedPageAPMDetails($cart);
+        if (!$hostedPageAPM) {
+            return [];
+        }
+
+        return $hostedPageAPM;
+    }
+
+    /**
      * @param string $type
      * @return PublicCredentials
      */

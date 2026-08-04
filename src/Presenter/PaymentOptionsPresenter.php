@@ -17,6 +17,7 @@ namespace HiPay\PrestaShop\Presenter;
 use HiPay\PrestaShop\Settings\Entity\AbstractAdvancedPaymentMethod;
 use HiPay\PrestaShop\Settings\Entity\AccountSettings;
 use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
+use HiPay\PrestaShop\Settings\Entity\MainSettings;
 use HiPay\PrestaShop\Settings\Settings;
 use HiPay\PrestaShop\Settings\SettingsLoader;
 use libphonenumber\NumberParseException;
@@ -92,42 +93,93 @@ class PaymentOptionsPresenter implements PresenterInterface
         }
         $paymentOptions = [];
         $cardPaymentCodes = $this->settings->cardPaymentSettings->getCardPaymentsCodes($this->context->cart);
-        $paymentDisplayMode = CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS === $this->settings->cardPaymentSettings->displayMode ? CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS : (CardPaymentSettings::HOSTED_PAGE_TYPE_REDIRECT === $this->settings->cardPaymentSettings->hostedPageType ? CardPaymentSettings::HOSTED_PAGE_TYPE_REDIRECT : CardPaymentSettings::HOSTED_PAGE_TYPE_IFRAME);
+        $cardDisplayMode = $this->settings->cardPaymentSettings->displayMode;
+        if (CardPaymentSettings::DISPLAY_MODE_HOSTED_PAGE === $cardDisplayMode && true !== $this->settings->mainSettings->hostedPageEnabled) {
+            $cardDisplayMode = CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS;
+        }
+        $paymentDisplayMode = CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS === $cardDisplayMode ? CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS : (CardPaymentSettings::HOSTED_PAGE_TYPE_REDIRECT === $this->settings->cardPaymentSettings->hostedPageType ? CardPaymentSettings::HOSTED_PAGE_TYPE_REDIRECT : CardPaymentSettings::HOSTED_PAGE_TYPE_IFRAME);
         $availableAPM = $this->settings->otherPMSettings->getAPMDetails($this->context->cart);
-        if ($cardPaymentCodes) {
-            $redirectParams = ['paymentMethodCodes' => implode(',', $cardPaymentCodes)];
+
+        $cardInHostedPage = $cardPaymentCodes && CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS !== $paymentDisplayMode;
+
+        $hostedPageAPMCodes = [];
+        $hostedPageLogos = [];
+        if (true === $this->settings->mainSettings->hostedPageEnabled) {
+            $hostedPageAPM = $this->settings->otherPMSettings->getHostedPageAPMDetails($this->context->cart);
+            $hostedPageAPMCodes = array_map(function ($availableProduct) {
+                return $availableProduct->code;
+            }, $hostedPageAPM);
+            $hostedPageLogos = array_map(function ($availableProduct) {
+                return [
+                    'code' => $availableProduct->code,
+                    'name' => $availableProduct->name,
+                    'logo' => sprintf('%sviews/img/logos/%s.svg', $this->module->getPathUri(), $availableProduct->code),
+                ];
+            }, $hostedPageAPM);
+            $availableAPM = array_filter($availableAPM, function ($availableProduct) {
+                return AbstractAdvancedPaymentMethod::CHANNEL_HOSTED_PAGE !== $availableProduct->channel;
+            });
+
+            if ($cardInHostedPage) {
+                $hostedPageAPMCodes = array_merge($cardPaymentCodes, $hostedPageAPMCodes);
+                array_unshift($hostedPageLogos, [
+                    'code' => 'CB_VISA_MC',
+                    'name' => $this->module->l('Credit or debit card', 'PaymentOptionsPresenter'),
+                    'logo' => sprintf('%sviews/img/logos/CB_VISA_MC.svg', $this->module->getPathUri()),
+                ]);
+            }
+        }
+
+        if ($cardPaymentCodes && !$cardInHostedPage) {
             $paymentOption = (new \PrestaShop\PrestaShop\Core\Payment\PaymentOption())
                 ->setCallToActionText($this->module->l('Pay with credit or debit card', 'PaymentOptionsPresenter'))
                 ->setLogo($this->module->getPathUri().'views/img/logos/CB_VISA_MC.svg')
-                ->setAdditionalInformation($environmentBlockHTML);
+                ->setAdditionalInformation($environmentBlockHTML)
+                ->setModuleName('hipay-payments-hf');
 
-            switch ($paymentDisplayMode) {
-                case CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS:
-                    $this->context->smarty->assign([
-                        'hiPayHFData' => [
-                            'formID' => 'card',
-                            'formAction' => $this->context->link->getModuleLink((string)$this->module->name, 'payment', ['token' => \Tools::getToken(), 'action' => 'sendHFPayment']),
-                        ],
-                    ]);
-                    $paymentOption
-                        ->setModuleName('hipay-payments-hf')
-                        ->setForm($this->context->smarty->fetch('module:hipaypayments/views/templates/front/hostedFields.tpl'));
-                    break;
-                case CardPaymentSettings::HOSTED_PAGE_TYPE_REDIRECT:
-                    $redirectParams['action'] = 'redirectToCardPayment';
-                    $paymentOption
-                        ->setAction($this->context->link->getModuleLink((string) $this->module->name, 'redirect', $redirectParams));
-                    break;
-                case CardPaymentSettings::HOSTED_PAGE_TYPE_IFRAME:
-                    $paymentOption
-                        ->setBinary(true)
-                        ->setModuleName('hipay-payments-iframe');
-                    break;
-                default:
-                    return [];
-            }
+            $this->context->smarty->assign([
+                'hiPayHFData' => [
+                    'formID' => 'card',
+                    'formAction' => $this->context->link->getModuleLink((string)$this->module->name, 'payment', ['token' => \Tools::getToken(), 'action' => 'sendHFPayment']),
+                ],
+            ]);
+            $paymentOption->setForm($this->context->smarty->fetch('module:hipaypayments/views/templates/front/hostedFields.tpl'));
+
             $paymentOptions[] = $paymentOption;
         }
+
+        $hostedPageOption = null;
+        if ($hostedPageAPMCodes) {
+            $idLang = (int) $this->context->language->id;
+            $hostedPageLabel = $this->settings->mainSettings->hostedPageLabel[$idLang]
+                ?? MainSettings::DEFAULT_HOSTED_PAGE_LABEL;
+            $this->context->smarty->assign([
+                'hiPayHostedPageLogosJson' => htmlspecialchars(json_encode($hostedPageLogos), ENT_QUOTES),
+            ]);
+            $hostedPageLogosHTML = $this->context->smarty->fetch('module:hipaypayments/views/templates/front/hostedPageLogos.tpl');
+
+            $hostedPageOption = (new \PrestaShop\PrestaShop\Core\Payment\PaymentOption())
+                ->setCallToActionText($hostedPageLabel)
+                ->setModuleName('hipay-payments-hostedpage')
+                ->setLogo($hostedPageLogos[0]['logo'])
+                ->setAdditionalInformation($environmentBlockHTML.$hostedPageLogosHTML);
+
+            if (CardPaymentSettings::HOSTED_PAGE_TYPE_IFRAME === $this->settings->mainSettings->hostedPageType) {
+                $hostedPageOption->setBinary(true);
+            } else {
+                $hostedPageOption->setAction($this->context->link->getModuleLink((string) $this->module->name, 'redirect', [
+                    'action' => 'redirectToCardPayment',
+                    'paymentMethodCodes' => implode(',', $hostedPageAPMCodes),
+                    'forceHostedPage' => 1,
+                ]));
+            }
+        }
+
+        if ($hostedPageOption && MainSettings::POSITION_ABOVE === $this->settings->mainSettings->hostedPagePosition) {
+            $paymentOptions[] = $hostedPageOption;
+        }
+
+        $apmOptions = [];
         if ($availableAPM) {
             foreach ($availableAPM as $availableProduct) {
                 $extraMessage = '';
@@ -241,8 +293,16 @@ class PaymentOptionsPresenter implements PresenterInterface
 
                         break;
                 }
-                $paymentOptions[] = $paymentOption;
+                $apmOptions[] = $paymentOption;
             }
+        }
+
+        foreach ($apmOptions as $apmOption) {
+            $paymentOptions[] = $apmOption;
+        }
+
+        if ($hostedPageOption && MainSettings::POSITION_BELOW === $this->settings->mainSettings->hostedPagePosition) {
+            $paymentOptions[] = $hostedPageOption;
         }
 
         return $paymentOptions;

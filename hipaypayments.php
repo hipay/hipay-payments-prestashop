@@ -35,7 +35,7 @@ class HiPayPayments extends PaymentModule
     {
         $this->name = 'hipaypayments';
         $this->author = 'HiPay';
-        $this->version = '3.3.1';
+        $this->version = '3.4.0';
         $this->tab = 'payments_gateways';
         $this->ps_versions_compliancy = [
             'min' => '1.7.6',
@@ -215,13 +215,22 @@ class HiPayPayments extends PaymentModule
                     }
                 }
 
-                if (!$cardPaymentCodes && !$apmCodes) {
+                $hostedPageCodes = array_map(function ($apm) {
+                    return $apm->code;
+                }, $settings->getStandaloneHostedPageAPM($this->context->cart));
+
+                if (!$cardPaymentCodes && !$apmCodes && !$hostedPageCodes) {
                     return;
                 }
 
                 $controller->registerStylesheet('css-hipay-payments-iframe', sprintf('modules/%s/views/css/hipayPaymentsBinary.min.css', $this->name));
                 $controller->registerJavascript('js-hipay-payments-hosted-fields', sprintf('modules/%s/views/js/ps-hosted-fields.js', $this->name));
                 $controller->registerStylesheet('css-hipay-payments-hosted-fields', sprintf('modules/%s/views/css/hipayPaymentsHostedFields.min.css', $this->name));
+
+                if ($hostedPageCodes) {
+                    $controller->registerJavascript('js-hipay-payments-hosted-page-logos', sprintf('modules/%s/views/js/hostedPageLogos.js', $this->name));
+                    $controller->registerStylesheet('css-hipay-payments-hosted-page', sprintf('modules/%s/views/css/hipayPaymentsHostedPage.css', $this->name));
+                }
 
                 $tokensDetails = [];
                 if (\HiPay\PrestaShop\Settings\Entity\CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS === $settings->cardPaymentSettings->displayMode && $cardPaymentCodes) {
@@ -392,11 +401,50 @@ class HiPayPayments extends PaymentModule
         }
         $redirectParams['action'] = 'redirectToCardPaymentIframe';
         $redirectParams['iframe'] = true;
+        $redirectParams['forceHostedPage'] = 0;
         $this->context->smarty->assign([
             'hipayPaymentsIframeSrc' => $this->context->link->getModuleLink((string) $this->name, 'redirect', $redirectParams),
         ]);
 
         return (string) $this->context->smarty->fetch('module:hipaypayments/views/templates/front/hookDisplayPaymentByBinaries.tpl');
+    }
+
+    /**
+     * @param \HiPay\PrestaShop\Settings\Settings $settings
+     * @return string
+     * @throws SmartyException
+     */
+    public function getHostedPagePaymentByBinaries(\HiPay\PrestaShop\Settings\Settings $settings): string
+    {
+        if (true !== $settings->mainSettings->hostedPageEnabled
+            || \HiPay\PrestaShop\Settings\Entity\CardPaymentSettings::HOSTED_PAGE_TYPE_IFRAME !== $settings->mainSettings->hostedPageType
+        ) {
+            return '';
+        }
+
+        $hostedPageCodes = array_map(function ($apm) {
+            return $apm->code;
+        }, $settings->getStandaloneHostedPageAPM($this->context->cart));
+
+        $cardPaymentCodes = $settings->cardPaymentSettings->getCardPaymentsCodes($this->context->cart);
+        if ($cardPaymentCodes && \HiPay\PrestaShop\Settings\Entity\CardPaymentSettings::DISPLAY_MODE_HOSTED_PAGE === $settings->cardPaymentSettings->displayMode) {
+            $hostedPageCodes = array_merge($cardPaymentCodes, $hostedPageCodes);
+        }
+
+        if (!$hostedPageCodes) {
+            return '';
+        }
+
+        $this->context->smarty->assign([
+            'hipayHostedPageIframeSrc' => $this->context->link->getModuleLink((string) $this->name, 'redirect', [
+                'action' => 'redirectToCardPaymentIframe',
+                'paymentMethodCodes' => implode(',', $hostedPageCodes),
+                'iframe' => true,
+                'forceHostedPage' => 1,
+            ]),
+        ]);
+
+        return (string) $this->context->smarty->fetch('module:hipaypayments/views/templates/front/hookDisplayPaymentByBinaries_hostedpage.tpl');
     }
 
     /**
@@ -445,6 +493,7 @@ class HiPayPayments extends PaymentModule
         /** @var \HiPay\PrestaShop\Settings\Settings $settings */
         $settings = $this->getService('hp.settings');
         $html = $this->getCardPaymentByBinaries($settings);
+        $html .= $this->getHostedPagePaymentByBinaries($settings);
         $html .= $this->getPayPalPaymentByBinaries($settings);
         $html .= $this->getApplePayPaymentByBinaries($settings);
 

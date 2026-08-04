@@ -127,9 +127,15 @@ abstract class AbstractPaymentRequestBuilder implements PaymentRequestBuilderInt
         }
         $request->notify_url = $context->link->getModuleLink((string) $this->module->name, 'notify');
         $request->http_accept = '*/*';
+        $request->ipaddr = \Tools::getRemoteAddr();
+        $request->http_user_agent = $_SERVER['HTTP_USER_AGENT'] ?? $request->http_user_agent;
         $request->language = str_replace('-', '_', $context->language->locale);
         $request->paymentMethod = new CardTokenPaymentMethod();
-        $request->paymentMethod->authentication_indicator = CardPaymentSettings::THREE_DS_MODES[$this->settings->cardPaymentSettings->threeDSMode];
+        $threeDSMode = $this->isHostedPageChannel()
+            ? $this->settings->mainSettings->threeDSMode
+            : $this->settings->cardPaymentSettings->threeDSMode;
+        $request->paymentMethod->authentication_indicator = CardPaymentSettings::THREE_DS_MODES[$threeDSMode]
+            ?? CardPaymentSettings::THREE_DS_MODES[CardPaymentSettings::THREE_DS_MODE_IF_AVAILABLE];
         if (isset($this->data['moto'])) {
             $request->paymentMethod->eci = 1;
         } else {
@@ -148,12 +154,21 @@ abstract class AbstractPaymentRequestBuilder implements PaymentRequestBuilderInt
         if (null !== $this->paymentMethod) {
             $request->payment_product_list = $this->paymentMethod->code;
         }
+        $cancelButtonDisplayed = $this->isHostedPageChannel()
+            ? $this->settings->mainSettings->cancelButtonDisplayed
+            : $this->settings->cardPaymentSettings->cancelButtonDisplayed;
         if (true === $iframe) {
             $request->template = 'iframe-js';
-            $request->display_cancel_button = false;
-        } else {
-            $request->display_cancel_button = isset($this->data['moto']) || $this->settings->cardPaymentSettings->cancelButtonDisplayed;
         }
+        $request->display_cancel_button = isset($this->data['moto']) || $cancelButtonDisplayed;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isHostedPageChannel(): bool
+    {
+        return isset($this->data['forceHostedPage']) && $this->data['forceHostedPage'];
     }
 
     /**

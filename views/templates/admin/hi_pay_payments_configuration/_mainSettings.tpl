@@ -65,6 +65,117 @@
                 </div>
 
                 <div class="panel">
+                    <div class="panel-heading">{l s='Hosted Page' mod='hipaypayments'}</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <!-- Hosted Page Enabled -->
+                                <div class="form-group">
+                                    <label class="control-label col-lg-3">
+                                        {l s='Enable Hosted Page' mod='hipaypayments'}
+                                    </label>
+                                    <div class="col-lg-9 js-hipay-hosted-page-switch">
+                                        <span class="switch prestashop-switch fixed-width-sm">
+                                            <input type="radio"
+                                                   value="1"
+                                                   name="hpMainSettings[hostedPageEnabled]"
+                                                   id="hpMainSettings_hostedPageEnabled_on"
+                                                   {if $data.mainSettings.hostedPageEnabled === true}checked="checked"{/if}>
+                                            <label for="hpMainSettings_hostedPageEnabled_on">{l s='Yes' mod='hipaypayments'}</label>
+                                            <input type="radio"
+                                                   value="0"
+                                                   name="hpMainSettings[hostedPageEnabled]"
+                                                   id="hpMainSettings_hostedPageEnabled_off"
+                                                   {if $data.mainSettings.hostedPageEnabled != true}checked="checked"{/if}>
+                                            <label for="hpMainSettings_hostedPageEnabled_off">{l s='No' mod='hipaypayments'}</label>
+                                            <a class="slide-button btn"></a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- /Hosted Page Enabled -->
+                                <!-- Hosted Page sub-options -->
+                                <div id="js-hipay-hosted-page-options-block" {if $data.mainSettings.hostedPageEnabled != true}style="display:none"{/if}>
+                                    <!-- Hosted Page Type -->
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-3">
+                                            <span>{l s='Display' mod='hipaypayments'}</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio"
+                                                           data-value="{$data.extra.const.HOSTED_PAGE_TYPE_REDIRECT|escape:'htmlall':'UTF-8'}"
+                                                           name="hpMainSettings[hostedPageType]"
+                                                           id="hpMainSettings_hostedPageType_redirect"
+                                                           value="{$data.extra.const.HOSTED_PAGE_TYPE_REDIRECT|escape:'htmlall':'UTF-8'}"
+                                                           {if $data.extra.const.HOSTED_PAGE_TYPE_REDIRECT === $data.mainSettings.hostedPageType || !$data.mainSettings.hostedPageType}checked="checked"{/if}
+                                                    >
+                                                    {l s='Redirect' mod='hipaypayments'}
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio"
+                                                           data-value="{$data.extra.const.HOSTED_PAGE_TYPE_IFRAME|escape:'htmlall':'UTF-8'}"
+                                                           name="hpMainSettings[hostedPageType]"
+                                                           id="hpMainSettings_hostedPageType_iframe"
+                                                           value="{$data.extra.const.HOSTED_PAGE_TYPE_IFRAME|escape:'htmlall':'UTF-8'}"
+                                                           {if $data.extra.const.HOSTED_PAGE_TYPE_IFRAME === $data.mainSettings.hostedPageType}checked="checked"{/if}
+                                                    >
+                                                    {l s='Iframe' mod='hipaypayments'}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /Hosted Page Type -->
+                                    <!-- Cancel Button -->
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-3">
+                                            {l s='Cancel button' mod='hipaypayments'}
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <span class="switch prestashop-switch fixed-width-sm">
+                                                <input type="radio"
+                                                       value="1"
+                                                       name="hpMainSettings[cancelButtonDisplayed]"
+                                                       id="hpMainSettings_cancelButtonDisplayed_on"
+                                                       {if $data.mainSettings.cancelButtonDisplayed === true}checked="checked"{/if}>
+                                                <label for="hpMainSettings_cancelButtonDisplayed_on">{l s='Yes' mod='hipaypayments'}</label>
+                                                <input type="radio"
+                                                       value="0"
+                                                       name="hpMainSettings[cancelButtonDisplayed]"
+                                                       id="hpMainSettings_cancelButtonDisplayed_off"
+                                                       {if $data.mainSettings.cancelButtonDisplayed != true}checked="checked"{/if}>
+                                                <label for="hpMainSettings_cancelButtonDisplayed_off">{l s='No' mod='hipaypayments'}</label>
+                                                <a class="slide-button btn"></a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- /Cancel Button -->
+                                    <!-- 3DS Mode -->
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-3" for="hpMainSettings_threeDSMode">
+                                            {l s='3DS mode' mod='hipaypayments'}
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <select name="hpMainSettings[threeDSMode]" class="fixed-width-xxl" id="hpMainSettings_threeDSMode">
+                                                {foreach $data.extra.const.THREE_DS_MODES as $k => $mode}
+                                                    <option value="{$k|escape:'html':'UTF-8'}" {if $k === $data.mainSettings.threeDSMode}selected="selected"{/if}>
+                                                        {$mode|escape:'html':'UTF-8'}
+                                                    </option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- /3DS Mode -->
+                                </div>
+                                <!-- /Hosted Page sub-options -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
                     <div class="panel-heading">{l s='Module settings' mod='hipaypayments'}</div>
                     <div class="panel-body">
                         <div class="row">

@@ -111,12 +111,26 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
         $requestBuilderFactory = $this->module->getService('hp.payment_request.builder');
         try {
             /** @var \HiPay\PrestaShop\Builder\CardRequestBuilder $builder */
-            $builder = $requestBuilderFactory->create(['payment_product' => Tools::getValue('paymentMethodCodes')], $this->context->cart, true);
+            $forceHostedPage = filter_var(Tools::getValue('forceHostedPage', true), FILTER_VALIDATE_BOOLEAN);
+            $builder = $requestBuilderFactory->create(['payment_product' => Tools::getValue('paymentMethodCodes'), 'forceHostedPage' => $forceHostedPage], $this->context->cart, true);
+
+            /** @var \HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest $hostedPaymentRequest */
+            $hostedPaymentRequest = $builder->buildRequest($iframe);
+
+            /** @var \HiPay\PrestaShop\Api\PrestaShopSDK $sdk */
+            $sdk = $this->module->getService('hp.sdk.gateway');
+
+            $transaction = $sdk
+                ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
+                ->server()
+                ->requestHostedPaymentPage($hostedPaymentRequest);
+            $forwardUrl = $transaction->getForwardUrl();
         } catch (Exception $e) {
             $this->logger->error(
                 'Unable to redirect customer to hosted payment page',
                 [
                     'message' => $e->getMessage(),
+                    'exception' => get_class($e),
                     'cartId' => $this->context->cart->id,
                     'paymentMethod' => Tools::getValue('paymentMethodCodes'),
                 ]
@@ -124,17 +138,6 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
             \Tools::redirect(\Context::getContext()->link->getPageLink('order', null, null, ['step' => 3, 'hipayError' => 1]));
             exit;
         }
-        /** @var \HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest $hostedPaymentRequest */
-        $hostedPaymentRequest = $builder->buildRequest($iframe);
-
-        /** @var \HiPay\PrestaShop\Api\PrestaShopSDK $sdk */
-        $sdk = $this->module->getService('hp.sdk.gateway');
-
-        $transaction = $sdk
-            ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
-            ->server()
-            ->requestHostedPaymentPage($hostedPaymentRequest);
-        $forwardUrl = $transaction->getForwardUrl();
         Tools::redirect($forwardUrl);
         exit;
     }
@@ -151,11 +154,25 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
         try {
             /** @var \HiPay\PrestaShop\Builder\AbstractPaymentRequestBuilder $builder */
             $builder = $requestBuilderFactory->create(['payment_product' => $paymentMethodCode], $this->context->cart);
+
+            /** @var \HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest $hostedPaymentRequest */
+            $hostedPaymentRequest = $builder->buildRequest();
+            $hostedPaymentRequest->payment_product = Tools::getValue('paymentMethodCode');
+
+            /** @var \HiPay\PrestaShop\Api\PrestaShopSDK $sdk */
+            $sdk = $this->module->getService('hp.sdk.gateway');
+
+            $transaction = $sdk
+                ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
+                ->server()
+                ->requestHostedPaymentPage($hostedPaymentRequest);
+            $forwardUrl = $transaction->getForwardUrl();
         } catch (Exception $e) {
             $this->logger->error(
                 'Unable to redirect customer to hosted payment page',
                 [
                     'message' => $e->getMessage(),
+                    'exception' => get_class($e),
                     'cartId' => $this->context->cart->id,
                     'paymentMethod' => $paymentMethodCode,
                 ]
@@ -163,18 +180,6 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
             \Tools::redirect(\Context::getContext()->link->getPageLink('order', null, null, ['step' => 3, 'hipayError' => 1]));
             exit;
         }
-        /** @var \HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest $hostedPaymentRequest */
-        $hostedPaymentRequest = $builder->buildRequest();
-        $hostedPaymentRequest->payment_product = Tools::getValue('paymentMethodCode');
-
-        /** @var \HiPay\PrestaShop\Api\PrestaShopSDK $sdk */
-        $sdk = $this->module->getService('hp.sdk.gateway');
-
-        $transaction = $sdk
-            ->init((int) $this->context->cart->id_shop, (int) $this->context->cart->id_shop_group)
-            ->server()
-            ->requestHostedPaymentPage($hostedPaymentRequest);
-        $forwardUrl = $transaction->getForwardUrl();
         Tools::redirect($forwardUrl);
         exit;
     }

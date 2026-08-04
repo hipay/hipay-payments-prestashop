@@ -53,6 +53,9 @@ class CardRequestBuilder extends AbstractPaymentRequestBuilder
         $paymentMethodCodes = explode(',', $paymentMethodIdentifier);
         foreach ($paymentMethodCodes as $code) {
             $paymentMethod = $this->settings->cardPaymentSettings->findByCode($code);
+            if (false === $paymentMethod) {
+                $paymentMethod = $this->settings->otherPMSettings->findByCode($code);
+            }
             if (false === $paymentMethod || false === $paymentMethod->isEligibleWithCart($cart)) {
                 throw new \Exception('Payment method not found or not eligible with cart');
             }
@@ -68,8 +71,11 @@ class CardRequestBuilder extends AbstractPaymentRequestBuilder
     {
         $source = $this->data['source'] ?? '';
         if (
-            (CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS === $this->settings->cardPaymentSettings->displayMode && !isset($this->data['moto'])) ||
-            (CardPaymentSettings::DISPLAY_MODE_HOSTED_PAGE === $this->settings->cardPaymentSettings->displayMode && 'APPLE-PAY' === $source)
+            !isset($this->data['forceHostedPage']) &&
+            (
+                (CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS === $this->settings->cardPaymentSettings->displayMode && !isset($this->data['moto'])) ||
+                (CardPaymentSettings::DISPLAY_MODE_HOSTED_PAGE === $this->settings->cardPaymentSettings->displayMode && 'APPLE-PAY' === $source)
+            )
         ) {
             return $this->buildOrderRequest();
         } else {
