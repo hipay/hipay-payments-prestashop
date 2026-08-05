@@ -41,7 +41,7 @@ class ModuleInfoUpdater extends AbstractSettingsUpdater
     /**
      * @return void
      */
-    protected function serialize()
+    protected function serialize(): void
     {
         $this->json = $this->serializer->serialize($this->settings->moduleInfo, 'json');
     }
@@ -51,7 +51,7 @@ class ModuleInfoUpdater extends AbstractSettingsUpdater
      * @param int|null $idShopGroup
      * @return void
      */
-    protected function save(int $idShop = null, int $idShopGroup = null)
+    protected function save(int $idShop = null, int $idShopGroup = null): void
     {
         \Configuration::updateValue(Settings::PS_CONFIG_KEY_MODULE_INFO, $this->json, false, $idShopGroup, $idShop);
     }

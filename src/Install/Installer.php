@@ -82,10 +82,10 @@ class Installer extends AbstractInstaller
     }
 
     /**
-     * @return true
+     * @return void
      * @throws \Exception
      */
-    public function checkTechnicalRequirements(): bool
+    public function checkTechnicalRequirements(): void
     {
         //@formatter:off
         if (!extension_loaded('curl')) {
@@ -95,8 +95,6 @@ class Installer extends AbstractInstaller
             throw new \Exception($this->module->l('PHP version 7.2.5 is required to run the module properly.', 'Installer'));
         }
         //@formatter:on
-
-        return true;
     }
 
     /**
@@ -104,7 +102,7 @@ class Installer extends AbstractInstaller
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function installTabs()
+    public function installTabs(): void
     {
         $this->getLogger()->info('Creating menus');
         $this->tabManager->setLogger($this->getLogger());
@@ -116,7 +114,7 @@ class Installer extends AbstractInstaller
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function installOrderStates()
+    public function installOrderStates(): void
     {
         $this->getLogger()->info('Creating order states');
         $this->orderStateManager->setLogger($this->getLogger());
@@ -128,7 +126,7 @@ class Installer extends AbstractInstaller
      * @throws ExceptionList
      * @throws \Exception
      */
-    public function applyDefaultConfiguration()
+    public function applyDefaultConfiguration(): void
     {
         $this->getLogger()->info('Applying default configuration');
         $this->accountSettingsUpdater->update($this->defaults['configuration']['account']);
