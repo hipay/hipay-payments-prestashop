@@ -1,6 +1,6 @@
 {
   "name": "hipaypayments/prestashop",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "HiPay module for PrestaShop",
   "license": "proprietary",
   "authors": [
@@ -36,7 +36,7 @@
     "anthogirard/ps-module-utils": "~3.0.1",
     "koriym/http-constants": "^1.2",
     "ramsey/uuid": "^4.9",
-    "hipay/hipay-fullservice-sdk-php": "^2.24",
+    "hipay/hipay-fullservice-sdk-php": "^2.24.1",
     "giggsey/libphonenumber-for-php": "^9.0"
   },
   "require-dev": {
