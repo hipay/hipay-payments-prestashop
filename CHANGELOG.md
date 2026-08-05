@@ -108,6 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved refund & capture processes
 
 ## [3.0.0] - 2025-11-27
+
 ### Added
 
 - First major version for PrestaShop 1.7
