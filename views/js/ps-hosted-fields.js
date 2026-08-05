@@ -554,9 +554,18 @@
         }).observe(btn, { attributes: true, attributeFilter: ['disabled'] });
       });
 
+      const hipaySubmitInProgress = {};
+
       Object.keys(hipayPaymentsInstances).forEach(( code) => {
-        $('#js-hipay-payments-form-'+code).one('submit', (event) => {
+        hipaySubmitInProgress[code] = false;
+
+        $('#js-hipay-payments-form-'+code).on('submit', (event) => {
           event.preventDefault();
+
+          if (hipaySubmitInProgress[code]) {
+            return;
+          }
+          hipaySubmitInProgress[code] = true;
 
           hipayPaymentsInstances[code].getPaymentData().then(
             (response) => {
@@ -580,12 +589,14 @@
                   if (data.success) {
                     window.top.location.href = data.redirectUrl;
                   } else {
+                    hipaySubmitInProgress[code] = false;
                     document.querySelector('.js-hipay-payments-hosted-fields-overlay-'+code).style.display = 'none';
                     document.getElementById('js-hipay-payments-'+code+'-error-message').innerHTML = data.message;
                     document.getElementById('js-hipay-payments-'+code+'-error-message').style.display = 'block';
                   }
                 })
                 .catch(error => {
+                  hipaySubmitInProgress[code] = false;
                   console.error('Fetch request failed:', error);
                   document.querySelector('.js-hipay-payments-hosted-fields-overlay-'+code).style.display = 'none';
                   document.getElementById('js-hipay-payments-'+code+'-error-message').innerHTML = 'Request failed: ' + error.message;
@@ -593,6 +604,7 @@
                 });
             },
             (errors) => {
+              hipaySubmitInProgress[code] = false;
               document.getElementById('js-hipay-payments-'+code+'-error-message').innerHTML = errors[0].error;
               document.getElementById('js-hipay-payments-'+code+'-error-message').style.display = 'block';
             }

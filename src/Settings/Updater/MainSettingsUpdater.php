@@ -61,7 +61,7 @@ class MainSettingsUpdater extends AbstractSettingsUpdater
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws \AG\PSModuleUtils\Exception\ExceptionList
      */
-    public function update($array)
+    public function update(array $array): Settings
     {
         $settings = parent::update($array);
 
@@ -87,7 +87,7 @@ class MainSettingsUpdater extends AbstractSettingsUpdater
     /**
      * @return void
      */
-    protected function serialize()
+    protected function serialize(): void
     {
         $this->json = $this->serializer->serialize($this->settings->mainSettings, 'json');
     }
@@ -97,7 +97,7 @@ class MainSettingsUpdater extends AbstractSettingsUpdater
      * @param int|null $idShopGroup
      * @return void
      */
-    protected function save(int $idShop = null, int $idShopGroup = null)
+    protected function save(int $idShop = null, int $idShopGroup = null): void
     {
         \Configuration::updateValue(Settings::PS_CONFIG_KEY_MAIN, $this->json, false, $idShopGroup, $idShop);
         if (\Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL) {

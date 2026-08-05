@@ -35,7 +35,7 @@ class HiPayPayments extends PaymentModule
     {
         $this->name = 'hipaypayments';
         $this->author = 'HiPay';
-        $this->version = '3.4.0';
+        $this->version = '3.4.1';
         $this->tab = 'payments_gateways';
         $this->ps_versions_compliancy = [
             'min' => '1.7.6',

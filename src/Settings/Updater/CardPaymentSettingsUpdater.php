@@ -41,7 +41,7 @@ class CardPaymentSettingsUpdater extends AbstractSettingsUpdater
     /**
      * @return void
      */
-    protected function serialize()
+    protected function serialize(): void
     {
         $this->json = $this->serializer->serialize($this->settings->cardPaymentSettings, 'json');
     }
@@ -51,7 +51,7 @@ class CardPaymentSettingsUpdater extends AbstractSettingsUpdater
      * @param int|null $idShopGroup
      * @return void
      */
-    protected function save(int $idShop = null, int $idShopGroup = null)
+    protected function save(int $idShop = null, int $idShopGroup = null): void
     {
         \Configuration::updateValue(Settings::PS_CONFIG_KEY_CARD_PAYMENT, $this->json, false, $idShopGroup, $idShop);
         if (\Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL) {

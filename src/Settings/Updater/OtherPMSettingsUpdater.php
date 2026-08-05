@@ -42,7 +42,7 @@ class OtherPMSettingsUpdater extends AbstractSettingsUpdater
     /**
      * @return void
      */
-    protected function serialize()
+    protected function serialize(): void
     {
         $this->json = $this->serializer->serialize($this->settings->otherPMSettings, 'json');
     }
@@ -52,7 +52,7 @@ class OtherPMSettingsUpdater extends AbstractSettingsUpdater
      * @param int|null $idShopGroup
      * @return void
      */
-    protected function save(int $idShop = null, int $idShopGroup = null)
+    protected function save(int $idShop = null, int $idShopGroup = null): void
     {
         \Configuration::updateValue(Settings::PS_CONFIG_KEY_OTHER_PM, $this->json, false, $idShopGroup, $idShop);
         if (\Shop::isFeatureActive() && \Shop::getContext() === \Shop::CONTEXT_ALL) {
