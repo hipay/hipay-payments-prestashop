@@ -5,3 +5,20 @@ include:
   - project: 'pi-ecommerce/cms/cms-template-ci'
     ref: '1.4.0'
     file: 'release.yaml'
+
+release-job:
+  script:
+    - |
+      # Extract changelog part according to tag version
+      VERSION="${CI_COMMIT_TAG#v}"
+      CHANGELOG=$(awk -v version="$VERSION" '
+        $0 ~ "^## \\[" version "\\]" { printit=1 }
+        printit && /^## \[/ && $0 !~ "\\[" version "\\]" { exit }
+        printit
+      ' CHANGELOG.md)
+
+      {
+        echo "# CHANGE LOG"
+        echo "$CHANGELOG"
+      } > "$TEMP_CHANGELOG_FILE"
+    - cat "$TEMP_CHANGELOG_FILE"
