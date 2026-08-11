@@ -1,16 +1,18 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [4.4.1] - 2026-08-10
+
 ### Fixed
 
 - Fixed a fatal error on module install
 
-
 ## [4.4.0] - 2026-07-27
+
 ### Added
 
 - Added Hosted Page/Hosted Fields for other APMs
@@ -20,12 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed null data error on Hosted Fields
 
 ## [4.3.1] - 2026-07-21
+
 ### Fixed
 
 - Fixed a translation issue
 
-
 ## [4.3.0] - 2026-07-16
+
 ### Added
 
 - Added Bancomat Pay
@@ -35,19 +38,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Apple Pay Credentials issue
 - Added Bizum
 
-
 ## [4.2.4] - 2026-07-09
+
 ### Fixed
 
 - Fixed Release package missing vendor directory
 
-
 ## [4.2.3] - 2026-06-12
+
 ### Changed
 
 - Improved backorder management
 
 ## [4.2.2] - 2026-03-23
+
 ### Added
 
 - Added Cartes Bancaires as ApplePay supported networks
@@ -69,6 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed order request for ApplePay + HPP
 
 ## [4.2.1] - 2026-03-16
+
 ### Added
 
 - Added control on Oney phone numbers
@@ -85,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed warning in logs file content
 
 ## [4.2.0] - 2026-01-31
+
 ### Added
 
 - Added migration interface to migrate data from HiPay Enterprise
@@ -93,6 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added MO/TO transactions
 
 ## [4.1.0] - 2026-01-05
+
 ### Added
 
 - Added Advanced Payment Methods (APM)
@@ -103,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved refund & capture processes
 
 ## [4.0.0] - 2025-11-27
+
 ### Added
 
 - First major version
