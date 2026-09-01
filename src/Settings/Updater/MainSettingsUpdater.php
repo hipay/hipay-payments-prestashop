@@ -14,6 +14,7 @@
 
 namespace HiPay\PrestaShop\Settings\Updater;
 
+use AG\PSModuleUtils\Settings\AbstractSettings;
 use AG\PSModuleUtils\Settings\AbstractSettingsUpdater;
 use AG\PSModuleUtils\Settings\OptionsResolver\AbstractSettingsResolver;
 use AG\PSModuleUtils\Settings\Validation\AbstractValidationData;
@@ -61,7 +62,7 @@ class MainSettingsUpdater extends AbstractSettingsUpdater
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws \AG\PSModuleUtils\Exception\ExceptionList
      */
-    public function update(array $array): Settings
+    public function update(array $array): AbstractSettings
     {
         $settings = parent::update($array);
 

@@ -14,6 +14,7 @@
 
 namespace HiPay\PrestaShop\Settings;
 
+use AG\PSModuleUtils\Settings\AbstractSettings;
 use AG\PSModuleUtils\Settings\AbstractSettingsLoader;
 use HiPay\PrestaShop\Settings\Entity\AccountSettings;
 use HiPay\PrestaShop\Settings\Entity\AdvancedPaymentSettings;
@@ -34,7 +35,7 @@ class SettingsLoader extends AbstractSettingsLoader
     /**
      * @return Settings
      */
-    protected function deserialize(): Settings
+    protected function deserialize(): AbstractSettings
     {
         $settings = new Settings();
         $jsonAccountSettings = \Configuration::get(Settings::PS_CONFIG_KEY_ACCOUNT, null, $this->idShopGroup, $this->idShop) ? : '[]';
