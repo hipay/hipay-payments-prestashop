@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed 500 error on module configuration page
 - Keep GitHub update check throttle when the API request fails
 - Apple Pay transactions not showing up on order detail page
+- Fixed a fatal error caused by return types in `SettingsLoader::deserialize()` and `MainSettingsUpdater::update()`
 
 ## [4.4.1] - 2026-08-10
 
