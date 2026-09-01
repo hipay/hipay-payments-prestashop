@@ -194,10 +194,37 @@ class HiPayTransactionManager {
             hipayFormatAmountComplete(input);
           }
         });
+      } else if (modalContent) {
+        this.displayModalError(modalContent, result.errorMessage);
       }
     } catch (error) {
       console.error('Error loading modal content:', error);
+      if (modalContent) {
+        this.displayModalError(modalContent);
+      }
     }
+  }
+
+  /**
+   * Display an error message inside the operations modal
+   * @param {HTMLElement} modalContent
+   * @param {string} [message]
+   */
+  displayModalError(modalContent, message) {
+    const errorText = message || this.config.genericErrorMessage;
+    modalContent.innerHTML = `
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <p></p>
+        </div>
+      </div>
+    `;
+    modalContent.querySelector('.alert-danger p').textContent = errorText;
   }
 
   /**

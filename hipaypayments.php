@@ -35,7 +35,7 @@ class HiPayPayments extends PaymentModule
     {
         $this->name = 'hipaypayments';
         $this->author = 'HiPay';
-        $this->version = '4.4.1';
+        $this->version = '4.4.2';
         $this->tab = 'payments_gateways';
         $this->ps_versions_compliancy = [
             'min' => '8.0',
@@ -333,6 +333,7 @@ class HiPayPayments extends PaymentModule
                 'hipayTransactionReference' => $hiPayOrder->hipay_transaction_reference,
                 'hipayAjaxController' => $this->context->link->getAdminLink('AdminHiPayPaymentsAjax'),
                 'hipayAjaxTransactionController' => $this->context->link->getAdminLink('AdminHiPayPaymentsAjaxTransactions'),
+                'genericErrorMessage' => $this->l('An error occurred. Please try again later.'),
             ],
         ]);
     }
