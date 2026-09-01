@@ -190,12 +190,10 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
             }
         }
 
-        $client = new Github\Client();
-        /** @var Github\Api\Repo $repo */
-        $repo = $client->api('repo');
-        $releases = $repo->releases()->all('hipay', 'hipay-payments-prestashop');
+        $releases = $this->fetchGithubReleases();
         $settings->moduleInfo->dateLatestCheck = date('Y-m-d H:i:s');
-        if ($releases) {
+
+        if (null !== $releases) {
             foreach ($releases as $release) {
                 $tag = $release['tag_name'];
                 $branch = $release['target_commitish'];
@@ -205,7 +203,7 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
 
                 $settings->moduleInfo->latestVersionAvailable = $tag;
                 $settings->moduleInfo->releaseUrl = $release['html_url'];
-                $settings->moduleInfo->assetUrl = isset($release['assets']) && is_array($release['assets']) ? $release['assets'][0]['browser_download_url'] : '';
+                $settings->moduleInfo->assetUrl = isset($release['assets'][0]['browser_download_url']) ? $release['assets'][0]['browser_download_url'] : '';
 
                 break;
             }
@@ -216,6 +214,52 @@ class AdminHiPayPaymentsConfigurationController extends ModuleAdminController
             $updater->updateObject($settings->moduleInfo);
         } catch (ExceptionList $e) {
             return;
+        }
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>|null
+     */
+    private function fetchGithubReleases()
+    {
+        $url = 'https://api.github.com/repos/hipay/hipay-payments-prestashop/releases?per_page=30';
+
+        try {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_CONNECTTIMEOUT => 5,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_HTTPHEADER => [
+                    'Accept: application/vnd.github+json',
+                    'User-Agent: hipaypayments-prestashop',
+                ],
+            ]);
+            $body = curl_exec($ch);
+            $errno = curl_errno($ch);
+            $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($errno || $status < 200 || $status >= 300 || !is_string($body)) {
+                throw new \RuntimeException(sprintf('GitHub API request failed (curl #%d, HTTP %d)', $errno, $status));
+            }
+
+            $releases = json_decode($body, true);
+            if (!is_array($releases)) {
+                throw new \RuntimeException('GitHub API returned an unexpected payload');
+            }
+
+            return $releases;
+        } catch (\Throwable $e) {
+            \PrestaShopLogger::addLog(
+                'HiPay - unable to fetch module update details: ' . $e->getMessage(),
+                2,
+                null,
+                'HiPayPayments'
+            );
+
+            return null;
         }
     }
 

@@ -16,9 +16,6 @@
     },
     "audit": {
       "block-insecure": false
-    },
-    "allow-plugins": {
-      "php-http/discovery": true
     }
   },
   "autoload": {
@@ -49,9 +46,6 @@
     "koriym/http-constants": "^1.1",
     "ramsey/uuid": "^3.9",
     "hipay/hipay-fullservice-sdk-php": "^2.24.1",
-    "knplabs/github-api": "^3.16",
-    "symfony/http-client": "^5.4",
-    "nyholm/psr7": "^1.8",
     "giggsey/libphonenumber-for-php": "^8.13"
   },
   "require-dev": {
