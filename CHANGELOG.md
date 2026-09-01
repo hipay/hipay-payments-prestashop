@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Refund modal blocked on loading
+- Apple Pay transactions not showing up on order detail page
 
 ## [3.4.1] - 2026-08-10
 

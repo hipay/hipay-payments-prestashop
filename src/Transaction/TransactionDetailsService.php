@@ -14,6 +14,7 @@
 
 namespace HiPay\PrestaShop\Transaction;
 
+use HiPay\PrestaShop\Api\Credentials;
 use HiPay\PrestaShop\Api\PrestaShopSDK;
 use HiPay\PrestaShop\Presenter\AdminTransactionPresenter;
 
@@ -64,10 +65,27 @@ class TransactionDetailsService
                 throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
             }
             $order = new \Order((int) $hipayPaymentsOrder->id_order);
-            $transaction = $this->sdk
-                ->init($order->id_shop, $order->id_shop_group)
-                ->server()
-                ->requestTransactionInformation($hipayPaymentsOrder->hipay_transaction_reference);
+
+            $transaction = null;
+            $credentialsTypes = [
+                Credentials::CREDENTIALS_TYPE_MAIN,
+                Credentials::CREDENTIALS_TYPE_APPLE_PAY,
+                Credentials::CREDENTIALS_TYPE_MOTO,
+            ];
+            foreach ($credentialsTypes as $credentialsType) {
+                try {
+                    $transaction = $this->sdk
+                        ->init($order->id_shop, $order->id_shop_group, $credentialsType)
+                        ->server()
+                        ->requestTransactionInformation($hipayPaymentsOrder->hipay_transaction_reference);
+                } catch (\Exception $e) {
+                    $transaction = null;
+                }
+
+                if (null !== $transaction) {
+                    break;
+                }
+            }
 
             if (null === $transaction) {
                 throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
