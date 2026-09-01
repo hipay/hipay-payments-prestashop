@@ -91,8 +91,7 @@ class AdminOperationPresenter implements PresenterInterface
                 'reductionDisplay' => $orderDetail['reduction_percent'] ? sprintf('(-%s%%)', $orderDetail['reduction_percent']) : ($orderDetail['reduction_amount'] ? sprintf('(-%s)', $reductionAmount->formatPrice()) : false),
             ];
         }
-        $cart = new \Cart((int) $order->id_cart);
-        $orderTotal = AmountOfMoney::fromStandardUnit($cart->getOrderTotal(), $orderCurrencyCode);
+        $orderTotal = AmountOfMoney::fromStandardUnit($order->total_paid_tax_incl, $orderCurrencyCode);
         $shippingTotal = AmountOfMoney::fromStandardUnit($order->total_shipping, $orderCurrencyCode);
         $data['orderTotal'] = $orderTotal->getAmount();
         $data['orderTotalDisplay'] = $orderTotal->formatPrice();
