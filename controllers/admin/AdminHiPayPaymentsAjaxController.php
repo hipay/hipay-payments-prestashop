@@ -66,25 +66,36 @@ class AdminHiPayPaymentsAjaxController extends ModuleAdminController
     public function displayAjaxGetOperationsModalContent()
     {
         $data = Tools::getValue('data');
-        switch ($data['modalType']) {
-            case 'full-capture':
-            case 'partial-capture':
-                /** @var \HiPay\PrestaShop\Presenter\AdminOperationPresenter $adminOperationPresenter */
-                $adminOperationPresenter = $this->module->getService('hp.admin_operation.presenter');
-                $this->context->smarty->assign([
-                    'data' => $adminOperationPresenter->present(new Order((int) $data['idOrder']), $data),
-                ]);
-                $html = $this->module->fetch(sprintf('module:hipaypayments/views/templates/admin/%s/_partials/modalOperationsCaptureContent.tpl', $this->module->theme));
-                break;
-            case 'refund':
-            default:
-                /** @var \HiPay\PrestaShop\Presenter\AdminOperationPresenter $adminOperationPresenter */
-                $adminOperationPresenter = $this->module->getService('hp.admin_operation.presenter');
-                $this->context->smarty->assign([
-                    'data' => $adminOperationPresenter->present(new Order((int) $data['idOrder']), $data),
-                ]);
-                $html = $this->module->fetch(sprintf('module:hipaypayments/views/templates/admin/%s/_partials/modalOperationsRefundContent.tpl', $this->module->theme));
-                break;
+        try {
+            switch ($data['modalType']) {
+                case 'full-capture':
+                case 'partial-capture':
+                    /** @var \HiPay\PrestaShop\Presenter\AdminOperationPresenter $adminOperationPresenter */
+                    $adminOperationPresenter = $this->module->getService('hp.admin_operation.presenter');
+                    $this->context->smarty->assign([
+                        'data' => $adminOperationPresenter->present(new Order((int) $data['idOrder']), $data),
+                    ]);
+                    $html = $this->module->fetch(sprintf('module:hipaypayments/views/templates/admin/%s/_partials/modalOperationsCaptureContent.tpl', $this->module->theme));
+                    break;
+                case 'refund':
+                default:
+                    /** @var \HiPay\PrestaShop\Presenter\AdminOperationPresenter $adminOperationPresenter */
+                    $adminOperationPresenter = $this->module->getService('hp.admin_operation.presenter');
+                    $this->context->smarty->assign([
+                        'data' => $adminOperationPresenter->present(new Order((int) $data['idOrder']), $data),
+                    ]);
+                    $html = $this->module->fetch(sprintf('module:hipaypayments/views/templates/admin/%s/_partials/modalOperationsRefundContent.tpl', $this->module->theme));
+                    break;
+            }
+        } catch (\Throwable $e) {
+            /** @var \HiPay\PrestaShop\Logger\LoggerFactory $loggerFactory */
+            $loggerFactory = $this->module->getService('hp.logger.factory');
+            $loggerFactory->withChannel('AdminOperationModal')->error('Error while building operations modal content', ['errors' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+
+            die(json_encode([
+                'success' => false,
+                'errorMessage' => $this->module->l('An error occurred while loading the operation form. Please consult the logs.', 'AdminHiPayPaymentsAjaxController'),
+            ]));
         }
 
         die(json_encode([
