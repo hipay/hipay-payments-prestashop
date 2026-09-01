@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refund modal blocked on loading
 - Fixed 500 error on module configuration page
 - Keep GitHub update check throttle when the API request fails
+- Apple Pay transactions not showing up on order detail page
 
 ## [4.4.1] - 2026-08-10
 

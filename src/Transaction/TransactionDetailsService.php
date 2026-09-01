@@ -65,23 +65,27 @@ class TransactionDetailsService
                 throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
             }
             $order = new \Order((int) $hipayPaymentsOrder->id_order);
-            foreach ([Credentials::CREDENTIALS_TYPE_MAIN, Credentials::CREDENTIALS_TYPE_APPLE_PAY] as $credentialsType) {
+
+            $transaction = null;
+            $credentialsTypes = [
+                Credentials::CREDENTIALS_TYPE_MAIN,
+                Credentials::CREDENTIALS_TYPE_APPLE_PAY,
+                Credentials::CREDENTIALS_TYPE_MOTO,
+            ];
+            foreach ($credentialsTypes as $credentialsType) {
                 try {
                     $transaction = $this->sdk
                         ->init($order->id_shop, $order->id_shop_group, $credentialsType)
                         ->server()
                         ->requestTransactionInformation($hipayPaymentsOrder->hipay_transaction_reference);
                 } catch (\Exception $e) {
-                    continue;
+                    $transaction = null;
                 }
+
                 if (null !== $transaction) {
                     break;
                 }
             }
-            $transaction = $this->sdk
-                ->init($order->id_shop, $order->id_shop_group)
-                ->server()
-                ->requestTransactionInformation($hipayPaymentsOrder->hipay_transaction_reference);
 
             if (null === $transaction) {
                 throw new \Exception($this->module->l('Cannot retrieve transaction details', 'TransactionDetailsService'));
