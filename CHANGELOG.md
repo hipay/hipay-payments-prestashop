@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep GitHub update check throttle when the API request fails
 - Apple Pay transactions not showing up on order detail page
 - Fixed a fatal error caused by return types in `SettingsLoader::deserialize()` and `MainSettingsUpdater::update()`
+- make CB default network on Apple Pay
 
 ## [4.4.1] - 2026-08-10
 
