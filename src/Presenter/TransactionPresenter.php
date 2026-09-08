@@ -99,16 +99,17 @@ class TransactionPresenter implements PresenterInterface
         $this->logger->debug(sprintf('Transaction %s - Tools::getOrderByCartId', $object->getTransactionReference()), ['data' => ['cartId' => $cart->id, 'orderId' => $order->id, 'module' => $order->module]]);
         $this->logger->debug(sprintf('Transaction %s - Cart::orderExists', $object->getTransactionReference()), ['result' => $cart->orderExists()]);
         $dbQuery = (new \DbQuery())
-            ->select('id_order')
+            ->select('id_order, hipay_transaction_reference')
             ->from('hipaypayments_order')
             ->where('id_cart = '.(int) $cart->id);
-        $idOrder = \Db::getInstance()->getValue($dbQuery, false);
-        $this->logger->debug(sprintf('Transaction %s - Raw request HiPayOrder', $object->getTransactionReference()), ['data' => ['orderId' => $idOrder]]);
+        $hiPayOrderRow = \Db::getInstance()->getRow($dbQuery, false);
+        $creatingTransactionReference = $hiPayOrderRow ? $hiPayOrderRow['hipay_transaction_reference'] : null;
+        $this->logger->debug(sprintf('Transaction %s - Raw request HiPayOrder', $object->getTransactionReference()), ['data' => ['orderId' => $hiPayOrderRow ? $hiPayOrderRow['id_order'] : null, 'creatingTransactionReference' => $creatingTransactionReference]]);
 
         if (\Validate::isLoadedObject($order)) {
             $this->logger->debug(sprintf('Transaction %s - Present existing order', $object->getTransactionReference()));
 
-            return $this->presentExistingOrder($order, $object);
+            return $this->presentExistingOrder($order, $object, $creatingTransactionReference);
         } else {
             $this->logger->debug(sprintf('Transaction %s - Present new order', $object->getTransactionReference()));
 
@@ -218,11 +219,22 @@ class TransactionPresenter implements PresenterInterface
     /**
      * @param \Order      $order
      * @param Transaction $transaction
+     * @param string|null $creatingTransactionReference
      * @return TransactionPresented
      */
-    public function presentExistingOrder(\Order $order, Transaction $transaction): TransactionPresented
+    public function presentExistingOrder(\Order $order, Transaction $transaction, string $creatingTransactionReference = null): TransactionPresented
     {
         if ($order->module !== $this->module->name) {
+            return $this->dataPresented;
+        }
+        if (null !== $creatingTransactionReference && $creatingTransactionReference !== $transaction->getTransactionReference()) {
+            $this->logger->debug(sprintf(
+                'Transaction %s - Notification ignored: order %d was created by transaction %s',
+                $transaction->getTransactionReference(),
+                $order->id,
+                $creatingTransactionReference
+            ));
+
             return $this->dataPresented;
         }
         $idOrderState = $this->getPSStatusIdFromHiPayStatusId($transaction);
