@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Apple Pay transactions not showing up on order detail page
 - Fixed a fatal error caused by return types in `SettingsLoader::deserialize()` and `MainSettingsUpdater::update()`
 - make CB default network on Apple Pay
+- Fixed order status being downgraded by a notification
 
 ## [4.4.1] - 2026-08-10
 
