@@ -9,18 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Apple Pay transactions not showing up on order detail page
-
-## [5.1.1] - 2026-08-27
-
-### Fixed
-
 - Refund modal blocked on loading
 - make CB default network on Apple Pay
-
-## [5.1.1] - 2026-08-13
-### Fixed
-
 - Fixed order status being downgraded by a notification
+- Apple Pay initialization issue
 
 
 ## [5.1.0] - 2026-07-24
