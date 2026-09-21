@@ -428,7 +428,8 @@
             function isApplePayReady() {
               return applePayBinaryArea &&
                 applePayBinaryArea.offsetParent !== null &&
-                !applePayBinaryArea.classList.contains('disabled');
+                !applePayBinaryArea.classList.contains('disabled') &&
+                (!termsCheckbox || termsCheckbox.checked);
             }
 
             function onPaymentContextChange() {
@@ -447,7 +448,9 @@
             });
 
             // T&C checkbox change
-            const termsCheckbox = document.querySelector(prestashop.selectors.checkout.termsCheckboxSelector);
+            const termsCheckboxSelector = (prestashop.selectors && prestashop.selectors.checkout && prestashop.selectors.checkout.termsCheckboxSelector)
+              || 'input[name="conditions_to_approve[terms-and-conditions]"]';
+            const termsCheckbox = document.querySelector(termsCheckboxSelector);
             if (termsCheckbox) {
               termsCheckbox.addEventListener('change', deferredContextChange);
             }
@@ -456,10 +459,14 @@
           } else if (PSHiPayData.applePaySpecifics.merchantIdentifier) {
             hipayPaymentsApplePayInstance.canMakePaymentsWithActiveCard(PSHiPayData.applePaySpecifics.merchantIdentifier).then((canMakePayments) => {
               if (canMakePayments) {
-                hipayPaymentsInstances[code] = hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]);
-                if (hipayPaymentsInstances['applepay'] !== undefined && null !== hipayPaymentsInstances['applepay']) {
-                  attachApplePayEvents();
-                }
+                Promise.resolve(hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]))
+                  .then((instance) => {
+                    if (instance) {
+                      hipayPaymentsInstances[code] = instance;
+                      attachApplePayEvents();
+                    }
+                  })
+                  .catch((err) => console.error('Apple Pay init error:', err));
               } else {
                 if (applePayDeviceMessage) {
                   applePayDeviceMessage.style.display = 'block';
@@ -474,10 +481,14 @@
             });
           } else {
             if (window.ApplePaySession.canMakePayments()) {
-              hipayPaymentsInstances[code] = hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]);
-              if (hipayPaymentsInstances['applepay'] !== undefined && null !== hipayPaymentsInstances['applepay']) {
-                attachApplePayEvents();
-              }
+              Promise.resolve(hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]))
+                .then((instance) => {
+                  if (instance) {
+                    hipayPaymentsInstances[code] = instance;
+                    attachApplePayEvents();
+                  }
+                })
+                .catch((err) => console.error('Apple Pay init error:', err));
             } else {
               if (applePayDeviceMessage) {
                 applePayDeviceMessage.style.display = 'block';
