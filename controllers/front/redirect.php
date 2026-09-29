@@ -73,11 +73,11 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @return bool
+     * @return void
      * @throws SmartyException
      * @throws Exception
      */
-    public function display(): bool
+    public function display(): void
     {
         switch (Tools::getValue('action')) {
             case 'redirectToCardPayment':
@@ -100,7 +100,7 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
                 break;
         }
 
-        return parent::display();
+        parent::display();
     }
 
     /**
@@ -209,12 +209,18 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
         $pos = strpos($hipayOrderId, '-');
         $idCart = ($pos !== false) ? substr($hipayOrderId, 0, $pos) : false;
 
+        $cart = $idCart ? new Cart((int) $idCart) : null;
+        $cartSecureKey = ($cart && Validate::isLoadedObject($cart)) ? $cart->secure_key : '';
+
         $this->context->smarty->assign([
             'hipayRedirectController' => $this->context->link->getModuleLink((string) $this->module->name, 'redirect', ['action' => 'redirectConfirmation']),
+            'hipayPaymentControllerUrl' => $this->context->link->getModuleLink((string) $this->module->name, 'payment', []),
             'hipayCustomerToken' => Tools::getToken(),
             'hipayTransactionReference' => Tools::getValue('reference'),
             'hipayOrderId' => Tools::getValue('orderid'),
             'idCart' => $idCart,
+            'cartSecureKey' => $cartSecureKey,
+            'paymentProduct' => Tools::getValue('paymentProduct', ''),
         ]);
     }
 

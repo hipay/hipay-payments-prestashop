@@ -23,9 +23,9 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Class BizumRequestBuilder
+ * Class BancomatPayRequestBuilder
  */
-class BizumRequestBuilder extends AbstractPaymentRequestBuilder
+class BancomatPayRequestBuilder extends AbstractPaymentRequestBuilder
 {
     /**
      * @param OrderRequest $request

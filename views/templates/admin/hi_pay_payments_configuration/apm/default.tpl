@@ -102,6 +102,7 @@
                         {if $data.otherPMSettings.paymentMethods[$k|intval]['minAmountForced']}readonly{/if}
                         name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][minAmount]"
                         onchange="hipayFormatAmountComplete(this)"
+                        oninput="hipayPreventNegativeAmount(this)"
                         data-decimals="{$data.extra.currencies.defaultIsoDecimals|intval}"
                         value="{$data.otherPMSettings.paymentMethods[$k|intval]['minAmount']|floatval}" />
                 </div>
@@ -120,6 +121,7 @@
                         {if $data.otherPMSettings.paymentMethods[$k|intval]['maxAmountForced']}readonly{/if}
                         name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][maxAmount]"
                         onchange="hipayFormatAmountComplete(this)"
+                        oninput="hipayPreventNegativeAmount(this)"
                         data-decimals="{$data.extra.currencies.defaultIsoDecimals|intval}"
                         value="{$data.otherPMSettings.paymentMethods[$k|intval]['maxAmount']|floatval}" />
                 </div>

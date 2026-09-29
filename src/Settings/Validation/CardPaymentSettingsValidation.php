@@ -41,9 +41,11 @@ class CardPaymentSettingsValidation extends AbstractValidationData
                         'fields' => [
                             'minAmount' => [
                                 new Assert\Type('numeric'),
+                                new Assert\PositiveOrZero(),
                             ],
                             'maxAmount' => [
                                 new Assert\Type('numeric'),
+                                new Assert\PositiveOrZero(),
                             ],
                         ],
                         'allowMissingFields' => true,

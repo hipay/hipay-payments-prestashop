@@ -48,6 +48,8 @@
 
       const hipayPaymentsConfig = {};
       const hipayPaymentsInstances = {};
+      const phoneRequiredCodes = ['bancomatpay', 'bizum'];
+      const phoneFieldValidity = {};
 
       if (!Array.isArray(PSHiPayData.cardSpecifics) || PSHiPayData.cardSpecifics.length) {
         hipayPaymentsConfig['card'] = {
@@ -520,6 +522,12 @@
         }
 
         hipayPaymentsInstances[code] = hipayPayments.create(code, hipayPaymentsConfig[code]);
+
+        if (phoneRequiredCodes.includes(code)) {
+          phoneFieldValidity[code] = false;
+          document.querySelector('.js-payment-confirmation button').classList.add('disabled');
+          document.querySelector('.js-payment-confirmation button').disabled = true;
+        }
       });
 
       setTimeout(() => {
@@ -531,6 +539,9 @@
           return;
         }
         hipayPaymentsInstances[code].on('change', (event) => {
+          if (phoneRequiredCodes.includes(code)) {
+            phoneFieldValidity[code] = event.valid;
+          }
           if (!event.valid) {
             document.querySelector('.js-payment-confirmation button').classList.add('disabled');
             document.querySelector('.js-payment-confirmation button').disabled = true;
@@ -542,6 +553,41 @@
           }
         });
       })
+
+      const phoneRequiredCodesInUse = phoneRequiredCodes.filter((code) => hipayPaymentsInstances[code]);
+      if (phoneRequiredCodesInUse.length) {
+        const getSelectedPhoneRequiredCode = () => phoneRequiredCodesInUse.find((code) => {
+          const container = document.getElementById('js-hipay-payments-hosted-fields-form-' + code);
+
+          return !!container && container.offsetParent !== null;
+        });
+
+        const placeOrderButton = document.querySelector('.js-payment-confirmation button');
+        if (placeOrderButton) {
+          const enforceDisabledState = () => {
+            const selectedCode = getSelectedPhoneRequiredCode();
+            if (selectedCode && !phoneFieldValidity[selectedCode] && !placeOrderButton.disabled) {
+              placeOrderButton.classList.add('disabled');
+              placeOrderButton.disabled = true;
+            }
+          };
+
+          new MutationObserver(enforceDisabledState).observe(placeOrderButton, {
+            attributes: true,
+            attributeFilter: ['disabled', 'class'],
+          });
+
+          document.addEventListener('click', (event) => {
+            const isConfirmButtonClick = !!(event.target.closest && event.target.closest('.js-payment-confirmation button'));
+            const selectedCode = getSelectedPhoneRequiredCode();
+            if (isConfirmButtonClick && selectedCode && !phoneFieldValidity[selectedCode]) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              enforceDisabledState();
+            }
+          }, true);
+        }
+      }
 
       Object.keys(hipayPaymentsInstances).forEach(( code) => {
         $('#js-hipay-payments-form-'+code).one('submit', (event) => {

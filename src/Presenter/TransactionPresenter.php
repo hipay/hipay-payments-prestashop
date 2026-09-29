@@ -46,6 +46,10 @@ class TransactionPresenter implements PresenterInterface
     const STATUS_CHARGED_BACK = 181;
     const STATUS_PARTIALLY_CHARGED_BACK = 180;
     const STATUS_EXPIRED = 114;
+    const STATUS_DENIED = 111;
+    const STATUS_REFUSED = 113;
+    const STATUS_CANCELLED = 115;
+    const STATUS_AUTHORIZATION_REFUSED = 163;
     const STATE_FORWARDING = 'forwarding';
     const MULTIBANCO_PAYMENT_PRODUCT_CODE = 'multibanco';
     const MOONEY_PAYMENT_PRODUCT_CODE = 'sisal';
@@ -151,6 +155,10 @@ class TransactionPresenter implements PresenterInterface
             case self::STATUS_PARTIALLY_CAPTURED:
                 return $this->settings->partiallyCapturedStatusId;
             case self::STATUS_EXPIRED:
+            case self::STATUS_DENIED:
+            case self::STATUS_REFUSED:
+            case self::STATUS_CANCELLED:
+            case self::STATUS_AUTHORIZATION_REFUSED:
                 return $newOrder ? false : (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
             default:
                 return false;

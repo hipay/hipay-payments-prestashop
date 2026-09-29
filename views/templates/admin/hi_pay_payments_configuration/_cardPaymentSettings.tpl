@@ -382,6 +382,7 @@
                                                    class="fixed-width-md"
                                                    name="hpCardPaymentSettings[paymentMethods][{$k|intval}][minAmount]"
                                                    onchange="hipayFormatAmountComplete(this)"
+                                                   oninput="hipayPreventNegativeAmount(this)"
                                                    data-decimals="{$data.extra.currencies.defaultIsoDecimals|intval}"
                                                    value="{$data.cardPaymentSettings.paymentMethods[$k|intval]['minAmount']|floatval}"
                                             />
@@ -401,6 +402,7 @@
                                                    class="fixed-width-md"
                                                    name="hpCardPaymentSettings[paymentMethods][{$k|intval}][maxAmount]"
                                                    onchange="hipayFormatAmountComplete(this)"
+                                                   oninput="hipayPreventNegativeAmount(this)"
                                                    data-decimals="{$data.extra.currencies.defaultIsoDecimals|intval}"
                                                    value="{$data.cardPaymentSettings.paymentMethods[$k|intval]['maxAmount']|floatval}"
                                             />

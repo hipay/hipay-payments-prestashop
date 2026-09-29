@@ -17,7 +17,14 @@ const CONFIG = {
     MAX_ATTEMPTS: 10,
     TIMEOUT_MESSAGE_ID: 'js-hipay-timeout-message',
     LOADER_ID: 'js-hipay-loader'
-  };
+};
+
+const PENDING_FLOW_PRODUCTS = ['bancomatpay', 'bizum'];
+
+const PENDING_FLOW_CONFIG = {
+    POLL_INTERVAL: 10000,
+    MAX_ATTEMPTS: 30,
+};
 
 /**
  * Makes a request to check HiPay order status and get redirect URL
@@ -92,7 +99,11 @@ function handleRedirectResponse(result) {
 async function handleTimeout() {
   console.warn('HiPay polling timeout reached');
 
-  // Show timeout message and hide loader
+  if (typeof paymentProduct !== 'undefined' && PENDING_FLOW_PRODUCTS.includes(paymentProduct)) {
+    showPendingPaymentState('timeout');
+    return;
+  }
+
   toggleElement(CONFIG.TIMEOUT_MESSAGE_ID, true);
   toggleElement(CONFIG.LOADER_ID, false);
 
@@ -101,7 +112,6 @@ async function handleTimeout() {
     handleRedirectResponse(result);
   } catch (error) {
     console.error('Timeout redirect failed:', error);
-    // Could show additional error message to user here
   }
 }
 
@@ -110,15 +120,34 @@ async function handleTimeout() {
  * @param {Function} callback - Function to call on each poll
  * @param {number} delay - Delay between polls in milliseconds
  * @param {number} maxAttempts - Maximum number of polling attempts
+ * @returns {{stop: Function}}
  */
 function startPolling(callback, delay, maxAttempts) {
   let attemptCount = 0;
+  let stopped = false;
+  let timeoutId = null;
+
+  const stop = () => {
+    stopped = true;
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  };
 
   const poll = async () => {
+    if (stopped) {
+      return;
+    }
+
+    let shouldStop = false;
     try {
-      await callback();
+      shouldStop = await callback();
     } catch (error) {
       console.error(`Polling attempt ${attemptCount + 1} failed:`, error);
+    }
+
+    if (stopped || shouldStop) {
+      return;
     }
 
     attemptCount++;
@@ -126,12 +155,14 @@ function startPolling(callback, delay, maxAttempts) {
     if (attemptCount >= maxAttempts) {
       handleTimeout();
     } else {
-      setTimeout(poll, delay);
+      timeoutId = setTimeout(poll, delay);
     }
   };
 
   // Start first poll
   poll();
+
+  return { stop };
 }
 
 /**
@@ -150,15 +181,83 @@ function initializeHiPayCheck() {
       if (redirected) {
         console.log('HiPay redirect successful');
       }
+
+      return redirected;
     },
     CONFIG.POLL_INTERVAL,
     CONFIG.MAX_ATTEMPTS
   );
 }
 
+function showPendingPaymentState(state) {
+  document.querySelectorAll('.js-hipay-pending-payment-state').forEach(function (el) {
+    el.style.display = 'none';
+  });
+  const target = document.querySelector('.js-hipay-pending-payment-state--' + state);
+  if (target) {
+    target.style.display = '';
+  }
+}
+
+async function pollPendingPaymentStatus() {
+  const formData = new FormData();
+  formData.append('action', 'checkPendingPaymentStatus');
+  formData.append('token', hipayCustomerToken);
+  formData.append('idCart', idCart);
+  formData.append('cartSecureKey', cartSecureKey);
+
+  try {
+    const response = await fetch(hipayPaymentControllerUrl, {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    });
+    if (!response.ok) {
+      return false;
+    }
+    const data = await response.json();
+    if (!data.success) {
+      return false;
+    }
+    if (data.status === 'success') {
+      showPendingPaymentState('success');
+      setTimeout(function () {
+        window.location.href = data.redirectUrl;
+      }, 2000);
+      return true;
+    }
+    if (data.status === 'failed') {
+      showPendingPaymentState('failed');
+      return true;
+    }
+  } catch (e) {
+    console.error('HiPay pending payment status poll failed:', e);
+  }
+
+  return false;
+}
+
+function initializePendingPaymentCheck() {
+  startPolling(
+    pollPendingPaymentStatus,
+    PENDING_FLOW_CONFIG.POLL_INTERVAL,
+    PENDING_FLOW_CONFIG.MAX_ATTEMPTS
+  );
+}
+
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeHiPayCheck);
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof paymentProduct !== 'undefined' && PENDING_FLOW_PRODUCTS.includes(paymentProduct)) {
+      initializePendingPaymentCheck();
+    } else {
+      initializeHiPayCheck();
+    }
+  });
 } else {
-  initializeHiPayCheck();
+  if (typeof paymentProduct !== 'undefined' && PENDING_FLOW_PRODUCTS.includes(paymentProduct)) {
+    initializePendingPaymentCheck();
+  } else {
+    initializeHiPayCheck();
+  }
 }
