@@ -163,6 +163,8 @@ configuration:
       file: 'applepay.yml'
     - code: 'mbway'
       file: 'mbway.yml'
+    - code: 'bizum'
+      file: 'bizum.yml'
     - code: 'multibanco'
       file: 'multibanco.yml'
     - code: 'ideal'

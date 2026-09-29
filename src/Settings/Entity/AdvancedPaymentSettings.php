@@ -29,6 +29,7 @@ class AdvancedPaymentSettings
     const APM_CODES = [
         'paypal' => ['name' => 'PayPal', 'builder' => Builder\PayPalRequestBuilder::class, 'discriminatorMap' => APM\PayPal::class],
         'mbway' => ['name' => 'MB Way', 'builder' => Builder\MBWayRequestBuilder::class, 'discriminatorMap' => APM\MBWay::class],
+        'bizum' => ['name' => 'Bizum', 'builder' => Builder\BizumRequestBuilder::class, 'discriminatorMap' => APM\Bizum::class],
         'multibanco' => ['name' => 'Multibanco', 'builder' => Builder\MultibancoRequestBuilder::class, 'discriminatorMap' => APM\Multibanco::class],
         'ideal' => ['name' => 'iDEAL', 'builder' => Builder\IDealRequestBuilder::class, 'discriminatorMap' => APM\IDeal::class],
         'bancontact' => ['name' => 'Bancontact', 'builder' => Builder\BancontactRequestBuilder::class, 'discriminatorMap' => APM\Bancontact::class],
