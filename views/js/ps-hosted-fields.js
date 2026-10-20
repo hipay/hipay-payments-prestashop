@@ -450,8 +450,16 @@
               }
             }
 
+            function isApplePayOptionSelected() {
+              const checked = document.querySelector('input[name="payment-option"]:checked');
+              if (!checked) { return false; }
+              const moduleName = checked.getAttribute('data-module-name');
+              return !!moduleName && applePayBinaryArea.classList.contains('js-payment-' + moduleName);
+            }
+
             function isApplePayReady() {
               return applePayBinaryArea &&
+                isApplePayOptionSelected() &&
                 applePayBinaryArea.offsetParent !== null &&
                 !applePayBinaryArea.classList.contains('disabled') &&
                 (!termsCheckbox || termsCheckbox.checked);
