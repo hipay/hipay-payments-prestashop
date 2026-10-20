@@ -89,7 +89,6 @@ class OneyRequestBuilder extends AbstractPaymentRequestBuilder
 
         $date = new \DateTime();
         $date->modify('+2 days');
-        $request->cid = sprintf('CUST-%d', $context->customer->id);
         $request->customerBillingInfo->gender = $gender;
         $request->customerBillingInfo->phone = $validPhone;
         $request->customerShippingInfo->shipto_gender = $gender;

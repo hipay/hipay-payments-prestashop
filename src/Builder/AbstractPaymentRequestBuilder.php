@@ -88,6 +88,9 @@ abstract class AbstractPaymentRequestBuilder implements PaymentRequestBuilderInt
         $request->orderid = sprintf('%d-%s', $this->cart->id, \AG\PSModuleUtils\Tools::generateRandomString(8));
         $request->operation = \HiPay\PrestaShop\Settings\Entity\MainSettings::OPERATION_VALUE[$this->settings->mainSettings->captureMode];
         $request->description = sprintf('ref_%d', $this->cart->id);
+        if ((int) $customer->id > 0) {
+            $request->cid = sprintf('CUST-%d', $customer->id);
+        }
         $request->customerBillingInfo = new CustomerBillingInfoRequest();
         $request->customerBillingInfo->firstname = $customer->firstname;
         $request->customerBillingInfo->lastname = $customer->lastname;

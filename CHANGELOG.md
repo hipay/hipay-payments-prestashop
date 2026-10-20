@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - add possibility to refund Przelewy24 orders
+- send missing customer id
 
 
 ## [3.4.3] - 2026-09-15
