@@ -40,7 +40,7 @@ class AdvancedPaymentSettings
         'bancomatpay' => ['name' => 'Bancomat Pay', 'builder' => Builder\BancomatPayRequestBuilder::class, 'discriminatorMap' => APM\BancomatPay::class],
         'bizum' => ['name' => 'Bizum', 'builder' => Builder\BizumRequestBuilder::class, 'discriminatorMap' => APM\Bizum::class],
         'bancomatpay' => ['name' => 'Bancomat Pay', 'builder' => Builder\BancomatPayRequestBuilder::class, 'discriminatorMap' => APM\BancomatPay::class],
-        'przelewy24' => ['name' => 'Przelewy24', 'builder' => Builder\P24RequestBuilder::class, 'discriminatorMap' => APM\P24::class],
+        'przelewy24' => ['name' => 'Blik / Przelewy24', 'builder' => Builder\P24RequestBuilder::class, 'discriminatorMap' => APM\P24::class],
         'illicado' => ['name' => 'Illicado', 'builder' => Builder\IllicadoRequestBuilder::class, 'discriminatorMap' => APM\Illicado::class],
         'klarna' => ['name' => 'Klarna', 'builder' => Builder\KlarnaRequestBuilder::class, 'discriminatorMap' => APM\Klarna::class],
         'postfinance-card' => ['name' => 'Postfinance', 'builder' => Builder\PostfinanceRequestBuilder::class, 'discriminatorMap' => APM\Postfinance::class],
