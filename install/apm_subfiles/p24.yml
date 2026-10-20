@@ -2,7 +2,7 @@ className: 'P24'
 defaults:
   enabled: true
   code: 'przelewy24'
-  name: 'Przelewy24'
+  name: 'Blik / Przelewy24'
   minAmount: 0.00
   maxAmount: 0.00
   currenciesCountriesManaged: true

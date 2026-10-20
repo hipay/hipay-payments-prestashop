@@ -104,7 +104,7 @@ class PaymentMethodsSync
             }
 
             try {
-                if (in_array($availableProduct->getCode(), ['sisal', '3xcb', '4xcb', '3xcb-no-fees', '4xcb-no-fees'])) {
+                if (in_array($availableProduct->getCode(), ['sisal', '3xcb', '4xcb', '3xcb-no-fees', '4xcb-no-fees', 'przelewy24'])) {
                     $displayName = AdvancedPaymentSettings::APM_CODES[$availableProduct->getCode()]['name'];
                 } else {
                     $displayName = $availableProduct->getDescription();
