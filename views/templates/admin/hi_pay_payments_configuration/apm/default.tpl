@@ -98,7 +98,9 @@
             <div class="col-lg-9">
                 <div class="input-group">
                     <span class="input-group-addon">{$data.extra.currencies.defaultIso|escape:'html':'UTF-8'}</span>
-                    <input type="text" class="fixed-width-md"
+                    <input type="number" class="fixed-width-md"
+                        min="{if $paymentMethod.code == $data.extra.const.BIZUM_CODE}{$data.extra.const.BIZUM_MIN_AMOUNT|floatval}{else}0{/if}"
+                        step="any"
                         {if $data.otherPMSettings.paymentMethods[$k|intval]['minAmountForced']}readonly{/if}
                         name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][minAmount]"
                         onchange="hipayFormatAmountComplete(this)"
@@ -117,7 +119,9 @@
             <div class="col-lg-9">
                 <div class="input-group">
                     <span class="input-group-addon">{$data.extra.currencies.defaultIso|escape:'html':'UTF-8'}</span>
-                    <input type="text" class="fixed-width-md"
+                    <input type="number" class="fixed-width-md"
+                        min="0"
+                        step="any"
                         {if $data.otherPMSettings.paymentMethods[$k|intval]['maxAmountForced']}readonly{/if}
                         name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][maxAmount]"
                         onchange="hipayFormatAmountComplete(this)"
