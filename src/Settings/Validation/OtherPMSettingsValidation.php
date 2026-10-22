@@ -15,6 +15,7 @@
 namespace HiPay\PrestaShop\Settings\Validation;
 
 use AG\PSModuleUtils\Settings\Validation\AbstractValidationData;
+use HiPay\PrestaShop\Settings\Entity\PaymentMethod;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -52,6 +53,17 @@ class OtherPMSettingsValidation extends AbstractValidationData
                     new Assert\Callback(function ($item, ExecutionContextInterface $context) {
                         if (!is_array($item)) {
                             return; // Don't crash if bad input
+                        }
+
+                        if (
+                            'bizum' === ($item['code'] ?? null) &&
+                            array_key_exists('minAmount', $item) &&
+                            is_numeric($item['minAmount']) &&
+                            $item['minAmount'] < PaymentMethod::BIZUM_MIN_AMOUNT
+                        ) {
+                            $context->buildViolation(sprintf($this->module->l('The minimum amount for payment method %s cannot be lower than %s', 'OtherPMSettingsValidation'), $item['name'], PaymentMethod::BIZUM_MIN_AMOUNT))
+                                ->atPath('[minAmount]')
+                                ->addViolation();
                         }
 
                         if (
