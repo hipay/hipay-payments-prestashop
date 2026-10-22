@@ -20,6 +20,7 @@ use HiPay\PrestaShop\Settings\Entity\AccountSettings;
 use HiPay\PrestaShop\Settings\Entity\APM\Multibanco;
 use HiPay\PrestaShop\Settings\Entity\CardPaymentSettings;
 use HiPay\PrestaShop\Settings\Entity\MainSettings;
+use HiPay\PrestaShop\Settings\Entity\PaymentMethod;
 use HiPay\PrestaShop\Settings\Settings;
 use HiPay\PrestaShop\Settings\SettingsLoader;
 use HiPay\PrestaShop\Utils\Tools;
@@ -84,6 +85,8 @@ class SettingsPresenter implements PresenterInterface
             'unavailableCards' => $settings->cardPaymentSettings->listUnavailableCards(),
             'unavailableAPM' => $settings->otherPMSettings->listUnavailableAPM(),
             'const' => [
+                'BIZUM_CODE' => PaymentMethod::BIZUM_CODE,
+                'BIZUM_MIN_AMOUNT' => PaymentMethod::BIZUM_MIN_AMOUNT,
                 'ENV_TEST' => AccountSettings::MODE_TEST,
                 'ENV_PRODUCTION' => AccountSettings::MODE_PRODUCTION,
                 'DISPLAY_MODE_HOSTED_FIELDS' => CardPaymentSettings::DISPLAY_MODE_HOSTED_FIELDS,

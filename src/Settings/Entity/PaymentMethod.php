@@ -26,6 +26,9 @@ if (!defined('_PS_VERSION_')) {
  */
 class PaymentMethod
 {
+    const BIZUM_CODE = 'bizum';
+    const BIZUM_MIN_AMOUNT = 0.5;
+
     /** @var string */
     public $code;
 
@@ -65,7 +68,8 @@ class PaymentMethod
         }
         $cartCurrencyIsoCode = Tools::getIsoCurrencyCodeById($cart->id_currency);
         $orderTotal = AmountOfMoney::fromStandardUnit($cart->getOrderTotal(), $cartCurrencyIsoCode);
-        $minAmount = AmountOfMoney::fromStandardUnit($this->minAmount, $cartCurrencyIsoCode);
+        $minAmountValue = self::BIZUM_CODE === $this->code ? max((float) $this->minAmount, self::BIZUM_MIN_AMOUNT) : $this->minAmount;
+        $minAmount = AmountOfMoney::fromStandardUnit($minAmountValue, $cartCurrencyIsoCode);
         $maxAmount = AmountOfMoney::fromStandardUnit($this->maxAmount, $cartCurrencyIsoCode);
         if (
             ($minAmount->getAmount() && $orderTotal->compare($minAmount) < 0) ||

@@ -125,7 +125,7 @@
                 <div class="input-group">
                     <span class="input-group-addon">{$data.extra.currencies.defaultIso|escape:'html':'UTF-8'}</span>
                     <input type="number" class="fixed-width-md"
-                        min="0"
+                        min="{if $paymentMethod.code == $data.extra.const.BIZUM_CODE}{$data.extra.const.BIZUM_MIN_AMOUNT|floatval}{else}0{/if}"
                         step="any"
                         {if $data.otherPMSettings.paymentMethods[$k|intval]['minAmountForced']}readonly{/if}
                         name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][minAmount]"
