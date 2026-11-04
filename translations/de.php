@@ -309,3 +309,11 @@ $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05c
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Ihre Bestellung nimmt mehr Zeit als erwartet in Anspruch. Bitte kontaktieren Sie unseren Kundendienst, wenn Ihre Zahlung akzeptiert wurde.';
 $_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'Die Zahlung muss in Ihrer Bancomat Pay App bestätigt werden.';
 $_MODULE['<{hipaypayments}prestashop>bizummessage_daab393da9e10fc8b96ffffc3f8d18c5'] = 'Die Zahlung muss in Ihrer Bizum-Banking-App bestätigt werden.';
+$_MODULE['<{hipaypayments}prestashop>3xcb_d4eb15dbe541f91ce3d7ba2475658658'] = 'Händleraktion';
+$_MODULE['<{hipaypayments}prestashop>3xcb_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Optional. Von Oney in Ihrem Konfigurationskit bereitgestellter Händleraktionscode. Er wird unverändert bei jeder mit dieser Zahlungsart getätigten Zahlung übermittelt.';
+$_MODULE['<{hipaypayments}prestashop>3xcb-no-fees_d4eb15dbe541f91ce3d7ba2475658658'] = 'Händleraktion';
+$_MODULE['<{hipaypayments}prestashop>3xcb-no-fees_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Optional. Von Oney in Ihrem Konfigurationskit bereitgestellter Händleraktionscode. Er wird unverändert bei jeder mit dieser Zahlungsart getätigten Zahlung übermittelt.';
+$_MODULE['<{hipaypayments}prestashop>4xcb_d4eb15dbe541f91ce3d7ba2475658658'] = 'Händleraktion';
+$_MODULE['<{hipaypayments}prestashop>4xcb_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Optional. Von Oney in Ihrem Konfigurationskit bereitgestellter Händleraktionscode. Er wird unverändert bei jeder mit dieser Zahlungsart getätigten Zahlung übermittelt.';
+$_MODULE['<{hipaypayments}prestashop>4xcb-no-fees_d4eb15dbe541f91ce3d7ba2475658658'] = 'Händleraktion';
+$_MODULE['<{hipaypayments}prestashop>4xcb-no-fees_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Optional. Von Oney in Ihrem Konfigurationskit bereitgestellter Händleraktionscode. Er wird unverändert bei jeder mit dieser Zahlungsart getätigten Zahlung übermittelt.';

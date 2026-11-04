@@ -72,6 +72,7 @@ class OtherPaymentSettingsOptionsResolver extends AbstractSettingsResolver
                 'position',
                 'expirationLimit',
                 'merchantIdentifier',
+                'merchantPromotion',
                 'multiBrowserEnabled',
                 'multiBrowserDisplayMode',
             ])
@@ -175,6 +176,12 @@ class OtherPaymentSettingsOptionsResolver extends AbstractSettingsResolver
                 'merchantIdentifier',
                 function (Options $options, $value) {
                     return trim($value);
+                }
+            )
+            ->setNormalizer(
+                'merchantPromotion',
+                function (Options $options, $value) {
+                    return trim((string) $value);
                 }
             )
             ->setNormalizer(

@@ -11,3 +11,16 @@
  * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  *
  *}
+
+<div class="form-group">
+    <label class="control-label col-lg-3">
+        {l s='Merchant promotion' mod='hipaypayments'}
+    </label>
+    <div class="col-lg-9">
+        <input type="text"
+               class="fixed-width-xxl"
+               name="hpAdvancedPaymentSettings[paymentMethods][{$k|intval}][merchantPromotion]"
+               value="{$data.otherPMSettings.paymentMethods[$k|intval]['merchantPromotion']|default:''|escape:'htmlall':'UTF-8'}"/>
+        <p class="help-block">{l s='Optional. Merchant promotion code provided by Oney in your configuration kit. It is sent as is with each payment made with this payment method.' mod='hipaypayments'}</p>
+    </div>
+</div>

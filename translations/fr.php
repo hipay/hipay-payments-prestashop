@@ -309,3 +309,11 @@ $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_c7e6d8a545ef74b7319c05c
 $_MODULE['<{hipaypayments}prestashop>redirectfrompayment_297365789cef49eaf6cfa6cc5b974285'] = 'Votre commande prend plus de temps que prévu. Veuillez contacter notre service clientèle si votre paiement a été accepté.';
 $_MODULE['<{hipaypayments}prestashop>bancomatpaymessage_94d0fb72c2118aee649ac3ec50b64646'] = 'Le paiement devra être validé sur votre application Bancomat Pay.';
 $_MODULE['<{hipaypayments}prestashop>bizummessage_daab393da9e10fc8b96ffffc3f8d18c5'] = 'Le paiement devra être validé sur votre application bancaire Bizum.';
+$_MODULE['<{hipaypayments}prestashop>3xcb_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promotion marchand';
+$_MODULE['<{hipaypayments}prestashop>3xcb_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facultatif. Code de promotion marchand fourni par Oney dans votre kit de configuration. Il est transmis tel quel à chaque paiement effectué avec ce moyen de paiement.';
+$_MODULE['<{hipaypayments}prestashop>3xcb-no-fees_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promotion marchand';
+$_MODULE['<{hipaypayments}prestashop>3xcb-no-fees_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facultatif. Code de promotion marchand fourni par Oney dans votre kit de configuration. Il est transmis tel quel à chaque paiement effectué avec ce moyen de paiement.';
+$_MODULE['<{hipaypayments}prestashop>4xcb_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promotion marchand';
+$_MODULE['<{hipaypayments}prestashop>4xcb_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facultatif. Code de promotion marchand fourni par Oney dans votre kit de configuration. Il est transmis tel quel à chaque paiement effectué avec ce moyen de paiement.';
+$_MODULE['<{hipaypayments}prestashop>4xcb-no-fees_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promotion marchand';
+$_MODULE['<{hipaypayments}prestashop>4xcb-no-fees_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facultatif. Code de promotion marchand fourni par Oney dans votre kit de configuration. Il est transmis tel quel à chaque paiement effectué avec ce moyen de paiement.';
