@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Apple Pay button displayed on checkout after returning from a hosted page payment method
 - add possibility to refund Przelewy24 orders
 - send missing customer id
+- Oney merchant promotion code field
 
 
 ## [3.4.3] - 2026-09-15

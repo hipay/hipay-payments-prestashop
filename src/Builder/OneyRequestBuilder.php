@@ -22,6 +22,7 @@ use HiPay\Fullservice\Gateway\Model\Cart\Item;
 use HiPay\Fullservice\Gateway\Request\Order\HostedPaymentPageRequest;
 use HiPay\Fullservice\Gateway\Request\Order\OrderRequest;
 use HiPay\Fullservice\Gateway\Request\PaymentMethod\XTimesCreditCardPaymentMethod;
+use HiPay\PrestaShop\Settings\Entity\APM\Oney;
 use libphonenumber\NumberParseException;
 
 if (!defined('_PS_VERSION_')) {
@@ -98,6 +99,11 @@ class OneyRequestBuilder extends AbstractPaymentRequestBuilder
         $request->paymentMethod->shipto_phone = $validPhone;
         $request->paymentMethod->delivery_method = '{"mode":"CARRIER","shipping":"STANDARD"}';
         $request->paymentMethod->delivery_date = $date->format('Y-m-d');
+        /** @var Oney $oney */
+        $oney = $this->paymentMethod;
+        if ('' !== trim((string) $oney->merchantPromotion)) {
+            $request->payment_product_parameters = json_encode(['merchant_promotion' => $oney->merchantPromotion]);
+        }
         $request->basket = new Cart();
         $cartCurrencyCode = Tools::getIsoCurrencyCodeById($context->cart->id_currency);
         $total = AmountOfMoney::fromStandardUnit(0, $cartCurrencyCode);
