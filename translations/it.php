@@ -335,3 +335,11 @@ $_MODULE['<{hipaypayments}prestashop>_otherpmsettings_e5ee4e7903a1694c25d899d854
 $_MODULE['<{hipaypayments}prestashop>default_781dc97dc62331eec3ea9ec4373a3ca8'] = 'Canale';
 $_MODULE['<{hipaypayments}prestashop>default_b1e123e6df73e93ce5f3babe0f0f19b5'] = 'Hosted Fields';
 $_MODULE['<{hipaypayments}prestashop>default_01e772a41fc907cf6a12b4fede85b691'] = 'Hosted Page';
+$_MODULE['<{hipaypayments}prestashop>3xcb_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promozione commerciante';
+$_MODULE['<{hipaypayments}prestashop>3xcb_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facoltativo. Codice promozione commerciante fornito da Oney nel kit di configurazione. Viene trasmesso così com\'è a ogni pagamento effettuato con questo metodo di pagamento.';
+$_MODULE['<{hipaypayments}prestashop>3xcb-no-fees_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promozione commerciante';
+$_MODULE['<{hipaypayments}prestashop>3xcb-no-fees_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facoltativo. Codice promozione commerciante fornito da Oney nel kit di configurazione. Viene trasmesso così com\'è a ogni pagamento effettuato con questo metodo di pagamento.';
+$_MODULE['<{hipaypayments}prestashop>4xcb_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promozione commerciante';
+$_MODULE['<{hipaypayments}prestashop>4xcb_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facoltativo. Codice promozione commerciante fornito da Oney nel kit di configurazione. Viene trasmesso così com\'è a ogni pagamento effettuato con questo metodo di pagamento.';
+$_MODULE['<{hipaypayments}prestashop>4xcb-no-fees_d4eb15dbe541f91ce3d7ba2475658658'] = 'Promozione commerciante';
+$_MODULE['<{hipaypayments}prestashop>4xcb-no-fees_a5e1350401474cf8e55fe0e7d4f0a20e'] = 'Facoltativo. Codice promozione commerciante fornito da Oney nel kit di configurazione. Viene trasmesso così com\'è a ogni pagamento effettuato con questo metodo di pagamento.';

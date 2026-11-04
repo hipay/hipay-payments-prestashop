@@ -25,5 +25,6 @@ if (!defined('_PS_VERSION_')) {
  */
 class Oney extends AbstractAdvancedPaymentMethod
 {
-
+    /** @var string */
+    public $merchantPromotion = '';
 }
