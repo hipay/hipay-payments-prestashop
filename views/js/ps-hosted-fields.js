@@ -17,6 +17,20 @@
     return;
   }
 
+  const resetRestoredCheckout = () => {
+    const sel = (prestashop.selectors && prestashop.selectors.checkout && prestashop.selectors.checkout.termsCheckboxSelector) || 'input[name="conditions_to_approve[terms-and-conditions]"]';
+    document.querySelectorAll('input[name="payment-option"]:checked, ' + sel + ':checked').forEach((input) => {
+      input.checked = false;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  };
+  window.addEventListener('pageshow', (event) => {
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (event.persisted || (nav && nav.type === 'back_forward')) {
+      setTimeout(resetRestoredCheckout, 100);
+    }
+  });
+
   try {
     // Fetch the integrity hash
     const response = await fetch('https://libs.hipay.com/js/sdkjs.integrity');
