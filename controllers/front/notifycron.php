@@ -47,7 +47,7 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
         $logger->info('Start of Cron notify');
         try {
             $this->processQueue($logger);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $logger->error($e->getMessage());
         }
         $logger->info('End of Cron notify');
@@ -70,9 +70,17 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
 
         $rows = (array) \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
         foreach ($rows as $row) {
-            $transactionMapper = new \HiPay\Fullservice\Gateway\Mapper\TransactionMapper(json_decode($row['payload'], true));
-            /** @var \HiPay\Fullservice\Gateway\Model\Transaction $transaction */
-            $transaction = $transactionMapper->getModelObjectMapped();
+            /** @var \HiPay\PrestaShop\Processor\NotificationProcessor $notificationProcessor */
+            $notificationProcessor = $this->module->getService('hp.notification.processor');
+            $transaction = $notificationProcessor->mapQueuedPayload((string) $row['payload']);
+            if (null === $transaction) {
+                $transaction = $this->findValidQueuedTransaction($notificationProcessor, (string) $row['transaction_reference']);
+            }
+            if (null === $transaction) {
+                $discarded = $notificationProcessor->discardInvalidQueuedNotifications((string) $row['transaction_reference']);
+                $logger->error(sprintf('Transaction %s - %d queued notification(s) with invalid payload marked as failed', $row['transaction_reference'], $discarded));
+                continue;
+            }
             $cartReference = $transaction->getOrder()->getId();
             $pos = strpos($cartReference, '-');
             $cartId = ($pos !== false) ? substr($cartReference, 0, $pos) : false;
@@ -81,8 +89,6 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
             }
             $cart = new Cart((int) $cartId);
 
-            /** @var \HiPay\PrestaShop\Processor\NotificationProcessor $notificationProcessor */
-            $notificationProcessor = $this->module->getService('hp.notification.processor');
             try {
                 $lockKey = sprintf('hipaypayments_lock_%s', $transaction->getTransactionReference());
                 $lock = new MySqlLock();
@@ -94,10 +100,38 @@ class HiPayPaymentsNotifyCronModuleFrontController extends ModuleFrontController
                 } else {
                     continue;
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $logger->error($e->getMessage());
                 continue;
             }
         }
+    }
+
+    /**
+     * @param NotificationProcessor $notificationProcessor
+     * @param string                $transactionReference
+     * @return \HiPay\Fullservice\Gateway\Model\Transaction|null
+     * @throws PrestaShopDatabaseException
+     */
+    private function findValidQueuedTransaction(NotificationProcessor $notificationProcessor, string $transactionReference)
+    {
+        $dbQuery = (new \DbQuery())
+            ->select('payload')
+            ->from(pSQL(NotificationProcessor::QUEUED_NOTIFICATIONS_TABLE_NAME))
+            ->where(sprintf('transaction_reference = "%s"', pSQL($transactionReference)))
+            ->where('is_processed = 0')
+            ->where('is_failed = 0')
+            ->where(sprintf('attempts < %d', (int) NotificationProcessor::MAX_ATTEMPTS))
+            ->orderBy('received_at DESC');
+
+        $rows = (array) \Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($dbQuery) ?: [];
+        foreach ($rows as $row) {
+            $transaction = $notificationProcessor->mapQueuedPayload((string) $row['payload']);
+            if (null !== $transaction) {
+                return $transaction;
+            }
+        }
+
+        return null;
     }
 }

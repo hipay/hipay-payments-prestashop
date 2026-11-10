@@ -478,29 +478,6 @@
             }
 
             onPaymentContextChange();
-          } else if (PSHiPayData.applePaySpecifics.merchantIdentifier) {
-            hipayPaymentsApplePayInstance.canMakePaymentsWithActiveCard(PSHiPayData.applePaySpecifics.merchantIdentifier).then((canMakePayments) => {
-              if (canMakePayments) {
-                Promise.resolve(hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]))
-                  .then((instance) => {
-                    if (instance) {
-                      hipayPaymentsInstances[code] = instance;
-                      attachApplePayEvents();
-                    }
-                  })
-                  .catch((err) => console.error('Apple Pay init error:', err));
-              } else {
-                if (applePayDeviceMessage) {
-                  applePayDeviceMessage.style.display = 'block';
-
-                  const tcMessage = applePayDeviceMessage.previousElementSibling;
-                  if (tcMessage && tcMessage.classList.contains('js-hipay-payments-tc-message')) {
-                    tcMessage.style.display = 'none';
-                  }
-                }
-                document.querySelector('#js-hipay-payments-hosted-fields-form-applepay').remove();
-              }
-            });
           } else {
             if (window.ApplePaySession.canMakePayments()) {
               Promise.resolve(hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]))

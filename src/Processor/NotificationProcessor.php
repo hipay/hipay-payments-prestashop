@@ -14,6 +14,7 @@
 
 namespace HiPay\PrestaShop\Processor;
 
+use HiPay\Fullservice\Gateway\Mapper\TransactionMapper;
 use HiPay\Fullservice\Gateway\Model\Transaction;
 use HiPay\PrestaShop\Presenter\TransactionPresenter;
 use HiPay\PrestaShop\Utils\MySqlLock;
@@ -74,14 +75,16 @@ class NotificationProcessor
         if ($lock->acquire($lockKey)) {
             $this->logger->debug(sprintf('Transaction %s - Lock acquired', $transaction->getTransactionReference()));
             try {
-                $this->processNotification($transaction, $cart);
+                try {
+                    $this->processNotification($transaction, $cart);
+                } catch (\Throwable $e) {
+                    $this->logger->debug(sprintf('Transaction %s - Exception, store in queue', $transaction->getTransactionReference()));
+                    $this->storeNotificationInQueue($transaction, true);
+                    throw $e;
+                }
                 $this->logger->debug(sprintf('Transaction %s - Process queue', $transaction->getTransactionReference()));
                 $this->processQueuedNotifications($transaction->getTransactionReference());
                 $this->logger->debug(sprintf('Transaction %s - End of process queue', $transaction->getTransactionReference()));
-            } catch (\Exception $e) {
-                $this->logger->debug(sprintf('Transaction %s - Exception, store in queue', $transaction->getTransactionReference()));
-                $this->storeNotificationInQueue($transaction, true);
-                throw $e;
             } finally {
                 $this->logger->debug(sprintf('Transaction %s - Lock released', $transaction->getTransactionReference()));
                 $lock->release();
@@ -183,7 +186,7 @@ class NotificationProcessor
      */
     private function storeNotificationInQueue(Transaction $transaction, bool $error = false)
     {
-        $payload = $transaction->toJson();
+        $payload = json_encode(self::removeEmptyArrays($transaction->toArray()));
         \Db::getInstance()->insert(
             pSQL(self::QUEUED_NOTIFICATIONS_TABLE_NAME),
             [
@@ -215,14 +218,16 @@ class NotificationProcessor
                 return $a['received_at'] <=> $b['received_at'];
             });
             foreach ($queuedNotifications as $queuedNotification) {
-                $payload = json_decode($queuedNotification['payload'], true);
-                $transactionMapper = new \HiPay\Fullservice\Gateway\Mapper\TransactionMapper($payload);
-                /** @var \HiPay\Fullservice\Gateway\Model\Transaction $transaction */
-                $transaction = $transactionMapper->getModelObjectMapped();
+                $transaction = $this->mapQueuedPayload((string) $queuedNotification['payload']);
+                if (null === $transaction) {
+                    $this->logger->error(sprintf('Transaction %s - Queued notification %d has an invalid payload, marked as failed', $transactionReference, (int) $queuedNotification['id']));
+                    $this->markAsFailed($queuedNotification);
+                    continue;
+                }
                 try {
                     $this->processNotification($transaction, $this->cart);
                     $this->markAsProcessed($queuedNotification);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $this->logger->error(sprintf('Transaction %s - %s', $transaction->getTransactionReference(), $e->getMessage()));
                     $attempt = $this->incrementAttempts($queuedNotification);
                     if ($attempt >= self::MAX_ATTEMPTS) {
@@ -232,5 +237,70 @@ class NotificationProcessor
                 }
             }
         } while (true);
+    }
+
+    /**
+     * @param string $transactionReference
+     * @return int
+     * @throws \PrestaShopDatabaseException
+     */
+    public function discardInvalidQueuedNotifications(string $transactionReference): int
+    {
+        $discarded = 0;
+        foreach ($this->getQueuedNotifications($transactionReference) as $queuedNotification) {
+            if (null === $this->mapQueuedPayload((string) $queuedNotification['payload'])) {
+                $this->markAsFailed($queuedNotification);
+                ++$discarded;
+            }
+        }
+
+        return $discarded;
+    }
+
+    /**
+     * @param string $payload
+     * @return Transaction|null
+     */
+    public function mapQueuedPayload(string $payload)
+    {
+        $source = json_decode($payload, true);
+        if (!is_array($source)) {
+            return null;
+        }
+        $source = self::removeEmptyArrays($source);
+        if (empty($source)) {
+            return null;
+        }
+        try {
+            /** @var Transaction $transaction */
+            $transaction = (new TransactionMapper($source))->getModelObjectMapped();
+        } catch (\Throwable $e) {
+            return null;
+        }
+        if (null === $transaction->getOrder()) {
+            return null;
+        }
+
+        return $transaction;
+    }
+
+    /**
+     * @param mixed[] $data
+     * @return mixed[]
+     */
+    private static function removeEmptyArrays(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $value = self::removeEmptyArrays($value);
+                if (empty($value)) {
+                    unset($data[$key]);
+                } else {
+                    $data[$key] = $value;
+                }
+            }
+        }
+
+        return $data;
     }
 }

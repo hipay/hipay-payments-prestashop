@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - send missing customer id
 - add possibility to refund Przelewy24 orders
 - Oney merchant promotion code field
+- Orders stuck in "Payment authorization pending" status when the Authorized notification is resent
 
 
 ## [4.4.3] - 2026-09-15

@@ -83,7 +83,7 @@ class HiPayPaymentsNotifyModuleFrontController extends ModuleFrontController
         $notificationProcessor = $this->module->getService('hp.notification.processor');
         try {
             $notificationProcessor->process($transaction, $cart, $logger);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $logger->error($e->getMessage());
         }
     }
