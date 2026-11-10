@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Apple Pay button displayed on checkout after returning from a hosted page payment method
 - Send missing customer id
 - Oney merchant promotion code field
+- Orders stuck in "Payment authorization pending" status when the Authorized notification is resent
 
 
 ## [5.2.1] - 2026-09-22

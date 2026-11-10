@@ -503,21 +503,6 @@
             }
 
             onPaymentContextChange();
-          } else if (PSHiPayData.applePaySpecifics.merchantIdentifier) {
-            hipayPaymentsApplePayInstance.canMakePaymentsWithActiveCard(PSHiPayData.applePaySpecifics.merchantIdentifier).then((canMakePayments) => {
-              if (canMakePayments) {
-                Promise.resolve(hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]))
-                  .then((instance) => {
-                    if (instance) {
-                      hipayPaymentsInstances[code] = instance;
-                      attachApplePayEvents();
-                    }
-                  })
-                  .catch((err) => console.error('Apple Pay init error:', err));
-              } else {
-                hideApplePayButton();
-              }
-            });
           } else {
             if (window.ApplePaySession.canMakePayments()) {
               Promise.resolve(hipayPaymentsApplePayInstance.create('paymentRequestButton', hipayPaymentsConfig[code]))
