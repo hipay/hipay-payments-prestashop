@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Renamed Przelewy24 payment method to "Blik / Przelewy24"
 - Fixed Apple Pay Button shown issue
-- send missing customer id
-- add possibility to refund Przelewy24 orders
+- Send missing customer id
+- Add possibility to refund Przelewy24 orders
 - Oney merchant promotion code field
 - Orders stuck in "Payment authorization pending" status when the Authorized notification is resent
 
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep GitHub update check throttle when the API request fails
 - Apple Pay transactions not showing up on order detail page
 - Fixed a fatal error caused by return types in `SettingsLoader::deserialize()` and `MainSettingsUpdater::update()`
-- make CB default network on Apple Pay
+- Make CB default network on Apple Pay
 - Fixed order status being downgraded by a notification
 
 ## [4.4.1] - 2026-08-10
