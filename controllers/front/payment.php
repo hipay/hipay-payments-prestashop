@@ -66,7 +66,7 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
         $loggerFactory = $this->module->getService('hp.logger.factory');
         $logger = $loggerFactory->withChannel('HostedFieldsPayment');
 
-        $data = json_decode(Tools::getValue('hipayData'), true);
+        $data = $this->getHostedFieldsPayload();
         $logger->debug('Received Hosted Fields payment', null === $data ? [] : $data);
 
         try {
@@ -181,5 +181,28 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
         );
 
         die(json_encode(['success' => true, 'status' => 'success', 'redirectUrl' => $redirectUrl]));
+    }
+
+    /**
+     * @return array|null
+     */
+    private function getHostedFieldsPayload(): ?array
+    {
+        $rawBody = (string) file_get_contents('php://input');
+        if ('' !== $rawBody) {
+            $data = json_decode($rawBody, true);
+            if (is_array($data)) {
+                return $data;
+            }
+        }
+
+        if (Tools::getIsset('hipayData')) {
+            $data = json_decode((string) Tools::getValue('hipayData'), true);
+            if (is_array($data)) {
+                return $data;
+            }
+        }
+
+        return null;
     }
 }

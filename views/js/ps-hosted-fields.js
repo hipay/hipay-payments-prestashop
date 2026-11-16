@@ -144,12 +144,10 @@
           console.debug('ApplePay payment authorized');
           document.querySelector('.js-hipay-payments-hosted-fields-overlay-applepay').style.display = 'block';
 
-          const formData = new FormData();
-          formData.append('hipayData', JSON.stringify(applepayData));
-
           fetch(PSHiPayData.paymentControllerUrl, {
             method: 'POST',
-            body: formData,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(applepayData),
           })
             .then(response => {
               if (!response.ok) {
@@ -213,12 +211,10 @@
           document.querySelector('.js-hipay-payments-hosted-fields-overlay-paypal').style.display = 'block';
           hipayPaymentsInstances['paypal'].destroy();
 
-          const formData = new FormData();
-          formData.append('hipayData', JSON.stringify(paypalData));
-
           fetch(PSHiPayData.paymentControllerUrl, {
             method: 'POST',
-            body: formData,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paypalData),
           })
             .then(response => {
               if (!response.ok) {
@@ -604,13 +600,12 @@
             (response) => {
               document.querySelector('.js-hipay-payments-hosted-fields-overlay-'+code).style.display = 'block';
 
-              const formData = new FormData();
-              formData.append('hipayData', JSON.stringify(response));
               document.getElementById('ioBB-'+code).value = response.device_fingerprint;
 
               fetch(PSHiPayData.paymentControllerUrl, {
                 method: 'POST',
-                body: formData,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(response),
               })
                 .then(response => {
                   if (!response.ok) {
