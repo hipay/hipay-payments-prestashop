@@ -36,7 +36,7 @@
     "anthogirard/ps-module-utils": "~3.0.1",
     "koriym/http-constants": "^1.2",
     "ramsey/uuid": "^4.9",
-    "hipay/hipay-fullservice-sdk-php": "^2.24.1",
+    "hipay/hipay-fullservice-sdk-php": "^2.24.2",
     "giggsey/libphonenumber-for-php": "^9.0"
   },
   "require-dev": {
