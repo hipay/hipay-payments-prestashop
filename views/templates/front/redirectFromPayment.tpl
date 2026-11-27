@@ -23,7 +23,6 @@
       const hipayOrderId = "{$hipayOrderId|escape:'javascript':'UTF-8'}";
       const hipayTransactionReference = "{$hipayOrderId|escape:'javascript':'UTF-8'}";
       const idCart = "{$idCart|escape:'javascript':'UTF-8'}";
-      const cartSecureKey = "{$cartSecureKey|escape:'javascript':'UTF-8'}";
       const paymentProduct = "{$paymentProduct|escape:'javascript':'UTF-8'}";
     </script>
 {/block}

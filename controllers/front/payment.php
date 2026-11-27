@@ -88,10 +88,12 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
             $orderRequest->payment_product = $data['payment_product'] ?? '';
             // $paymentMethod = new \HiPay\Fullservice\Gateway\Request\PaymentMethod\CardTokenPaymentMethod();
             if (isset($data['one_click']) && $data['one_click']) {
-                if (!isset($data['multi_use']) || !$data['multi_use']) {
-                    if (false === HiPayPaymentsCustomerCard::checkCustomerToken($this->context->customer->id, $data['token'] ?? '')) {
-                        throw new Exception(sprintf('Customer token (%s) not found', $data['token'] ?? ''));
-                    }
+                $cardToken = (string) ($data['token'] ?? '');
+                $isMultiUse = isset($data['multi_use']) && $data['multi_use'];
+                if ((!$isMultiUse || HiPayPaymentsCustomerCard::isTokenSaved($cardToken))
+                    && false === HiPayPaymentsCustomerCard::checkCustomerToken((int) $this->context->customer->id, $cardToken)
+                ) {
+                    throw new Exception('Customer card token not found');
                 }
             }
             if (isset($data['one_click']) && $data['one_click']) {
@@ -160,20 +162,19 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
     private function checkPendingAppPaymentStatus(): void
     {
         $idCart = (int) Tools::getValue('idCart');
-        $token = Tools::getValue('token');
-        $cartSecureKey = Tools::getValue('cartSecureKey');
+        $token = (string) Tools::getValue('token');
 
-        if (!Validate::isUnsignedId($idCart) || $token !== Tools::getToken()) {
+        if (!Validate::isUnsignedId($idCart) || !hash_equals((string) Tools::getToken(), $token)) {
             die(json_encode(['success' => false]));
         }
 
         $cart = new Cart($idCart);
-        if (!Validate::isLoadedObject($cart) || !hash_equals($cart->secure_key, $cartSecureKey)) {
+        if (!\HiPay\PrestaShop\Utils\Tools::isCartOwnedByCurrentCustomer($cart, $this->context)) {
             die(json_encode(['success' => false]));
         }
 
-        $order = \HiPay\PrestaShop\Utils\Tools::getOrderByCartId($idCart);
-        if (!\Validate::isLoadedObject($order)) {
+        $order = \HiPay\PrestaShop\Utils\Tools::getOwnedOrderByCart($cart, $this->context, (string) $this->module->name);
+        if (null === $order) {
             die(json_encode(['success' => true, 'status' => 'pending']));
         }
 
@@ -196,15 +197,14 @@ class HiPayPaymentsPaymentModuleFrontController extends ModuleFrontController
             die(json_encode(['success' => true, 'status' => 'pending']));
         }
 
-        $customer = new Customer($order->id_customer);
         $redirectUrl = $this->context->link->getPageLink(
             'order-confirmation',
             null,
             null,
             [
                 'id_cart' => $idCart,
-                'id_module' => $this->module->id,
-                'key' => $customer->secure_key,
+                'id_module' => (int) $this->module->id,
+                'key' => $order->secure_key,
             ]
         );
 

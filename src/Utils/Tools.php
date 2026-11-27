@@ -89,17 +89,21 @@ class Tools
     }
 
     /**
-     * @param int $cartId
+     * @param int      $cartId
+     * @param int|null $idShop
      * @return \Order
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public static function getOrderByCartId(int $cartId): \Order
+    public static function getOrderByCartId(int $cartId, ?int $idShop = null): \Order
     {
         $dbQuery = (new \DbQuery())
             ->select('id_order')
             ->from('orders')
             ->where('id_cart = '.(int) $cartId);
+        if (null !== $idShop) {
+            $dbQuery->where('id_shop = '.(int) $idShop);
+        }
         $idOrder = \Db::getInstance()->getValue($dbQuery, false);
 
         return new \Order((int) $idOrder);
@@ -121,5 +125,47 @@ class Tools
         }
 
         return \Cache::retrieve($cacheId);
+    }
+
+    /**
+     *
+     * @param \Cart    $cart
+     * @param \Context $context
+     * @return bool
+     */
+    public static function isCartOwnedByCurrentCustomer(\Cart $cart, \Context $context): bool
+    {
+        $customer = $context->customer;
+
+        return \Validate::isLoadedObject($cart)
+            && \Validate::isLoadedObject($customer)
+            && $customer->isLogged(true)
+            && (int) $cart->id_customer > 0
+            && (int) $cart->id_customer === (int) $customer->id
+            && (int) $cart->id_shop === (int) $context->shop->id;
+    }
+
+    /**
+     * @param \Cart     $cart
+     * @param \Context  $context
+     * @param string    $moduleName
+     * @return \Order|null
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    public static function getOwnedOrderByCart(\Cart $cart, \Context $context, string $moduleName): ?\Order
+    {
+        if (!self::isCartOwnedByCurrentCustomer($cart, $context)) {
+            return null;
+        }
+        $order = self::getOrderByCartId((int) $cart->id, (int) $context->shop->id);
+        if (!\Validate::isLoadedObject($order)
+            || $order->module !== $moduleName
+            || (int) $order->id_customer !== (int) $context->customer->id
+        ) {
+            return null;
+        }
+
+        return $order;
     }
 }
