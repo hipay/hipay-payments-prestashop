@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed access control on the order confirmation redirect
+- Hardened notification signature check
+- Updated HiPay PHP SDK to 2.24.2
 
 ## [3.4.4] - 2026-10-01
 

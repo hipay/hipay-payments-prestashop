@@ -63,10 +63,18 @@ class HiPayPaymentsNotifyModuleFrontController extends ModuleFrontController
             \HiPay\PrestaShop\Api\Credentials::CREDENTIALS_TYPE_APPLE_PAY,
             \HiPay\PrestaShop\Api\Credentials::CREDENTIALS_TYPE_MOTO,
         ];
+        $signature = isset($_SERVER['HTTP_X_ALLOPASS_SIGNATURE'])
+            ? (string) $_SERVER['HTTP_X_ALLOPASS_SIGNATURE']
+            : '';
+        $payload = (string) file_get_contents('php://input');
+        $isValidSignature = false;
         foreach ($credentialsTypes as $credentialsType) {
+            $privateCredentials = $settings->getPrivateCredentials($credentialsType);
             $isValidSignature = \HiPay\Fullservice\Helper\Signature::isValidHttpSignature(
-                $settings->getPrivateCredentials($credentialsType)->identifiers->secret,
-                $settings->getPrivateCredentials($credentialsType)->hashingAlgorithm
+                $privateCredentials->identifiers->secret,
+                $privateCredentials->hashingAlgorithm,
+                $signature,
+                $payload
             );
             if (true === $isValidSignature) {
                 break;
