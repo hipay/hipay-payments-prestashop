@@ -45,7 +45,7 @@
     "symfony/yaml": "^4.4",
     "koriym/http-constants": "^1.1",
     "ramsey/uuid": "^3.9",
-    "hipay/hipay-fullservice-sdk-php": "^2.24.1",
+    "hipay/hipay-fullservice-sdk-php": "^2.24.2",
     "giggsey/libphonenumber-for-php": "^8.13"
   },
   "require-dev": {
