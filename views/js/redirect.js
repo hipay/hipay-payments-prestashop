@@ -189,7 +189,6 @@ async function pollBancomatPayStatus() {
   formData.append('action', action);
   formData.append('token', hipayCustomerToken);
   formData.append('idCart', idCart);
-  formData.append('cartSecureKey', cartSecureKey);
 
   try {
     const response = await fetch(hipayPaymentControllerUrl, {

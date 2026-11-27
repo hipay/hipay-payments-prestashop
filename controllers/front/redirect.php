@@ -211,8 +211,6 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
         $pos = strpos($hipayOrderId, '-');
         $idCart = ($pos !== false) ? substr($hipayOrderId, 0, $pos) : false;
 
-        $cart = $idCart ? new Cart((int) $idCart) : null;
-        $cartSecureKey = ($cart && Validate::isLoadedObject($cart)) ? $cart->secure_key : '';
 
         $this->context->smarty->assign([
             'hipayRedirectController' => $this->context->link->getModuleLink((string) $this->module->name, 'redirect', ['action' => 'redirectConfirmation']),
@@ -221,7 +219,6 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
             'hipayTransactionReference' => Tools::getValue('reference'),
             'hipayOrderId' => Tools::getValue('orderid'),
             'idCart' => $idCart,
-            'cartSecureKey' => $cartSecureKey,
             'paymentProduct' => Tools::getValue('paymentProduct', ''),
         ]);
     }
@@ -234,20 +231,21 @@ class HiPayPaymentsRedirectModuleFrontController extends ModuleFrontController
     public function displayAjaxRedirectConfirmation()
     {
         $cart = new Cart((int) Tools::getValue('idCart'));
-        if (Validate::isLoadedObject($cart) && Validate::isLoadedObject(\HiPay\PrestaShop\Utils\Tools::getOrderByCartId($cart->id))) {
-            $customer = new Customer($cart->id_customer);
+        $order = \HiPay\PrestaShop\Utils\Tools::getOwnedOrderByCart($cart, $this->context, (string) $this->module->name);
+        if (null !== $order) {
             die(json_encode([
                 'redirectUrl' => $this->context->link->getPageLink(
                     'order-confirmation',
                     null,
                     null,
                     [
-                        'id_cart' => $cart->id,
-                        'id_module' => $this->module->id,
-                        'key' => $customer->secure_key,
+                        'id_cart' => (int) $cart->id,
+                        'id_module' => (int) $this->module->id,
+                        'key' => $order->secure_key,
                     ]
                 ),
             ]));
         }
+        die(json_encode([]));
     }
 }
