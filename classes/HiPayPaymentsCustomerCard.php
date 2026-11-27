@@ -106,6 +106,23 @@ class HiPayPaymentsCustomerCard extends ObjectModel
     }
 
     /**
+     * @param string $token
+     * @return bool
+     */
+    public static function isTokenSaved(string $token): bool
+    {
+        if ('' === $token) {
+            return false;
+        }
+        $dbQuery = (new DbQuery())
+            ->select(self::$definition['primary'])
+            ->from(self::$definition['table'])
+            ->where(sprintf('card_token = "%s"', pSQL($token)));
+
+        return (bool) Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($dbQuery);
+    }
+
+    /**
      * @param int    $customerId
      * @param string $token
      * @return self

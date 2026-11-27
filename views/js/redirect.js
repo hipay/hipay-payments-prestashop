@@ -204,7 +204,6 @@ async function pollPendingPaymentStatus() {
   formData.append('action', 'checkPendingPaymentStatus');
   formData.append('token', hipayCustomerToken);
   formData.append('idCart', idCart);
-  formData.append('cartSecureKey', cartSecureKey);
 
   try {
     const response = await fetch(hipayPaymentControllerUrl, {
